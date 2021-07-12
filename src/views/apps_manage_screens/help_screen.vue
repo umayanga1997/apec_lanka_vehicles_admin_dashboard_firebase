@@ -60,18 +60,22 @@
         item-key="id"
         fixed-header
         :loading="loading"
+        
       >
-        <template v-slot:item="{ item }">
-          <tr>
-            <td>{{ item.id }}</td>
-            <td>{{ item.point }}</td>
-            <td>{{ item.app_name }}</td>
-            <td>{{ item.title }}</td>
-            <td class="truncate">{{ item.body }}</td>
-            <td>{{ item.link_title }}</td>
-            <td>{{ item.link }}</td>
-            <td>{{ item.link_icon }}</td>
-            <v-container fluid class="ActionButton__container pa-1">
+        <template v-slot:body="{ items}">
+            <tbody>
+          <tr v-for="item in items"
+            :key="item.point">
+            <td class="d-block d-sm-table-cell">{{ item.id }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.point }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.app_name }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.title }}</td>
+            <td class="d-block d-sm-table-cell truncate">{{ item.body }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.link_title }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.link }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.link_icon }}</td>
+            <td class="d-block d-sm-table-cell">
+              <v-container fluid class="ActionButton__container pa-1">
               <ActionButton
                 class="ma-1"
                 @click="
@@ -92,7 +96,9 @@
                 color="red lighten-1"
               />
             </v-container>
+            </td>
           </tr>
+            </tbody>
         </template>
       </v-data-table>
     </v-card>
@@ -345,7 +351,7 @@ export default {
         align: "start",
         value: "id",
       },
-      { text: "Point", value: "point", align: "center" },
+      { text: "Point", value: "point", align: "center", width:"100px" },
       { text: "App Name", value: "app_name" },
       { text: "Title", value: "title" },
       { text: "Help Description", value: "body", width: "300px" },
@@ -496,7 +502,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .v-input {
   margin: 0px;
   padding: 0px;
