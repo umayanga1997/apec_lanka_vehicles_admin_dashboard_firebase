@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import Helps from '../views/apps_manage_screens/help_screen.vue';
+import Helps from '@/views/apps_manage_screens/help_screen.vue';
+import Ads from '@/views/apps_manage_screens/Ads/ads_screen.vue';
 
 Vue.use(VueRouter)
 
@@ -14,10 +15,11 @@ const routes = [{
         path: '/helps_',
         name: 'helps',
         component: Helps,
-        // route level code-splitting
-        // this generates a separate chunk (about.[hash].js) for this route
-        // which is lazy-loaded when the route is visited.
-
+    },
+    {
+        path: '/ads_conf',
+        name: 'ads',
+        component: Ads,
     }
 ]
 

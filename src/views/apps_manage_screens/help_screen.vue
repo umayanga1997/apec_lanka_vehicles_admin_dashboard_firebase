@@ -263,7 +263,7 @@
               <v-btn
                 :loading="loadingBtn"
                 :disabled="loadingBtn ? loadingBtn : invalid"
-                                text
+                text
                 color="error"
                 @click="deleteData()"
               >
@@ -316,8 +316,8 @@ extend("email", {
   message: "Email must be valid",
 });
 
-const helpsGroup = db.collectionGroup("helps");
-const helps = db
+const helpsFetchRef = db.collectionGroup("helps");
+const helpsRef = db
   .collection("apps_management")
   .doc("FU0U4I2n3PuXmL4LWtIy")
   .collection("helps");
@@ -370,19 +370,25 @@ export default {
   }),
   methods: {
     getHelpDetails() {
-      helpsGroup.orderBy('point').onSnapshot((snapshot) => {
-        this.dataRows = [];
-        snapshot.docs.forEach((element) => {
-          this.dataRows.push({ id: element.id, ...element.data() });
+      helpsFetchRef
+        .orderBy("point")
+        .onSnapshot((snapshot) => {
+          this.dataRows = [];
+          snapshot.docs.forEach((element) => {
+            this.dataRows.push({ id: element.id, ...element.data() });
+            this.loading = false;
+          });
+        })
+        .catch((e) => {
           this.loading = false;
+          this.alertMessage(e.message, "error");
         });
-      });
     },
     insertData() {
       try {
         this.loadingBtn = true;
 
-        helps
+        helpsRef
           .add({
             point: parseInt(this.editItem.point),
             app_name: this.editItem.app_name,
@@ -416,7 +422,7 @@ export default {
       try {
         this.loadingBtn = true;
 
-        helps
+        helpsRef
           .doc(this.editItem.id)
           .update({
             point: parseInt(this.editItem.point),
@@ -453,7 +459,7 @@ export default {
       try {
         this.loadingBtn = true;
 
-        helps
+        helpsRef
           .doc(this.deleteID)
           .delete()
           .then(() => {

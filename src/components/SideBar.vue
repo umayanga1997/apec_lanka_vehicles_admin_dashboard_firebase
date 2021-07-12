@@ -8,7 +8,7 @@
     </v-app-bar>
     <v-navigation-drawer
       fixed
-      :mini-variant.sync="$vuetify.breakpoint.lgOnly ? isDrawerOpen : AAAA"
+      :mini-variant="$vuetify.breakpoint.lgOnly ? isDrawerOpen : A"
       :permanent="$vuetify.breakpoint.lgOnly"
       :temporary="$vuetify.breakpoint.smOnly"
       v-model="isDrawerOpen"
