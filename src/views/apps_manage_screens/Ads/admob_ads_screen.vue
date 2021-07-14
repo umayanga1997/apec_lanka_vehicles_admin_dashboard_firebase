@@ -117,7 +117,7 @@ export default {
   methods: {
     getAdmobDetails() {
       admobFetchRef
-        .onSnapshot((snapshot) => {
+        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.details = [];
           snapshot.docs.forEach((element) => {
             this.configID = element.data().config_id;

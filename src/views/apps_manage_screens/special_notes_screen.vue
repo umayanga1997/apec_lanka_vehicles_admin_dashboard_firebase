@@ -47,7 +47,7 @@
     <!-- Data Table -->
     <v-card class="mt-5 mb-5">
       <v-card-title>
-        <span>Help's Details</span>
+        <span>Special Notes Details</span>
       </v-card-title>
 
       <v-data-table
@@ -60,45 +60,44 @@
         item-key="id"
         fixed-header
         :loading="loading"
-        
       >
-        <template v-slot:body="{ items}">
-            <tbody>
-          <tr v-for="item in items"
-            :key="item.point">
-            <td class="d-block d-sm-table-cell">{{ item.id }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.point }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.app_name }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.title }}</td>
-            <td class="d-block d-sm-table-cell truncate">{{ item.body }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.link_title }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.link }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.link_icon }}</td>
-            <td class="d-block d-sm-table-cell">
-              <v-container fluid class="ActionButton__container pa-1">
-              <ActionButton
-                class="ma-1"
-                @click="
-                  isUpdateData = true;
-                  dialog = !dialog;
-                  editItem = item;
-                "
-                icon="mdi-pencil"
-                color="green lighten-2"
-              />
-              <ActionButton
-                class="ma-1"
-                @click="
-                  dialogDelete = !dialogDelete;
-                  deleteID = item.id;
-                "
-                icon="mdi-delete"
-                color="red lighten-1"
-              />
-            </v-container>
-            </td>
-          </tr>
-            </tbody>
+        <template v-slot:body="{ items }">
+          <tbody>
+            <tr v-for="item in items" :key="item.point">
+              <td class="d-block d-sm-table-cell">{{ item.app_name }}</td>
+              <td class="d-block d-sm-table-cell">{{ item.title }}</td>
+              <td class="d-block d-sm-table-cell truncate">
+                {{ item.description }}
+              </td>
+              <td class="d-block d-sm-table-cell">{{ item.link }}</td>
+              <td class="d-block d-sm-table-cell">{{ item.isShow }}</td>
+              <td class="d-block d-sm-table-cell">{{ item.isLockApp }}</td>
+
+              <td class="d-block d-sm-table-cell">
+                <v-container fluid class="ActionButton__container pa-1">
+                  <ActionButton
+                    class="ma-1"
+                    @click="
+                      isUpdateData = true;
+                      dialog = !dialog;
+                      editItem = item;
+                    "
+                    icon="mdi-pencil"
+                    color="green lighten-2"
+                  />
+                  <ActionButton
+                    class="ma-1"
+                    @click="
+                      dialogDelete = !dialogDelete;
+                      deleteID = item.note_id;
+                    "
+                    icon="mdi-delete"
+                    color="red lighten-1"
+                  />
+                </v-container>
+              </td>
+            </tr>
+          </tbody>
         </template>
       </v-data-table>
     </v-card>
@@ -109,18 +108,11 @@
           <ValidationObserver ref="observer" v-slot="{ invalid }">
             <v-card>
               <v-card-title fixed>
-                <span class="headline">Help Details</span>
+                <span class="headline">Note Details</span>
               </v-card-title>
               <v-card-text>
                 <v-container>
                   <v-row class="mt-4">
-                    <v-col cols="12" sm="6" md="6">
-                      <v-text-field
-                        v-model="editItem.point"
-                        label="Point"
-                        hint="Enter point of help"
-                      ></v-text-field>
-                    </v-col>
                     <v-col cols="12" sm="6" md="6">
                       <validation-provider
                         v-slot="{ errors }"
@@ -158,7 +150,7 @@
                         name="Description"
                       >
                         <v-textarea
-                          v-model="editItem.body"
+                          v-model="editItem.description"
                           :error-messages="errors"
                           required
                           auto-grow
@@ -168,59 +160,49 @@
                         ></v-textarea>
                       </validation-provider>
                     </v-col>
-                    <v-col cols="12" sm="6" md="6">
-                      <v-text-field
-                        v-model="editItem.link_title"
-                        label="Link Title"
-                        hint="Enter link title of help"
-                      ></v-text-field>
-                    </v-col>
+
                     <v-col cols="12" sm="6" md="6">
                       <v-text-field
                         v-model="editItem.link"
                         label="Link"
-                        hint="Enter link of help"
+                        hint="Enter link of Note"
                       ></v-text-field>
                     </v-col>
-                    <v-col cols="12" sm="6" md="6">
-                      <v-text-field
-                        v-model="editItem.link_icon"
-                        label="Link Icon"
-                        hint="Enter link icon of help"
-                      ></v-text-field>
-                    </v-col>
-
-                    <!-- Dae Picker -->
-                    <!-- <v-col cols="12" sm="6" md="4">
-                      <v-dialog
-                        ref="dateTimeDialog"
-                        v-model="dateTimeDialog"
-                        :close-on-content-click="false"
-                        :return-value.sync="editItem.reg_date"
-                        persistent
-                        width="290px"
+                    <v-spacer></v-spacer>
+                    
+                    <v-col cols="12" md="4">
+                       <validation-provider
+                        v-slot="{ errors }"
+                        rules="required"
+                        name="'Is Show'"
                       >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="editItem.reg_date"
-                            label="Register date"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker v-model="editItem.reg_date" scrollable>
-                          <v-spacer></v-spacer>
-                          <v-btn text color="primary" @click="dateTimeDialog = false">Cancel</v-btn>
-                          <v-btn
-                            text
-                            color="primary"
-                            @click="$refs.dateTimeDialog.save(editItem.reg_date)"
-                          >OK</v-btn>
-                        </v-date-picker>
-                      </v-dialog>
-                    </v-col> -->
+                      <v-select
+                        v-model="editItem.isShow"
+                        :items="selectItems"
+                        :error-messages="errors"
+                        label="Is Show?"
+                        required
+                      >
+                      </v-select>
+                       </validation-provider>
+                    </v-col>
+                    <v-col cols="12" md="4">
+                    
+                       <validation-provider
+                        v-slot="{ errors }"
+                        rules="required"
+                        name="'Is Lock App'"
+                      >
+                      <v-select
+                        v-model="editItem.isLockApp"
+                        :items="selectItems"
+                        :error-messages="errors"
+                        label="Is Lock App"
+                        required
+                      >
+                      </v-select>
+                       </validation-provider>
+                    </v-col>
                   </v-row>
                 </v-container>
                 <small>*indicates required field</small>
@@ -285,6 +267,7 @@
 
 <script>
 import db from "@/firebaseConfig";
+import { v4 as uuidv4 } from 'uuid';
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
 import {
@@ -322,14 +305,14 @@ extend("email", {
   message: "Email must be valid",
 });
 
-const helpsFetchRef = db.collectionGroup("helps");
-const helpsRef = db
+const NoteFetchRef = db.collectionGroup("special_notes");
+const NoteRef = db
   .collection("apps_management")
   .doc("FU0U4I2n3PuXmL4LWtIy")
-  .collection("helps");
+  .collection("special_notes");
 
 export default {
-  name: "helps",
+  name: "special_notes",
   components: {
     ActionButton,
     ValidationObserver,
@@ -337,7 +320,7 @@ export default {
   },
 
   created() {
-    this.getHelpDetails();
+    this.getSpNoteDetails();
   },
 
   data: () => ({
@@ -346,23 +329,17 @@ export default {
     // Table
     loading: true,
     headers: [
-      {
-        text: "ID",
-        align: "start",
-        value: "id",
-      },
-      { text: "Point", value: "point", align: "center", width:"100px" },
       { text: "App Name", value: "app_name" },
       { text: "Title", value: "title" },
-      { text: "Help Description", value: "body", width: "300px" },
-      { text: "Link Title", value: "link_title" },
+      { text: "Note Description", value: "description", width: "300px" },
       { text: "Link", value: "link" },
-      { text: "Link Icon", value: "link_icon" },
-      //   { text: "Mangement Actions", value: "m-actions", width: "190px" },
+      { text: "Is Show?", value: "isShow" },
+      { text: "Is Lock App?", value: "isLockApp" },
       { text: "Actions", value: "u-actions", width: "190px" },
     ],
     dataRows: [],
     //Form
+    selectItems: [true, false],
     editItem: {},
     loadingBtn: false,
     isUpdateData: false,
@@ -375,13 +352,12 @@ export default {
     msgType: null,
   }),
   methods: {
-    getHelpDetails() {
-      helpsFetchRef
-        .orderBy("point")
+    getSpNoteDetails() {
+      NoteFetchRef
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
           snapshot.docs.forEach((element) => {
-            this.dataRows.push({ id: element.id, ...element.data() });
+            this.dataRows.push({ ...element.data() });
             this.loading = false;
           });
         })
@@ -393,16 +369,16 @@ export default {
     insertData() {
       try {
         this.loadingBtn = true;
-
-        helpsRef
-          .add({
-            point: parseInt(this.editItem.point),
+        const id =uuidv4();
+               NoteRef.doc(id)
+          .set({
+            note_id : id,
             app_name: this.editItem.app_name,
             title: this.editItem.title,
-            body: this.editItem.body,
-            link_title: this.editItem.link_title ?? "",
+            description: this.editItem.description,
             link: this.editItem.link ?? "",
-            link_icon: this.editItem.link_icon ?? "",
+            isShow: this.editItem.isShow ,
+            isLockApp: this.editItem.isLockApp,
           })
           .then(() => {
             this.dialog = !this.dialog;
@@ -428,16 +404,15 @@ export default {
       try {
         this.loadingBtn = true;
 
-        helpsRef
-          .doc(this.editItem.id)
+        NoteRef
+          .doc(this.editItem.note_id)
           .update({
-            point: parseInt(this.editItem.point),
             app_name: this.editItem.app_name,
             title: this.editItem.title,
-            body: this.editItem.body,
-            link_title: this.editItem.link_title ?? "",
+            description: this.editItem.description,
             link: this.editItem.link ?? "",
-            link_icon: this.editItem.link_icon ?? "",
+            isShow: this.editItem.isShow ,
+            isLockApp: this.editItem.isLockApp,
           })
           .then(() => {
             this.dialog = !this.dialog;
@@ -465,7 +440,7 @@ export default {
       try {
         this.loadingBtn = true;
 
-        helpsRef
+        NoteRef
           .doc(this.deleteID)
           .delete()
           .then(() => {

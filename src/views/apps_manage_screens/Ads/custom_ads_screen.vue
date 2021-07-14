@@ -360,7 +360,7 @@ export default {
     getHelpDetails() {
       customAdsFetchRef
         .orderBy("point")
-        .onSnapshot((snapshot) => {
+        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
           snapshot.docs.forEach((element) => {
             this.dataRows.push({ id: element.id, ...element.data() });

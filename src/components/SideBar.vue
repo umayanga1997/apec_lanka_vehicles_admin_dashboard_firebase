@@ -83,7 +83,7 @@ export default {
         subLinks: [
           {
             subTitle: "Ads",
-            suRoute: "/ads_conf",
+            suRoute: "/ads_conf_",
             active: false,
           },
           {
@@ -113,7 +113,7 @@ export default {
           },
           {
             subTitle: "About Us",
-            suRoute: "/about_us_details",
+            suRoute: "/about_us_details_",
             active: false,
           },
           {

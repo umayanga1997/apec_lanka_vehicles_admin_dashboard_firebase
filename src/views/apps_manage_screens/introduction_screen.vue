@@ -47,7 +47,7 @@
     <!-- Data Table -->
     <v-card class="mt-5 mb-5">
       <v-card-title>
-        <span>Help's Details</span>
+        <span>Introductions Details</span>
       </v-card-title>
 
       <v-data-table
@@ -60,45 +60,42 @@
         item-key="id"
         fixed-header
         :loading="loading"
-        
       >
-        <template v-slot:body="{ items}">
-            <tbody>
-          <tr v-for="item in items"
-            :key="item.point">
-            <td class="d-block d-sm-table-cell">{{ item.id }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.point }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.app_name }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.title }}</td>
-            <td class="d-block d-sm-table-cell truncate">{{ item.body }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.link_title }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.link }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.link_icon }}</td>
-            <td class="d-block d-sm-table-cell">
-              <v-container fluid class="ActionButton__container pa-1">
-              <ActionButton
-                class="ma-1"
-                @click="
-                  isUpdateData = true;
-                  dialog = !dialog;
-                  editItem = item;
-                "
-                icon="mdi-pencil"
-                color="green lighten-2"
-              />
-              <ActionButton
-                class="ma-1"
-                @click="
-                  dialogDelete = !dialogDelete;
-                  deleteID = item.id;
-                "
-                icon="mdi-delete"
-                color="red lighten-1"
-              />
-            </v-container>
-            </td>
-          </tr>
-            </tbody>
+        <template v-slot:body="{ items }">
+          <tbody>
+            <tr v-for="item in items" :key="item.point">
+              <td class="d-block d-sm-table-cell">{{ item.point }}</td>
+              <td class="d-block d-sm-table-cell">{{ item.app_name }}</td>
+              <td class="d-block d-sm-table-cell">{{ item.title }}</td>
+              <td class="d-block d-sm-table-cell truncate">
+                {{ item.description }}
+              </td>
+              
+              <td class="d-block d-sm-table-cell">
+                <v-container fluid class="ActionButton__container pa-1">
+                  <ActionButton
+                    class="ma-1"
+                    @click="
+                      isUpdateData = true;
+                      dialog = !dialog;
+                      editItem = item;
+                    "
+                    icon="mdi-pencil"
+                    color="green lighten-2"
+                  />
+                  <ActionButton
+                    class="ma-1"
+                    @click="
+                      dialogDelete = !dialogDelete;
+                      deleteID = item.intro_id;
+                    "
+                    icon="mdi-delete"
+                    color="red lighten-1"
+                  />
+                </v-container>
+              </td>
+            </tr>
+          </tbody>
         </template>
       </v-data-table>
     </v-card>
@@ -109,17 +106,25 @@
           <ValidationObserver ref="observer" v-slot="{ invalid }">
             <v-card>
               <v-card-title fixed>
-                <span class="headline">Help Details</span>
+                <span class="headline">Introduction Details</span>
               </v-card-title>
               <v-card-text>
                 <v-container>
                   <v-row class="mt-4">
                     <v-col cols="12" sm="6" md="6">
-                      <v-text-field
-                        v-model="editItem.point"
-                        label="Point"
-                        hint="Enter point of help"
-                      ></v-text-field>
+                      <validation-provider
+                        v-slot="{ errors }"
+                        rules="required"
+                        name="Point"
+                      >
+                        <v-text-field
+                          v-model="editItem.point"
+                          :error-messages="errors"
+                          label="Point *"
+                          hint="Enter introduction point"
+                          required
+                        ></v-text-field>
+                      </validation-provider>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
                       <validation-provider
@@ -147,7 +152,7 @@
                           :error-messages="errors"
                           required
                           label="Title *"
-                          hint="Enter title of help"
+                          hint="Enter title of introduction"
                         ></v-text-field>
                       </validation-provider>
                     </v-col>
@@ -158,69 +163,16 @@
                         name="Description"
                       >
                         <v-textarea
-                          v-model="editItem.body"
+                          v-model="editItem.description"
                           :error-messages="errors"
                           required
                           auto-grow
                           rows="1"
                           label="Description *"
-                          hint="Enter description of help"
+                          hint="Enter description of introduction"
                         ></v-textarea>
                       </validation-provider>
                     </v-col>
-                    <v-col cols="12" sm="6" md="6">
-                      <v-text-field
-                        v-model="editItem.link_title"
-                        label="Link Title"
-                        hint="Enter link title of help"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="6">
-                      <v-text-field
-                        v-model="editItem.link"
-                        label="Link"
-                        hint="Enter link of help"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="6">
-                      <v-text-field
-                        v-model="editItem.link_icon"
-                        label="Link Icon"
-                        hint="Enter link icon of help"
-                      ></v-text-field>
-                    </v-col>
-
-                    <!-- Dae Picker -->
-                    <!-- <v-col cols="12" sm="6" md="4">
-                      <v-dialog
-                        ref="dateTimeDialog"
-                        v-model="dateTimeDialog"
-                        :close-on-content-click="false"
-                        :return-value.sync="editItem.reg_date"
-                        persistent
-                        width="290px"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="editItem.reg_date"
-                            label="Register date"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker v-model="editItem.reg_date" scrollable>
-                          <v-spacer></v-spacer>
-                          <v-btn text color="primary" @click="dateTimeDialog = false">Cancel</v-btn>
-                          <v-btn
-                            text
-                            color="primary"
-                            @click="$refs.dateTimeDialog.save(editItem.reg_date)"
-                          >OK</v-btn>
-                        </v-date-picker>
-                      </v-dialog>
-                    </v-col> -->
                   </v-row>
                 </v-container>
                 <small>*indicates required field</small>
@@ -285,6 +237,7 @@
 
 <script>
 import db from "@/firebaseConfig";
+import { v4 as uuidv4 } from 'uuid';
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
 import {
@@ -322,14 +275,14 @@ extend("email", {
   message: "Email must be valid",
 });
 
-const helpsFetchRef = db.collectionGroup("helps");
-const helpsRef = db
+const IntroductionsFetchRef = db.collectionGroup("introductions");
+const IntroductionsRef = db
   .collection("apps_management")
   .doc("FU0U4I2n3PuXmL4LWtIy")
-  .collection("helps");
+  .collection("introductions");
 
 export default {
-  name: "helps",
+  name: "instructions",
   components: {
     ActionButton,
     ValidationObserver,
@@ -337,7 +290,7 @@ export default {
   },
 
   created() {
-    this.getHelpDetails();
+    this.getSpNoteDetails();
   },
 
   data: () => ({
@@ -346,23 +299,15 @@ export default {
     // Table
     loading: true,
     headers: [
-      {
-        text: "ID",
-        align: "start",
-        value: "id",
-      },
-      { text: "Point", value: "point", align: "center", width:"100px" },
+      { text: "Point", value: "point" },
       { text: "App Name", value: "app_name" },
       { text: "Title", value: "title" },
-      { text: "Help Description", value: "body", width: "300px" },
-      { text: "Link Title", value: "link_title" },
-      { text: "Link", value: "link" },
-      { text: "Link Icon", value: "link_icon" },
-      //   { text: "Mangement Actions", value: "m-actions", width: "190px" },
+      { text: "Note Description", value: "description", width: "300px" },
       { text: "Actions", value: "u-actions", width: "190px" },
     ],
     dataRows: [],
     //Form
+    selectItems: [true, false],
     editItem: {},
     loadingBtn: false,
     isUpdateData: false,
@@ -375,13 +320,12 @@ export default {
     msgType: null,
   }),
   methods: {
-    getHelpDetails() {
-      helpsFetchRef
-        .orderBy("point")
+    getSpNoteDetails() {
+      IntroductionsFetchRef.orderBy('point')
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
           snapshot.docs.forEach((element) => {
-            this.dataRows.push({ id: element.id, ...element.data() });
+            this.dataRows.push({ ...element.data() });
             this.loading = false;
           });
         })
@@ -393,16 +337,14 @@ export default {
     insertData() {
       try {
         this.loadingBtn = true;
-
-        helpsRef
-          .add({
+        const id =uuidv4();
+               IntroductionsRef.doc(id)
+          .set({
+            intro_id : id,
             point: parseInt(this.editItem.point),
             app_name: this.editItem.app_name,
             title: this.editItem.title,
-            body: this.editItem.body,
-            link_title: this.editItem.link_title ?? "",
-            link: this.editItem.link ?? "",
-            link_icon: this.editItem.link_icon ?? "",
+            description: this.editItem.description,
           })
           .then(() => {
             this.dialog = !this.dialog;
@@ -428,16 +370,13 @@ export default {
       try {
         this.loadingBtn = true;
 
-        helpsRef
-          .doc(this.editItem.id)
+        IntroductionsRef
+          .doc(this.editItem.intro_id)
           .update({
             point: parseInt(this.editItem.point),
             app_name: this.editItem.app_name,
             title: this.editItem.title,
-            body: this.editItem.body,
-            link_title: this.editItem.link_title ?? "",
-            link: this.editItem.link ?? "",
-            link_icon: this.editItem.link_icon ?? "",
+            description: this.editItem.description,
           })
           .then(() => {
             this.dialog = !this.dialog;
@@ -465,7 +404,7 @@ export default {
       try {
         this.loadingBtn = true;
 
-        helpsRef
+        IntroductionsRef
           .doc(this.deleteID)
           .delete()
           .then(() => {

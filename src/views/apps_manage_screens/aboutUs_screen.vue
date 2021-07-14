@@ -47,9 +47,9 @@
     <!-- Data Table -->
     <v-card class="mt-5 mb-5">
       <v-card-title>
-        <span>Help's Details</span>
+        <span>About Us Details</span>
       </v-card-title>
-
+        
       <v-data-table
         dark
         style="background-color: #292929"
@@ -60,22 +60,39 @@
         item-key="id"
         fixed-header
         :loading="loading"
-        
       >
+      
         <template v-slot:body="{ items}">
             <tbody>
           <tr v-for="item in items"
             :key="item.point">
-            <td class="d-block d-sm-table-cell">{{ item.id }}</td>
             <td class="d-block d-sm-table-cell">{{ item.point }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.app_name }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.title }}</td>
-            <td class="d-block d-sm-table-cell truncate">{{ item.body }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.link_title }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.link }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.link_icon }}</td>
-            <td class="d-block d-sm-table-cell">
-              <v-container fluid class="ActionButton__container pa-1">
+            <td class="d-block d-sm-table-cell">{{ item.name }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.designation }}</td>
+            <td class="d-block-flex d-sm-table-cell">
+              <v-img
+                :src="item.profile_image"
+                :lazy-src="item.profile_image"
+                width="130px"
+                height="130px"
+                class="grey lighten-2"
+              >
+                <template v-slot:placeholder>
+                  <v-row
+                    class="fill-height ma-0"
+                    align="center"
+                    justify="center"
+                  >
+                    <v-progress-circular
+                      indeterminate
+                      color="grey lighten-5"
+                    ></v-progress-circular>
+                  </v-row>
+                </template>
+              </v-img>
+            </td>
+
+            <td class="d-block d-sm-table-cell"><v-container fluid class="ActionButton__container pa-1">
               <ActionButton
                 class="ma-1"
                 @click="
@@ -95,8 +112,7 @@
                 icon="mdi-delete"
                 color="red lighten-1"
               />
-            </v-container>
-            </td>
+            </v-container></td>
           </tr>
             </tbody>
         </template>
@@ -109,118 +125,61 @@
           <ValidationObserver ref="observer" v-slot="{ invalid }">
             <v-card>
               <v-card-title fixed>
-                <span class="headline">Help Details</span>
+                <span class="headline">About Us Details</span>
               </v-card-title>
               <v-card-text>
                 <v-container>
                   <v-row class="mt-4">
                     <v-col cols="12" sm="6" md="6">
+                         <validation-provider
+                        v-slot="{ errors }"
+                        rules="required"
+                        name="Point"
+                      >
                       <v-text-field
                         v-model="editItem.point"
+                         :error-messages="errors"
                         label="Point"
-                        hint="Enter point of help"
+                        hint="Enter point of custom ad"
+                        required
                       ></v-text-field>
+                         </validation-provider>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
-                      <validation-provider
+                         <validation-provider
                         v-slot="{ errors }"
                         rules="required"
-                        name="App Name"
+                        name="Name"
                       >
-                        <v-text-field
-                          v-model="editItem.app_name"
-                          :error-messages="errors"
-                          label="App Name *"
-                          hint="Enter app name"
-                          required
-                        ></v-text-field>
-                      </validation-provider>
+                      <v-text-field
+                        v-model="editItem.name"
+                         :error-messages="errors"
+                        label="Name *"
+                        hint="Enter Name"
+                        required
+                      ></v-text-field>
+                         </validation-provider>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
-                      <validation-provider
+                         <validation-provider
                         v-slot="{ errors }"
                         rules="required"
-                        name="Title"
+                        name="Designation"
                       >
-                        <v-text-field
-                          v-model="editItem.title"
-                          :error-messages="errors"
-                          required
-                          label="Title *"
-                          hint="Enter title of help"
-                        ></v-text-field>
-                      </validation-provider>
-                    </v-col>
-                    <v-col cols="12" sm="12" md="12">
-                      <validation-provider
-                        v-slot="{ errors }"
-                        rules="required"
-                        name="Description"
-                      >
-                        <v-textarea
-                          v-model="editItem.body"
-                          :error-messages="errors"
-                          required
-                          auto-grow
-                          rows="1"
-                          label="Description *"
-                          hint="Enter description of help"
-                        ></v-textarea>
-                      </validation-provider>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="6">
                       <v-text-field
-                        v-model="editItem.link_title"
-                        label="Link Title"
-                        hint="Enter link title of help"
+                        v-model="editItem.designation"
+                         :error-messages="errors"
+                        label="Designation *"
+                        hint="Enter Designation"
+                        required
                       ></v-text-field>
+                         </validation-provider>
                     </v-col>
+                    
                     <v-col cols="12" sm="6" md="6">
-                      <v-text-field
-                        v-model="editItem.link"
-                        label="Link"
-                        hint="Enter link of help"
-                      ></v-text-field>
+                      Image
                     </v-col>
-                    <v-col cols="12" sm="6" md="6">
-                      <v-text-field
-                        v-model="editItem.link_icon"
-                        label="Link Icon"
-                        hint="Enter link icon of help"
-                      ></v-text-field>
-                    </v-col>
-
-                    <!-- Dae Picker -->
-                    <!-- <v-col cols="12" sm="6" md="4">
-                      <v-dialog
-                        ref="dateTimeDialog"
-                        v-model="dateTimeDialog"
-                        :close-on-content-click="false"
-                        :return-value.sync="editItem.reg_date"
-                        persistent
-                        width="290px"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="editItem.reg_date"
-                            label="Register date"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker v-model="editItem.reg_date" scrollable>
-                          <v-spacer></v-spacer>
-                          <v-btn text color="primary" @click="dateTimeDialog = false">Cancel</v-btn>
-                          <v-btn
-                            text
-                            color="primary"
-                            @click="$refs.dateTimeDialog.save(editItem.reg_date)"
-                          >OK</v-btn>
-                        </v-date-picker>
-                      </v-dialog>
-                    </v-col> -->
+                    
                   </v-row>
                 </v-container>
                 <small>*indicates required field</small>
@@ -293,7 +252,7 @@ import {
   ValidationObserver,
   ValidationProvider,
 } from "vee-validate";
-import ActionButton from "../../components/ActionButton.vue";
+import ActionButton from "@/components/ActionButton.vue";
 
 setInteractionMode("eager");
 
@@ -322,14 +281,14 @@ extend("email", {
   message: "Email must be valid",
 });
 
-const helpsFetchRef = db.collectionGroup("helps");
-const helpsRef = db
+const AboutUsFetchRef = db.collectionGroup("about_us_details");
+const AboutUsRef = db
   .collection("apps_management")
   .doc("FU0U4I2n3PuXmL4LWtIy")
-  .collection("helps");
+  .collection("about_us_details");
 
 export default {
-  name: "helps",
+  name: "about_us",
   components: {
     ActionButton,
     ValidationObserver,
@@ -346,24 +305,16 @@ export default {
     // Table
     loading: true,
     headers: [
-      {
-        text: "ID",
-        align: "start",
-        value: "id",
-      },
-      { text: "Point", value: "point", align: "center", width:"100px" },
-      { text: "App Name", value: "app_name" },
-      { text: "Title", value: "title" },
-      { text: "Help Description", value: "body", width: "300px" },
-      { text: "Link Title", value: "link_title" },
-      { text: "Link", value: "link" },
-      { text: "Link Icon", value: "link_icon" },
-      //   { text: "Mangement Actions", value: "m-actions", width: "190px" },
+      { text: "Point", value: "point", align: "center" },
+      { text: "Name", value: "name" },
+      { text: "Designation", value: "designation" },
+      { text: "Profile Image", value: "profile_image", width:"130px"},
       { text: "Actions", value: "u-actions", width: "190px" },
     ],
     dataRows: [],
     //Form
     editItem: {},
+    dateTimeDialog: false,
     loadingBtn: false,
     isUpdateData: false,
     dialog: false,
@@ -376,7 +327,7 @@ export default {
   }),
   methods: {
     getHelpDetails() {
-      helpsFetchRef
+      AboutUsFetchRef
         .orderBy("point")
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
@@ -394,7 +345,7 @@ export default {
       try {
         this.loadingBtn = true;
 
-        helpsRef
+        AboutUsRef
           .add({
             point: parseInt(this.editItem.point),
             app_name: this.editItem.app_name,
@@ -428,7 +379,7 @@ export default {
       try {
         this.loadingBtn = true;
 
-        helpsRef
+        AboutUsRef
           .doc(this.editItem.id)
           .update({
             point: parseInt(this.editItem.point),
@@ -465,7 +416,7 @@ export default {
       try {
         this.loadingBtn = true;
 
-        helpsRef
+        AboutUsRef
           .doc(this.deleteID)
           .delete()
           .then(() => {
@@ -502,7 +453,7 @@ export default {
 };
 </script>
 
-<style>
+<style >
 .v-input {
   margin: 0px;
   padding: 0px;
@@ -539,10 +490,10 @@ export default {
 .ActionButton__container {
   text-align: center;
 }
-.truncate {
+/* .truncate {
   max-width: 300px !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
+} */
 </style>

@@ -10,6 +10,9 @@ var firebaseConfig = {
     measurementId: "G-0MYBRV4W5L"
 };
 const firebaseApp = firebase.initializeApp(firebaseConfig);
-firebaseApp.firestore().settings({ timestampsInSnapshots: true });
-console.log(firebaseApp.firestore().app.functions.name);
+firebaseApp.firestore().settings({
+    timestampsInSnapshots: true,
+    cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
+});
+firebaseApp.firestore().enablePersistence();
 export default firebaseApp.firestore();

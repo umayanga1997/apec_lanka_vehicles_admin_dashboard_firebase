@@ -47,7 +47,7 @@
     <!-- Data Table -->
     <v-card class="mt-5 mb-5">
       <v-card-title>
-        <span>Help's Details</span>
+        <span>Additional Packages Details</span>
       </v-card-title>
 
       <v-data-table
@@ -60,45 +60,46 @@
         item-key="id"
         fixed-header
         :loading="loading"
-        
       >
-        <template v-slot:body="{ items}">
-            <tbody>
-          <tr v-for="item in items"
-            :key="item.point">
-            <td class="d-block d-sm-table-cell">{{ item.id }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.point }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.app_name }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.title }}</td>
-            <td class="d-block d-sm-table-cell truncate">{{ item.body }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.link_title }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.link }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.link_icon }}</td>
-            <td class="d-block d-sm-table-cell">
-              <v-container fluid class="ActionButton__container pa-1">
-              <ActionButton
-                class="ma-1"
-                @click="
-                  isUpdateData = true;
-                  dialog = !dialog;
-                  editItem = item;
-                "
-                icon="mdi-pencil"
-                color="green lighten-2"
-              />
-              <ActionButton
-                class="ma-1"
-                @click="
-                  dialogDelete = !dialogDelete;
-                  deleteID = item.id;
-                "
-                icon="mdi-delete"
-                color="red lighten-1"
-              />
-            </v-container>
-            </td>
-          </tr>
-            </tbody>
+        <template v-slot:body="{ items }">
+          <tbody>
+            <tr v-for="item in items" :key="item.position">
+              <td class="d-block d-sm-table-cell">{{ item.position }}</td>
+              <td class="d-block d-sm-table-cell">{{ item.type }}</td>
+              <td class="d-block d-sm-table-cell">{{ item.vehicles }}</td>
+              <td class="d-block d-sm-table-cell">
+                {{ item.valid_years }}
+              </td>
+              <td class="d-block d-sm-table-cell">{{ item.price_origin }}</td>
+              <td class="d-block d-sm-table-cell">{{ item.price_discount }}</td>
+              <td class="d-block d-sm-table-cell">
+                <v-container fluid class="ActionButton__container pa-1">
+                  <ActionButton
+                    class="ma-1"
+                    @click="
+                      isUpdateData = true;
+                      dialog = !dialog;
+                      editItem = item;
+                    "
+                    icon="mdi-pencil"
+                    color="green lighten-2"
+                  />
+
+                  <div class="" v-if="item.type == 'Free'"></div>
+                  <ActionButton
+                    v-else
+                    class="ma-1"
+                    @click="
+                      dialogDelete = !dialogDelete;
+                      deleteID = item.id;
+                    "
+                    icon="mdi-delete"
+                    color="red lighten-1"
+                  />
+                </v-container>
+              </td>
+            </tr>
+          </tbody>
         </template>
       </v-data-table>
     </v-card>
@@ -109,29 +110,22 @@
           <ValidationObserver ref="observer" v-slot="{ invalid }">
             <v-card>
               <v-card-title fixed>
-                <span class="headline">Help Details</span>
+                <span class="headline">Package Details</span>
               </v-card-title>
               <v-card-text>
                 <v-container>
                   <v-row class="mt-4">
                     <v-col cols="12" sm="6" md="6">
-                      <v-text-field
-                        v-model="editItem.point"
-                        label="Point"
-                        hint="Enter point of help"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="6">
                       <validation-provider
                         v-slot="{ errors }"
                         rules="required"
-                        name="App Name"
+                        name="Position"
                       >
                         <v-text-field
-                          v-model="editItem.app_name"
+                          v-model="editItem.position"
                           :error-messages="errors"
-                          label="App Name *"
-                          hint="Enter app name"
+                          label="Position *"
+                          hint="Enter position"
                           required
                         ></v-text-field>
                       </validation-provider>
@@ -140,87 +134,72 @@
                       <validation-provider
                         v-slot="{ errors }"
                         rules="required"
-                        name="Title"
+                        name="Package Type"
                       >
                         <v-text-field
-                          v-model="editItem.title"
+                          v-model="editItem.type"
                           :error-messages="errors"
                           required
-                          label="Title *"
-                          hint="Enter title of help"
+                          label="Package Type *"
+                          hint="Enter package type"
                         ></v-text-field>
                       </validation-provider>
                     </v-col>
-                    <v-col cols="12" sm="12" md="12">
+                    <v-col cols="12" sm="6" md="6">
                       <validation-provider
                         v-slot="{ errors }"
                         rules="required"
-                        name="Description"
+                        name="Number of Vehicles"
                       >
-                        <v-textarea
-                          v-model="editItem.body"
+                        <v-text-field
+                          v-model="editItem.vehicles"
                           :error-messages="errors"
                           required
-                          auto-grow
-                          rows="1"
-                          label="Description *"
-                          hint="Enter description of help"
-                        ></v-textarea>
+                          label="Number of Vehicles *"
+                          hint="Enter number of vehicles"
+                        ></v-text-field>
                       </validation-provider>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="6">
-                      <v-text-field
-                        v-model="editItem.link_title"
-                        label="Link Title"
-                        hint="Enter link title of help"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="6">
-                      <v-text-field
-                        v-model="editItem.link"
-                        label="Link"
-                        hint="Enter link of help"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="6">
-                      <v-text-field
-                        v-model="editItem.link_icon"
-                        label="Link Icon"
-                        hint="Enter link icon of help"
-                      ></v-text-field>
                     </v-col>
 
-                    <!-- Dae Picker -->
-                    <!-- <v-col cols="12" sm="6" md="4">
-                      <v-dialog
-                        ref="dateTimeDialog"
-                        v-model="dateTimeDialog"
-                        :close-on-content-click="false"
-                        :return-value.sync="editItem.reg_date"
-                        persistent
-                        width="290px"
+                    <v-col cols="12" sm="6" md="6">
+                      <validation-provider
+                        v-slot="{ errors }"
+                        rules="required"
+                        name="Valid Years"
                       >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="editItem.reg_date"
-                            label="Register date"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker v-model="editItem.reg_date" scrollable>
-                          <v-spacer></v-spacer>
-                          <v-btn text color="primary" @click="dateTimeDialog = false">Cancel</v-btn>
-                          <v-btn
-                            text
-                            color="primary"
-                            @click="$refs.dateTimeDialog.save(editItem.reg_date)"
-                          >OK</v-btn>
-                        </v-date-picker>
-                      </v-dialog>
-                    </v-col> -->
+                        <v-text-field
+                          required
+                          v-model="editItem.valid_years"
+                          :error-messages="errors"
+                          label="Valid Years *"
+                          hint="Enter valid years"
+                        ></v-text-field>
+                      </validation-provider>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="6">
+                      <validation-provider
+                        v-slot="{ errors }"
+                        rules="required"
+                        name="Price Original"
+                      >
+                        <v-text-field
+                          v-model="editItem.price_origin"
+                          :error-messages="errors"
+                          required
+                          label="Price Original *"
+                          hint="Enter original price"
+                        ></v-text-field>
+                      </validation-provider>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="6">
+                      <v-text-field
+                        v-model="editItem.price_discount"
+                        :error-messages="errors"
+                        required
+                        label="Price Discount *"
+                        hint="Enter discount price"
+                      ></v-text-field>
+                    </v-col>
                   </v-row>
                 </v-container>
                 <small>*indicates required field</small>
@@ -285,6 +264,7 @@
 
 <script>
 import db from "@/firebaseConfig";
+import { v4 as uuidv4 } from "uuid";
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
 import {
@@ -322,14 +302,14 @@ extend("email", {
   message: "Email must be valid",
 });
 
-const helpsFetchRef = db.collectionGroup("helps");
-const helpsRef = db
+const PackageFetchRef = db.collectionGroup("additional_packages_config");
+const PackageRef = db
   .collection("apps_management")
   .doc("FU0U4I2n3PuXmL4LWtIy")
-  .collection("helps");
+  .collection("additional_packages_config");
 
 export default {
-  name: "helps",
+  name: "additional_packages",
   components: {
     ActionButton,
     ValidationObserver,
@@ -337,7 +317,7 @@ export default {
   },
 
   created() {
-    this.getHelpDetails();
+    this.getSpNoteDetails();
   },
 
   data: () => ({
@@ -346,19 +326,12 @@ export default {
     // Table
     loading: true,
     headers: [
-      {
-        text: "ID",
-        align: "start",
-        value: "id",
-      },
-      { text: "Point", value: "point", align: "center", width:"100px" },
-      { text: "App Name", value: "app_name" },
-      { text: "Title", value: "title" },
-      { text: "Help Description", value: "body", width: "300px" },
-      { text: "Link Title", value: "link_title" },
-      { text: "Link", value: "link" },
-      { text: "Link Icon", value: "link_icon" },
-      //   { text: "Mangement Actions", value: "m-actions", width: "190px" },
+      { text: "Position", value: "position" },
+      { text: "Package Type", value: "type" },
+      { text: "Num of Vehicles", value: "vehicles" },
+      { text: "Valid Years", value: "valid_years" },
+      { text: "Price Original", value: "price_origin" },
+      { text: "Price Discount", value: "price_discount" },
       { text: "Actions", value: "u-actions", width: "190px" },
     ],
     dataRows: [],
@@ -375,13 +348,12 @@ export default {
     msgType: null,
   }),
   methods: {
-    getHelpDetails() {
-      helpsFetchRef
-        .orderBy("point")
+    getSpNoteDetails() {
+      PackageFetchRef.orderBy("position")
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
           snapshot.docs.forEach((element) => {
-            this.dataRows.push({ id: element.id, ...element.data() });
+            this.dataRows.push({ ...element.data() });
             this.loading = false;
           });
         })
@@ -393,16 +365,16 @@ export default {
     insertData() {
       try {
         this.loadingBtn = true;
-
-        helpsRef
-          .add({
-            point: parseInt(this.editItem.point),
-            app_name: this.editItem.app_name,
-            title: this.editItem.title,
-            body: this.editItem.body,
-            link_title: this.editItem.link_title ?? "",
-            link: this.editItem.link ?? "",
-            link_icon: this.editItem.link_icon ?? "",
+        const id = uuidv4();
+        PackageRef.doc(id)
+          .set({
+            id: id,
+            position: parseInt(this.editItem.position),
+            type: this.editItem.type,
+            vehicles: this.editItem.vehicles,
+            valid_years: parseInt(this.editItem.valid_years),
+            price_origin: parseFloat(this.editItem.price_origin),
+            price_discount: parseFloat(this.editItem.price_discount??0),
           })
           .then(() => {
             this.dialog = !this.dialog;
@@ -428,16 +400,14 @@ export default {
       try {
         this.loadingBtn = true;
 
-        helpsRef
-          .doc(this.editItem.id)
+        PackageRef.doc(this.editItem.id)
           .update({
-            point: parseInt(this.editItem.point),
-            app_name: this.editItem.app_name,
-            title: this.editItem.title,
-            body: this.editItem.body,
-            link_title: this.editItem.link_title ?? "",
-            link: this.editItem.link ?? "",
-            link_icon: this.editItem.link_icon ?? "",
+            position: parseInt(this.editItem.position),
+            type: this.editItem.type,
+            vehicles: this.editItem.vehicles,
+            valid_years: parseInt(this.editItem.valid_years),
+            price_origin: parseFloat(this.editItem.price_origin),
+            price_discount: parseFloat(this.editItem.price_discount),
           })
           .then(() => {
             this.dialog = !this.dialog;
@@ -465,8 +435,7 @@ export default {
       try {
         this.loadingBtn = true;
 
-        helpsRef
-          .doc(this.deleteID)
+        PackageRef.doc(this.deleteID)
           .delete()
           .then(() => {
             this.dialogDelete = !this.dialogDelete;
@@ -538,11 +507,5 @@ export default {
 }
 .ActionButton__container {
   text-align: center;
-}
-.truncate {
-  max-width: 300px !important;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 </style>
