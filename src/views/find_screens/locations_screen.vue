@@ -241,7 +241,7 @@ export default {
     // Table
     loading: true,
     headers: [
-      { text: "Location Name", value: "locatoin_name" },
+      { text: "Location Name", value: "location_name" },
       { text: "Actions", value: "u-actions", width: "190px" },
     ],
     dataRows: [],
