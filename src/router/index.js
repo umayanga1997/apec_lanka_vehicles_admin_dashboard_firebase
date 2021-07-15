@@ -9,6 +9,8 @@ import WhatIsNew from '@/views/apps_manage_screens/whatIs_new_screen.vue';
 import Introductions from '@/views/apps_manage_screens/introduction_screen.vue';
 import AboutUs from '@/views/apps_manage_screens/aboutUs_screen.vue';
 import OurProducts from '@/views/apps_manage_screens/our_products_screen.vue';
+import OtherConfigs from '@/views/apps_manage_screens/other_config_screen.vue';
+import Locations from '@/views/find_screens/locations_screen.vue';
 
 Vue.use(VueRouter)
 
@@ -56,7 +58,18 @@ const routes = [{
         path: '/our_products_',
         name: 'our_products',
         component: OurProducts,
-    }
+    },
+    {
+        path: '/other_config_',
+        name: 'other_config',
+        component: OtherConfigs,
+    },
+    {
+        path: '/locations_',
+        name: 'locations',
+        component: Locations,
+    },
+
 ]
 
 const router = new VueRouter({

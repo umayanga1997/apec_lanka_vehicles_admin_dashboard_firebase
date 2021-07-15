@@ -45,11 +45,11 @@
     </v-row>
 
     <!-- Data Table -->
-    <v-card class="mt-5 mb-5">
+    <v-card class="mt-5 mb-5" style="width:50%">
       <v-card-title>
-        <span>Custom Ads Details</span>
+        <span>Locations Details</span>
       </v-card-title>
-        
+
       <v-data-table
         dark
         style="background-color: #292929"
@@ -57,167 +57,68 @@
         :items="dataRows"
         :search="search"
         fixed-tabs
-        item-key="id"
         fixed-header
         :loading="loading"
       >
-      
-        <template v-slot:body="{ items}">
-            <tbody>
-          <tr v-for="item in items"
-            :key="item.point">
-            <td class="d-block d-sm-table-cell">{{ item.point }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.st_date }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.exp_date }}</td>
-            <td class="d-block-flex d-sm-table-cell">
-              <v-img
-                :src="item.banner_image"
-                :lazy-src="item.banner_image"
-                width="130px"
-                height="130px"
-                class="grey lighten-2"
-              >
-                <template v-slot:placeholder>
-                  <v-row
-                    class="fill-height ma-0"
-                    align="center"
-                    justify="center"
-                  >
-                    <v-progress-circular
-                      indeterminate
-                      color="grey lighten-5"
-                    ></v-progress-circular>
-                  </v-row>
-                </template>
-              </v-img>
-            </td>
-
-            <td class="d-block d-sm-table-cell"><v-container fluid class="ActionButton__container pa-1">
-              <ActionButton
-                class="ma-1"
-                @click="
-                  isUpdateData = true;
-                  dialog = !dialog;
-                  editItem = item;
-                "
-                icon="mdi-pencil"
-                color="green lighten-2"
-              />
-              <ActionButton
-                class="ma-1"
-                @click="
-                  dialogDelete = !dialogDelete;
-                  deleteID = item.id;
-                "
-                icon="mdi-delete"
-                color="red lighten-1"
-              />
-            </v-container></td>
-          </tr>
-            </tbody>
+        <template v-slot:body="{ items }">
+          <tbody>
+            <tr v-for="item in items" :key="item.location_id">
+              <td class="d-block d-sm-table-cell">{{ item.location_name }}</td>
+              <td class="d-block d-sm-table-cell">
+                <v-container fluid class="ActionButton__container pa-1">
+                  <ActionButton
+                    class="ma-1"
+                    @click="
+                      isUpdateData = true;
+                      dialog = !dialog;
+                      editItem = item;
+                    "
+                    icon="mdi-pencil"
+                    color="green lighten-2"
+                  />
+                  <ActionButton
+                    class="ma-1"
+                    @click="
+                      dialogDelete = !dialogDelete;
+                      deleteID = item.location_id;
+                    "
+                    icon="mdi-delete"
+                    color="red lighten-1"
+                  />
+                </v-container>
+              </td>
+            </tr>
+          </tbody>
         </template>
       </v-data-table>
     </v-card>
     <!-- Popup Form Create/Update-->
     <template>
       <v-row justify="center">
-        <v-dialog v-model="dialog" max-width="600px">
+        <v-dialog v-model="dialog" max-width="300px">
           <ValidationObserver ref="observer" v-slot="{ invalid }">
             <v-card>
               <v-card-title fixed>
-                <span class="headline">Custom Ad Details</span>
+                <span class="headline">Location Details</span>
               </v-card-title>
               <v-card-text>
                 <v-container>
                   <v-row class="mt-4">
-                    <v-col cols="12" sm="6" md="6">
-                         <validation-provider
+                    <v-col cols="12" sm="12" md="12">
+                      <validation-provider
                         v-slot="{ errors }"
                         rules="required"
-                        name="Point"
+                        name="Location Name"
                       >
-                      <v-text-field
-                        v-model="editItem.point"
-                         :error-messages="errors"
-                        label="Point"
-                        hint="Enter point of custom ad"
-                        required
-                      ></v-text-field>
-                         </validation-provider>
+                        <v-text-field
+                          v-model="editItem.location_name"
+                          :error-messages="errors"
+                          label="Location Name *"
+                          hint="Enter location name"
+                          required
+                        ></v-text-field>
+                      </validation-provider>
                     </v-col>
-                    <!-- Dae Picker -->
-                    <v-col cols="12" sm="6" md="6">
-                      <v-dialog
-                        ref="dateTimeDialog"
-                        v-model="dateTimeDialog"
-                        :close-on-content-click="false"
-                        :return-value.sync="editItem.st_date"
-                        persistent
-                        width="290px"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="editItem.st_date"
-                            label="ST date"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker v-model="editItem.st_date" scrollable>
-                          <v-spacer></v-spacer>
-                          <v-btn text color="primary" @click="dateTimeDialog = false">Cancel</v-btn>
-                          <v-btn
-                            text
-                            color="primary"
-                            @click="$refs.dateTimeDialog.save(editItem.st_date)"
-                          >OK</v-btn>
-                        </v-date-picker>
-                      </v-dialog>
-                    </v-col>
-                     <!-- Dae Picker -->
-                    <v-col cols="12" sm="6" md="6">
-                      <v-dialog
-                        ref="dateTimeDialog"
-                        v-model="dateTimeDialog"
-                        :close-on-content-click="false"
-                        :return-value.sync="editItem.exp_date"
-                        persistent
-                        width="290px"
-                      >
-                        <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="editItem.exp_date"
-                            label="Exp date"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"
-                          ></v-text-field>
-                        </template>
-                        <v-date-picker v-model="editItem.exp_date" scrollable>
-                          <v-spacer></v-spacer>
-                          <v-btn text color="primary" @click="dateTimeDialog = false">Cancel</v-btn>
-                          <v-btn
-                            text
-                            color="primary"
-                            @click="$refs.dateTimeDialog.save(editItem.exp_date)"
-                          >OK</v-btn>
-                        </v-date-picker>
-                      </v-dialog>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="6">
-                     <cropper
-                        class="cropper"
-                        :src="img"
-                        :stencil-props="{
-                          aspectRatio: 10/12
-                        }"
-                        @change="change"
-                      ></cropper>
-                    </v-col>
-                    
                   </v-row>
                 </v-container>
                 <small>*indicates required field</small>
@@ -282,8 +183,7 @@
 
 <script>
 import db from "@/firebaseConfig";
-import { Cropper } from 'vue-advanced-cropper'
-import 'vue-advanced-cropper/dist/style.css';
+import { v4 as uuidv4 } from "uuid";
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
 import {
@@ -292,7 +192,7 @@ import {
   ValidationObserver,
   ValidationProvider,
 } from "vee-validate";
-import ActionButton from "@/components/ActionButton.vue";
+import ActionButton from "../../components/ActionButton.vue";
 
 setInteractionMode("eager");
 
@@ -321,23 +221,18 @@ extend("email", {
   message: "Email must be valid",
 });
 
-const customAdsFetchRef = db.collectionGroup("custom_ads_config");
-const customAdsRef = db
-  .collection("apps_management")
-  .doc("FU0U4I2n3PuXmL4LWtIy")
-  .collection("custom_ads_config");
+const locationsRef = db.collection("locations");
 
 export default {
-  name: "custom_ads",
+  name: "locations",
   components: {
     ActionButton,
-    Cropper,
     ValidationObserver,
     ValidationProvider,
   },
 
   created() {
-    this.getHelpDetails();
+    this.getSpNoteDetails();
   },
 
   data: () => ({
@@ -346,16 +241,12 @@ export default {
     // Table
     loading: true,
     headers: [
-      { text: "Point", value: "point", align: "center" },
-      { text: "ST Date", value: "st_date" },
-      { text: "Exp Date", value: "exp_date" },
-      { text: "Image", value: "banner_image", width:"130px"},
+      { text: "Location Name", value: "locatoin_name" },
       { text: "Actions", value: "u-actions", width: "190px" },
     ],
     dataRows: [],
     //Form
     editItem: {},
-    dateTimeDialog: false,
     loadingBtn: false,
     isUpdateData: false,
     dialog: false,
@@ -367,13 +258,13 @@ export default {
     msgType: null,
   }),
   methods: {
-    getHelpDetails() {
-      customAdsFetchRef
-        .orderBy("point")
+    getSpNoteDetails() {
+      locationsRef
+        .orderBy("location_name")
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
           snapshot.docs.forEach((element) => {
-            this.dataRows.push({ id: element.id, ...element.data() });
+            this.dataRows.push({ ...element.data() });
             this.loading = false;
           });
         })
@@ -385,16 +276,12 @@ export default {
     insertData() {
       try {
         this.loadingBtn = true;
-
-        customAdsRef
-          .add({
-            point: parseInt(this.editItem.point),
-            app_name: this.editItem.app_name,
-            title: this.editItem.title,
-            body: this.editItem.body,
-            link_title: this.editItem.link_title ?? "",
-            link: this.editItem.link ?? "",
-            link_icon: this.editItem.link_icon ?? "",
+        const id = uuidv4();
+        locationsRef
+          .doc(id)
+          .set({
+            location_id: id,
+            location_name: this.editItem.location_name,
           })
           .then(() => {
             this.dialog = !this.dialog;
@@ -420,16 +307,10 @@ export default {
       try {
         this.loadingBtn = true;
 
-        customAdsRef
-          .doc(this.editItem.id)
+        locationsRef
+          .doc(this.editItem.location_id)
           .update({
-            point: parseInt(this.editItem.point),
-            app_name: this.editItem.app_name,
-            title: this.editItem.title,
-            body: this.editItem.body,
-            link_title: this.editItem.link_title ?? "",
-            link: this.editItem.link ?? "",
-            link_icon: this.editItem.link_icon ?? "",
+            location_name: this.editItem.location_name,
           })
           .then(() => {
             this.dialog = !this.dialog;
@@ -457,7 +338,7 @@ export default {
       try {
         this.loadingBtn = true;
 
-        customAdsRef
+        locationsRef
           .doc(this.deleteID)
           .delete()
           .then(() => {
@@ -494,7 +375,7 @@ export default {
 };
 </script>
 
-<style >
+<style>
 .v-input {
   margin: 0px;
   padding: 0px;
@@ -531,14 +412,4 @@ export default {
 .ActionButton__container {
   text-align: center;
 }
-.cropper {
-  height: 100px;
-  background: #DDD;
-}
-/* .truncate {
-  max-width: 300px !important;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-} */
 </style>
