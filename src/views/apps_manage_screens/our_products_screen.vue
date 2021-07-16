@@ -57,15 +57,12 @@
         :items="dataRows"
         :search="search"
         fixed-tabs
-        item-key="id"
+        item-key="app_name"
         fixed-header
         :loading="loading"
-        
       >
-        <template v-slot:body="{ items}">
-            <tbody>
-          <tr v-for="item in items"
-            :key="item.point">
+        <template v-slot:item="{ item }">
+          <tr>
             <td class="d-block-flex d-sm-table-cell">
               <v-img
                 :src="item.app_icon_url"
@@ -90,35 +87,36 @@
             </td>
             <td class="d-block d-sm-table-cell">{{ item.app_name }}</td>
             <td class="d-block d-sm-table-cell">{{ item.app_title }}</td>
-            <td class="d-block d-sm-table-cell truncate">{{ item.app_description }}</td>
+            <td class="d-block d-sm-table-cell truncate">
+              {{ item.app_description }}
+            </td>
             <td class="d-block d-sm-table-cell">{{ item.link_title }}</td>
             <td class="d-block d-sm-table-cell">{{ item.app_link }}</td>
             <td class="d-block d-sm-table-cell">{{ item.link_icon }}</td>
             <td class="d-block d-sm-table-cell">
               <v-container fluid class="ActionButton__container pa-1">
-              <ActionButton
-                class="ma-1"
-                @click="
-                  isUpdateData = true;
-                  dialog = !dialog;
-                  editItem = item;
-                "
-                icon="mdi-pencil"
-                color="green lighten-2"
-              />
-              <ActionButton
-                class="ma-1"
-                @click="
-                  dialogDelete = !dialogDelete;
-                  deleteID = item.product_id;
-                "
-                icon="mdi-delete"
-                color="red lighten-1"
-              />
-            </v-container>
+                <ActionButton
+                  class="ma-1"
+                  @click="
+                    isUpdateData = true;
+                    dialog = !dialog;
+                    editItem = item;
+                  "
+                  icon="mdi-pencil"
+                  color="green lighten-2"
+                />
+                <ActionButton
+                  class="ma-1"
+                  @click="
+                    dialogDelete = !dialogDelete;
+                    deleteID = item.product_id;
+                  "
+                  icon="mdi-delete"
+                  color="red lighten-1"
+                />
+              </v-container>
             </td>
           </tr>
-            </tbody>
         </template>
       </v-data-table>
     </v-card>
@@ -209,7 +207,6 @@
                         hint="Enter link icon of help"
                       ></v-text-field>
                     </v-col>
-
                   </v-row>
                 </v-container>
                 <small>*indicates required field</small>
@@ -336,12 +333,12 @@ export default {
     // Table
     loading: true,
     headers: [
-      { text: "App Icon", value: "app_icon_url" , width:"100px"},
-      { text: "App Name", value: "app_name" , width:'120px'},
+      { text: "App Icon", value: "app_icon_url", width: "100px" },
+      { text: "App Name", value: "app_name", width: "120px" },
       { text: "App Title", value: "app_title" },
       { text: "App Description", value: "app_description", width: "300px" },
       { text: "Link Title", value: "link_title" },
-      { text: "Link", value: "app_link" , width:'100px'},
+      { text: "Link", value: "app_link", width: "100px" },
       { text: "Link Icon", value: "link_icon" },
       { text: "Actions", value: "u-actions", width: "190px" },
     ],
@@ -376,8 +373,9 @@ export default {
     insertData() {
       try {
         this.loadingBtn = true;
-const id = uuidv4();
-        ourProductsRef.doc(id)
+        const id = uuidv4();
+        ourProductsRef
+          .doc(id)
           .set({
             product_id: id,
             app_icon_url: this.editItem.app_icon_url,

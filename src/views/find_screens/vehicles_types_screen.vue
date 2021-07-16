@@ -56,40 +56,39 @@
         :headers="headers"
         :items="dataRows"
         :search="search"
+        item-key="v_type_name"
         fixed-tabs
         fixed-header
         :loading="loading"
       >
-        <template v-slot:body="{ items }">
-          <tbody>
-            <tr v-for="item in items" :key="item.v_type_id">
-              <td class="d-block d-sm-table-cell">{{ item.v_type_name }}</td>
-              <td class="d-block d-sm-table-cell">
-                <v-container fluid class="ActionButton__container pa-1">
-                  <ActionButton
-                    class="ma-1"
-                    @click="
-                      isUpdateData = true;
-                      dialog = !dialog;
-                      editItem = {};
-                      editItem = item;
-                    "
-                    icon="mdi-pencil"
-                    color="green lighten-2"
-                  />
-                  <ActionButton
-                    class="ma-1"
-                    @click="
-                      dialogDelete = !dialogDelete;
-                      deleteID = item.v_type_id;
-                    "
-                    icon="mdi-delete"
-                    color="red lighten-1"
-                  />
-                </v-container>
-              </td>
-            </tr>
-          </tbody>
+        <template v-slot:item="{ item }">
+          <tr>
+            <td class="d-block d-sm-table-cell">{{ item.v_type_name }}</td>
+            <td class="d-block d-sm-table-cell">
+              <v-container fluid class="ActionButton__container pa-1">
+                <ActionButton
+                  class="ma-1"
+                  @click="
+                    isUpdateData = true;
+                    dialog = !dialog;
+                    editItem = {};
+                    editItem = item;
+                  "
+                  icon="mdi-pencil"
+                  color="green lighten-2"
+                />
+                <ActionButton
+                  class="ma-1"
+                  @click="
+                    dialogDelete = !dialogDelete;
+                    deleteID = item.v_type_id;
+                  "
+                  icon="mdi-delete"
+                  color="red lighten-1"
+                />
+              </v-container>
+            </td>
+          </tr>
         </template>
       </v-data-table>
     </v-card>

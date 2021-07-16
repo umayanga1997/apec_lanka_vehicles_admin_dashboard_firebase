@@ -57,16 +57,12 @@
         :items="dataRows"
         :search="search"
         fixed-tabs
-        item-key="id"
+        item-key="point"
         fixed-header
         :loading="loading"
-        
       >
-        <template v-slot:body="{ items}">
-            <tbody>
-          <tr v-for="item in items"
-            :key="item.point">
-            <td class="d-block d-sm-table-cell">{{ item.id }}</td>
+        <template v-slot:item="{ item }">
+          <tr>
             <td class="d-block d-sm-table-cell">{{ item.point }}</td>
             <td class="d-block d-sm-table-cell">{{ item.app_name }}</td>
             <td class="d-block d-sm-table-cell">{{ item.title }}</td>
@@ -76,29 +72,28 @@
             <td class="d-block d-sm-table-cell">{{ item.link_icon }}</td>
             <td class="d-block d-sm-table-cell">
               <v-container fluid class="ActionButton__container pa-1">
-              <ActionButton
-                class="ma-1"
-                @click="
-                  isUpdateData = true;
-                  dialog = !dialog;
-                  editItem = item;
-                "
-                icon="mdi-pencil"
-                color="green lighten-2"
-              />
-              <ActionButton
-                class="ma-1"
-                @click="
-                  dialogDelete = !dialogDelete;
-                  deleteID = item.id;
-                "
-                icon="mdi-delete"
-                color="red lighten-1"
-              />
-            </v-container>
+                <ActionButton
+                  class="ma-1"
+                  @click="
+                    isUpdateData = true;
+                    dialog = !dialog;
+                    editItem = item;
+                  "
+                  icon="mdi-pencil"
+                  color="green lighten-2"
+                />
+                <ActionButton
+                  class="ma-1"
+                  @click="
+                    dialogDelete = !dialogDelete;
+                    deleteID = item.id;
+                  "
+                  icon="mdi-delete"
+                  color="red lighten-1"
+                />
+              </v-container>
             </td>
           </tr>
-            </tbody>
         </template>
       </v-data-table>
     </v-card>
@@ -346,19 +341,13 @@ export default {
     // Table
     loading: true,
     headers: [
-      {
-        text: "ID",
-        align: "start",
-        value: "id",
-      },
-      { text: "Point", value: "point", align: "center", width:"100px" },
+      { text: "Point", value: "point", align: "center", width: "100px" },
       { text: "App Name", value: "app_name" },
       { text: "Title", value: "title" },
       { text: "Help Description", value: "body", width: "300px" },
       { text: "Link Title", value: "link_title" },
       { text: "Link", value: "link" },
       { text: "Link Icon", value: "link_icon" },
-      //   { text: "Mangement Actions", value: "m-actions", width: "190px" },
       { text: "Actions", value: "u-actions", width: "190px" },
     ],
     dataRows: [],

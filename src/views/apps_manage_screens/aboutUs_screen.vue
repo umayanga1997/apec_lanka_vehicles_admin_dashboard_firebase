@@ -49,7 +49,7 @@
       <v-card-title>
         <span>About Us Details</span>
       </v-card-title>
-        
+
       <v-data-table
         dark
         style="background-color: #292929"
@@ -57,15 +57,12 @@
         :items="dataRows"
         :search="search"
         fixed-tabs
-        item-key="id"
+        item-key="point"
         fixed-header
         :loading="loading"
       >
-      
-        <template v-slot:body="{ items}">
-            <tbody>
-          <tr v-for="item in items"
-            :key="item.point">
+        <template v-slot:item="{ item }">
+          <tr>
             <td class="d-block d-sm-table-cell">{{ item.point }}</td>
             <td class="d-block d-sm-table-cell">{{ item.name }}</td>
             <td class="d-block d-sm-table-cell">{{ item.designation }}</td>
@@ -92,29 +89,30 @@
               </v-img>
             </td>
 
-            <td class="d-block d-sm-table-cell"><v-container fluid class="ActionButton__container pa-1">
-              <ActionButton
-                class="ma-1"
-                @click="
-                  isUpdateData = true;
-                  dialog = !dialog;
-                  editItem = item;
-                "
-                icon="mdi-pencil"
-                color="green lighten-2"
-              />
-              <ActionButton
-                class="ma-1"
-                @click="
-                  dialogDelete = !dialogDelete;
-                  deleteID = item.id;
-                "
-                icon="mdi-delete"
-                color="red lighten-1"
-              />
-            </v-container></td>
+            <td class="d-block d-sm-table-cell">
+              <v-container fluid class="ActionButton__container pa-1">
+                <ActionButton
+                  class="ma-1"
+                  @click="
+                    isUpdateData = true;
+                    dialog = !dialog;
+                    editItem = item;
+                  "
+                  icon="mdi-pencil"
+                  color="green lighten-2"
+                />
+                <ActionButton
+                  class="ma-1"
+                  @click="
+                    dialogDelete = !dialogDelete;
+                    deleteID = item.id;
+                  "
+                  icon="mdi-delete"
+                  color="red lighten-1"
+                />
+              </v-container>
+            </td>
           </tr>
-            </tbody>
         </template>
       </v-data-table>
     </v-card>
@@ -131,55 +129,52 @@
                 <v-container>
                   <v-row class="mt-4">
                     <v-col cols="12" sm="6" md="6">
-                         <validation-provider
+                      <validation-provider
                         v-slot="{ errors }"
                         rules="required"
                         name="Point"
                       >
-                      <v-text-field
-                        v-model="editItem.point"
-                         :error-messages="errors"
-                        label="Point"
-                        hint="Enter point of custom ad"
-                        required
-                      ></v-text-field>
-                         </validation-provider>
+                        <v-text-field
+                          v-model="editItem.point"
+                          :error-messages="errors"
+                          label="Point"
+                          hint="Enter point of custom ad"
+                          required
+                        ></v-text-field>
+                      </validation-provider>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
-                         <validation-provider
+                      <validation-provider
                         v-slot="{ errors }"
                         rules="required"
                         name="Name"
                       >
-                      <v-text-field
-                        v-model="editItem.name"
-                         :error-messages="errors"
-                        label="Name *"
-                        hint="Enter Name"
-                        required
-                      ></v-text-field>
-                         </validation-provider>
+                        <v-text-field
+                          v-model="editItem.name"
+                          :error-messages="errors"
+                          label="Name *"
+                          hint="Enter Name"
+                          required
+                        ></v-text-field>
+                      </validation-provider>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
-                         <validation-provider
+                      <validation-provider
                         v-slot="{ errors }"
                         rules="required"
                         name="Designation"
                       >
-                      <v-text-field
-                        v-model="editItem.designation"
-                         :error-messages="errors"
-                        label="Designation *"
-                        hint="Enter Designation"
-                        required
-                      ></v-text-field>
-                         </validation-provider>
+                        <v-text-field
+                          v-model="editItem.designation"
+                          :error-messages="errors"
+                          label="Designation *"
+                          hint="Enter Designation"
+                          required
+                        ></v-text-field>
+                      </validation-provider>
                     </v-col>
-                    
-                    <v-col cols="12" sm="6" md="6">
-                      Image
-                    </v-col>
-                    
+
+                    <v-col cols="12" sm="6" md="6"> Image </v-col>
                   </v-row>
                 </v-container>
                 <small>*indicates required field</small>
@@ -308,7 +303,7 @@ export default {
       { text: "Point", value: "point", align: "center" },
       { text: "Name", value: "name" },
       { text: "Designation", value: "designation" },
-      { text: "Profile Image", value: "profile_image", width:"130px"},
+      { text: "Profile Image", value: "profile_image", width: "130px" },
       { text: "Actions", value: "u-actions", width: "190px" },
     ],
     dataRows: [],
@@ -327,8 +322,7 @@ export default {
   }),
   methods: {
     getHelpDetails() {
-      AboutUsFetchRef
-        .orderBy("point")
+      AboutUsFetchRef.orderBy("point")
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
           snapshot.docs.forEach((element) => {
@@ -345,16 +339,15 @@ export default {
       try {
         this.loadingBtn = true;
 
-        AboutUsRef
-          .add({
-            point: parseInt(this.editItem.point),
-            app_name: this.editItem.app_name,
-            title: this.editItem.title,
-            body: this.editItem.body,
-            link_title: this.editItem.link_title ?? "",
-            link: this.editItem.link ?? "",
-            link_icon: this.editItem.link_icon ?? "",
-          })
+        AboutUsRef.add({
+          point: parseInt(this.editItem.point),
+          app_name: this.editItem.app_name,
+          title: this.editItem.title,
+          body: this.editItem.body,
+          link_title: this.editItem.link_title ?? "",
+          link: this.editItem.link ?? "",
+          link_icon: this.editItem.link_icon ?? "",
+        })
           .then(() => {
             this.dialog = !this.dialog;
             this.loadingBtn = !this.loadingBtn;
@@ -379,8 +372,7 @@ export default {
       try {
         this.loadingBtn = true;
 
-        AboutUsRef
-          .doc(this.editItem.id)
+        AboutUsRef.doc(this.editItem.id)
           .update({
             point: parseInt(this.editItem.point),
             app_name: this.editItem.app_name,
@@ -416,8 +408,7 @@ export default {
       try {
         this.loadingBtn = true;
 
-        AboutUsRef
-          .doc(this.deleteID)
+        AboutUsRef.doc(this.deleteID)
           .delete()
           .then(() => {
             this.dialogDelete = !this.dialogDelete;

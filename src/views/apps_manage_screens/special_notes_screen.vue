@@ -57,47 +57,45 @@
         :items="dataRows"
         :search="search"
         fixed-tabs
-        item-key="id"
+        item-key="note_id"
         fixed-header
         :loading="loading"
       >
-        <template v-slot:body="{ items }">
-          <tbody>
-            <tr v-for="item in items" :key="item.point">
-              <td class="d-block d-sm-table-cell">{{ item.app_name }}</td>
-              <td class="d-block d-sm-table-cell">{{ item.title }}</td>
-              <td class="d-block d-sm-table-cell truncate">
-                {{ item.description }}
-              </td>
-              <td class="d-block d-sm-table-cell">{{ item.link }}</td>
-              <td class="d-block d-sm-table-cell">{{ item.isShow }}</td>
-              <td class="d-block d-sm-table-cell">{{ item.isLockApp }}</td>
+        <template v-slot:item="{ item }">
+          <tr>
+            <td class="d-block d-sm-table-cell">{{ item.app_name }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.title }}</td>
+            <td class="d-block d-sm-table-cell truncate">
+              {{ item.description }}
+            </td>
+            <td class="d-block d-sm-table-cell">{{ item.link }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.isShow }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.isLockApp }}</td>
 
-              <td class="d-block d-sm-table-cell">
-                <v-container fluid class="ActionButton__container pa-1">
-                  <ActionButton
-                    class="ma-1"
-                    @click="
-                      isUpdateData = true;
-                      dialog = !dialog;
-                      editItem = item;
-                    "
-                    icon="mdi-pencil"
-                    color="green lighten-2"
-                  />
-                  <ActionButton
-                    class="ma-1"
-                    @click="
-                      dialogDelete = !dialogDelete;
-                      deleteID = item.note_id;
-                    "
-                    icon="mdi-delete"
-                    color="red lighten-1"
-                  />
-                </v-container>
-              </td>
-            </tr>
-          </tbody>
+            <td class="d-block d-sm-table-cell">
+              <v-container fluid class="ActionButton__container pa-1">
+                <ActionButton
+                  class="ma-1"
+                  @click="
+                    isUpdateData = true;
+                    dialog = !dialog;
+                    editItem = item;
+                  "
+                  icon="mdi-pencil"
+                  color="green lighten-2"
+                />
+                <ActionButton
+                  class="ma-1"
+                  @click="
+                    dialogDelete = !dialogDelete;
+                    deleteID = item.note_id;
+                  "
+                  icon="mdi-delete"
+                  color="red lighten-1"
+                />
+              </v-container>
+            </td>
+          </tr>
         </template>
       </v-data-table>
     </v-card>
@@ -169,39 +167,38 @@
                       ></v-text-field>
                     </v-col>
                     <v-spacer></v-spacer>
-                    
+
                     <v-col cols="12" md="4">
-                       <validation-provider
+                      <validation-provider
                         v-slot="{ errors }"
                         rules="required"
                         name="'Is Show'"
                       >
-                      <v-select
-                        v-model="editItem.isShow"
-                        :items="selectItems"
-                        :error-messages="errors"
-                        label="Is Show?"
-                        required
-                      >
-                      </v-select>
-                       </validation-provider>
+                        <v-select
+                          v-model="editItem.isShow"
+                          :items="selectItems"
+                          :error-messages="errors"
+                          label="Is Show?"
+                          required
+                        >
+                        </v-select>
+                      </validation-provider>
                     </v-col>
                     <v-col cols="12" md="4">
-                    
-                       <validation-provider
+                      <validation-provider
                         v-slot="{ errors }"
                         rules="required"
                         name="'Is Lock App'"
                       >
-                      <v-select
-                        v-model="editItem.isLockApp"
-                        :items="selectItems"
-                        :error-messages="errors"
-                        label="Is Lock App"
-                        required
-                      >
-                      </v-select>
-                       </validation-provider>
+                        <v-select
+                          v-model="editItem.isLockApp"
+                          :items="selectItems"
+                          :error-messages="errors"
+                          label="Is Lock App"
+                          required
+                        >
+                        </v-select>
+                      </validation-provider>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -267,7 +264,7 @@
 
 <script>
 import db from "@/firebaseConfig";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
 import {
@@ -353,31 +350,29 @@ export default {
   }),
   methods: {
     getSpNoteDetails() {
-      NoteFetchRef
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          this.dataRows = [];
-          snapshot.docs.forEach((element) => {
-            this.dataRows.push({ ...element.data() });
-            this.loading = false;
-          });
-        })
-        .catch((e) => {
+      NoteFetchRef.onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
+        this.dataRows = [];
+        snapshot.docs.forEach((element) => {
+          this.dataRows.push({ ...element.data() });
           this.loading = false;
-          this.alertMessage(e.message, "error");
         });
+      }).catch((e) => {
+        this.loading = false;
+        this.alertMessage(e.message, "error");
+      });
     },
     insertData() {
       try {
         this.loadingBtn = true;
-        const id =uuidv4();
-               NoteRef.doc(id)
+        const id = uuidv4();
+        NoteRef.doc(id)
           .set({
-            note_id : id,
+            note_id: id,
             app_name: this.editItem.app_name,
             title: this.editItem.title,
             description: this.editItem.description,
             link: this.editItem.link ?? "",
-            isShow: this.editItem.isShow ,
+            isShow: this.editItem.isShow,
             isLockApp: this.editItem.isLockApp,
           })
           .then(() => {
@@ -404,14 +399,13 @@ export default {
       try {
         this.loadingBtn = true;
 
-        NoteRef
-          .doc(this.editItem.note_id)
+        NoteRef.doc(this.editItem.note_id)
           .update({
             app_name: this.editItem.app_name,
             title: this.editItem.title,
             description: this.editItem.description,
             link: this.editItem.link ?? "",
-            isShow: this.editItem.isShow ,
+            isShow: this.editItem.isShow,
             isLockApp: this.editItem.isLockApp,
           })
           .then(() => {
@@ -440,8 +434,7 @@ export default {
       try {
         this.loadingBtn = true;
 
-        NoteRef
-          .doc(this.deleteID)
+        NoteRef.doc(this.deleteID)
           .delete()
           .then(() => {
             this.dialogDelete = !this.dialogDelete;

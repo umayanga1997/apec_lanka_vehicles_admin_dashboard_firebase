@@ -57,45 +57,43 @@
         :items="dataRows"
         :search="search"
         fixed-tabs
-        item-key="id"
+        item-key="point"
         fixed-header
         :loading="loading"
       >
-        <template v-slot:body="{ items }">
-          <tbody>
-            <tr v-for="item in items" :key="item.point">
-              <td class="d-block d-sm-table-cell">{{ item.point }}</td>
-              <td class="d-block d-sm-table-cell">{{ item.app_name }}</td>
-              <td class="d-block d-sm-table-cell">{{ item.title }}</td>
-              <td class="d-block d-sm-table-cell truncate">
-                {{ item.description }}
-              </td>
-              
-              <td class="d-block d-sm-table-cell">
-                <v-container fluid class="ActionButton__container pa-1">
-                  <ActionButton
-                    class="ma-1"
-                    @click="
-                      isUpdateData = true;
-                      dialog = !dialog;
-                      editItem = item;
-                    "
-                    icon="mdi-pencil"
-                    color="green lighten-2"
-                  />
-                  <ActionButton
-                    class="ma-1"
-                    @click="
-                      dialogDelete = !dialogDelete;
-                      deleteID = item.intro_id;
-                    "
-                    icon="mdi-delete"
-                    color="red lighten-1"
-                  />
-                </v-container>
-              </td>
-            </tr>
-          </tbody>
+        <template v-slot:item="{ item }">
+          <tr>
+            <td class="d-block d-sm-table-cell">{{ item.point }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.app_name }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.title }}</td>
+            <td class="d-block d-sm-table-cell truncate">
+              {{ item.description }}
+            </td>
+
+            <td class="d-block d-sm-table-cell">
+              <v-container fluid class="ActionButton__container pa-1">
+                <ActionButton
+                  class="ma-1"
+                  @click="
+                    isUpdateData = true;
+                    dialog = !dialog;
+                    editItem = item;
+                  "
+                  icon="mdi-pencil"
+                  color="green lighten-2"
+                />
+                <ActionButton
+                  class="ma-1"
+                  @click="
+                    dialogDelete = !dialogDelete;
+                    deleteID = item.intro_id;
+                  "
+                  icon="mdi-delete"
+                  color="red lighten-1"
+                />
+              </v-container>
+            </td>
+          </tr>
         </template>
       </v-data-table>
     </v-card>
@@ -237,7 +235,7 @@
 
 <script>
 import db from "@/firebaseConfig";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
 import {
@@ -321,7 +319,7 @@ export default {
   }),
   methods: {
     getSpNoteDetails() {
-      IntroductionsFetchRef.orderBy('point')
+      IntroductionsFetchRef.orderBy("point")
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
           snapshot.docs.forEach((element) => {
@@ -337,10 +335,10 @@ export default {
     insertData() {
       try {
         this.loadingBtn = true;
-        const id =uuidv4();
-               IntroductionsRef.doc(id)
+        const id = uuidv4();
+        IntroductionsRef.doc(id)
           .set({
-            intro_id : id,
+            intro_id: id,
             point: parseInt(this.editItem.point),
             app_name: this.editItem.app_name,
             title: this.editItem.title,
@@ -370,8 +368,7 @@ export default {
       try {
         this.loadingBtn = true;
 
-        IntroductionsRef
-          .doc(this.editItem.intro_id)
+        IntroductionsRef.doc(this.editItem.intro_id)
           .update({
             point: parseInt(this.editItem.point),
             app_name: this.editItem.app_name,
@@ -404,8 +401,7 @@ export default {
       try {
         this.loadingBtn = true;
 
-        IntroductionsRef
-          .doc(this.deleteID)
+        IntroductionsRef.doc(this.deleteID)
           .delete()
           .then(() => {
             this.dialogDelete = !this.dialogDelete;

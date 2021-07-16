@@ -49,7 +49,7 @@
       <v-card-title>
         <span>Custom Ads Details</span>
       </v-card-title>
-        
+
       <v-data-table
         dark
         style="background-color: #292929"
@@ -57,15 +57,12 @@
         :items="dataRows"
         :search="search"
         fixed-tabs
-        item-key="id"
+        item-key="point"
         fixed-header
         :loading="loading"
       >
-      
-        <template v-slot:body="{ items}">
-            <tbody>
-          <tr v-for="item in items"
-            :key="item.point">
+        <template v-slot:item="{ item }">
+          <tr>
             <td class="d-block d-sm-table-cell">{{ item.point }}</td>
             <td class="d-block d-sm-table-cell">{{ item.st_date }}</td>
             <td class="d-block d-sm-table-cell">{{ item.exp_date }}</td>
@@ -92,29 +89,31 @@
               </v-img>
             </td>
 
-            <td class="d-block d-sm-table-cell"><v-container fluid class="ActionButton__container pa-1">
-              <ActionButton
-                class="ma-1"
-                @click="
-                  isUpdateData = true;
-                  dialog = !dialog;
-                  editItem = item;
-                "
-                icon="mdi-pencil"
-                color="green lighten-2"
-              />
-              <ActionButton
-                class="ma-1"
-                @click="
-                  dialogDelete = !dialogDelete;
-                  deleteID = item.id;
-                "
-                icon="mdi-delete"
-                color="red lighten-1"
-              />
-            </v-container></td>
+            <td class="d-block d-sm-table-cell">
+              <v-container fluid class="ActionButton__container pa-1">
+                <ActionButton
+                  class="ma-1"
+                  @click="
+                    isUpdateData = true;
+                    dialog = !dialog;
+                    editItem = item;
+                    selectedImage = item.banner_image;
+                  "
+                  icon="mdi-pencil"
+                  color="green lighten-2"
+                />
+                <ActionButton
+                  class="ma-1"
+                  @click="
+                    dialogDelete = !dialogDelete;
+                    deleteID = item.id;
+                  "
+                  icon="mdi-delete"
+                  color="red lighten-1"
+                />
+              </v-container>
+            </td>
           </tr>
-            </tbody>
         </template>
       </v-data-table>
     </v-card>
@@ -131,19 +130,19 @@
                 <v-container>
                   <v-row class="mt-4">
                     <v-col cols="12" sm="6" md="6">
-                         <validation-provider
+                      <validation-provider
                         v-slot="{ errors }"
                         rules="required"
                         name="Point"
                       >
-                      <v-text-field
-                        v-model="editItem.point"
-                         :error-messages="errors"
-                        label="Point"
-                        hint="Enter point of custom ad"
-                        required
-                      ></v-text-field>
-                         </validation-provider>
+                        <v-text-field
+                          v-model="editItem.point"
+                          :error-messages="errors"
+                          label="Point"
+                          hint="Enter point of custom ad"
+                          required
+                        ></v-text-field>
+                      </validation-provider>
                     </v-col>
                     <!-- Dae Picker -->
                     <v-col cols="12" sm="6" md="6">
@@ -167,16 +166,22 @@
                         </template>
                         <v-date-picker v-model="editItem.st_date" scrollable>
                           <v-spacer></v-spacer>
-                          <v-btn text color="primary" @click="dateTimeDialog = false">Cancel</v-btn>
+                          <v-btn
+                            text
+                            color="primary"
+                            @click="dateTimeDialog = false"
+                            >Cancel</v-btn
+                          >
                           <v-btn
                             text
                             color="primary"
                             @click="$refs.dateTimeDialog.save(editItem.st_date)"
-                          >OK</v-btn>
+                            >OK</v-btn
+                          >
                         </v-date-picker>
                       </v-dialog>
                     </v-col>
-                     <!-- Dae Picker -->
+                    <!-- Dae Picker -->
                     <v-col cols="12" sm="6" md="6">
                       <v-dialog
                         ref="dateTimeDialog"
@@ -198,26 +203,35 @@
                         </template>
                         <v-date-picker v-model="editItem.exp_date" scrollable>
                           <v-spacer></v-spacer>
-                          <v-btn text color="primary" @click="dateTimeDialog = false">Cancel</v-btn>
                           <v-btn
                             text
                             color="primary"
-                            @click="$refs.dateTimeDialog.save(editItem.exp_date)"
-                          >OK</v-btn>
+                            @click="dateTimeDialog = false"
+                            >Cancel</v-btn
+                          >
+                          <v-btn
+                            text
+                            color="primary"
+                            @click="
+                              $refs.dateTimeDialog.save(editItem.exp_date)
+                            "
+                            >OK</v-btn
+                          >
                         </v-date-picker>
                       </v-dialog>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
-                     <cropper
+
+                      <cropper
                         class="cropper"
-                        :src="img"
-                        :stencil-props="{
-                          aspectRatio: 10/12
-                        }"
+                        :src="selectedImage"
                         @change="change"
                       ></cropper>
+                      <v-spacer></v-spacer>
+                      <v-btn class="primary" style=" width: 250px;">
+                        Pick Image
+                      </v-btn>
                     </v-col>
-                    
                   </v-row>
                 </v-container>
                 <small>*indicates required field</small>
@@ -282,8 +296,8 @@
 
 <script>
 import db from "@/firebaseConfig";
-import { Cropper } from 'vue-advanced-cropper'
-import 'vue-advanced-cropper/dist/style.css';
+import { Cropper } from "vue-advanced-cropper";
+import "vue-advanced-cropper/dist/style.css";
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
 import {
@@ -349,11 +363,12 @@ export default {
       { text: "Point", value: "point", align: "center" },
       { text: "ST Date", value: "st_date" },
       { text: "Exp Date", value: "exp_date" },
-      { text: "Image", value: "banner_image", width:"130px"},
+      { text: "Image", value: "banner_image", width: "130px" },
       { text: "Actions", value: "u-actions", width: "190px" },
     ],
     dataRows: [],
     //Form
+    selectedImage :null,
     editItem: {},
     dateTimeDialog: false,
     loadingBtn: false,
@@ -479,7 +494,9 @@ export default {
         this.alertMessage(error.message, "error");
       }
     },
-
+    change({ coordinates }) {
+			console.log(coordinates);
+		},
     alertMessage(message, msgType) {
       this.isMsg = true;
       this.message = message;
@@ -532,8 +549,11 @@ export default {
   text-align: center;
 }
 .cropper {
-  height: 100px;
-  background: #DDD;
+  /* aspect-ratio: 16/9; */
+  height: auto;
+  width: 250px;
+  background: #ddd;
+  margin-bottom: 10px;
 }
 /* .truncate {
   max-width: 300px !important;

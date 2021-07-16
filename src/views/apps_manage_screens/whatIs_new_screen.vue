@@ -57,43 +57,41 @@
         :items="dataRows"
         :search="search"
         fixed-tabs
-        item-key="id"
+        item-key="app_name"
         fixed-header
         :loading="loading"
       >
-        <template v-slot:body="{ items }">
-          <tbody>
-            <tr v-for="item in items" :key="item.point">
-              <td class="d-block d-sm-table-cell">{{ item.app_name }}</td>
-              <td class="d-block d-sm-table-cell">{{ item.title }}</td>
-              <td class="d-block d-sm-table-cell truncate">
-                {{ item.note }}
-              </td>
-              <td class="d-block d-sm-table-cell">
-                <v-container fluid class="ActionButton__container pa-1">
-                  <ActionButton
-                    class="ma-1"
-                    @click="
-                      isUpdateData = true;
-                      dialog = !dialog;
-                      editItem = item;
-                    "
-                    icon="mdi-pencil"
-                    color="green lighten-2"
-                  />
-                  <ActionButton
-                    class="ma-1"
-                    @click="
-                      dialogDelete = !dialogDelete;
-                      deleteID = item.docId;
-                    "
-                    icon="mdi-delete"
-                    color="red lighten-1"
-                  />
-                </v-container>
-              </td>
-            </tr>
-          </tbody>
+        <template v-slot:item="{ item }">
+          <tr>
+            <td class="d-block d-sm-table-cell">{{ item.app_name }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.title }}</td>
+            <td class="d-block d-sm-table-cell truncate">
+              {{ item.note }}
+            </td>
+            <td class="d-block d-sm-table-cell">
+              <v-container fluid class="ActionButton__container pa-1">
+                <ActionButton
+                  class="ma-1"
+                  @click="
+                    isUpdateData = true;
+                    dialog = !dialog;
+                    editItem = item;
+                  "
+                  icon="mdi-pencil"
+                  color="green lighten-2"
+                />
+                <ActionButton
+                  class="ma-1"
+                  @click="
+                    dialogDelete = !dialogDelete;
+                    deleteID = item.docId;
+                  "
+                  icon="mdi-delete"
+                  color="red lighten-1"
+                />
+              </v-container>
+            </td>
+          </tr>
         </template>
       </v-data-table>
     </v-card>
@@ -156,7 +154,6 @@
                         ></v-textarea>
                       </validation-provider>
                     </v-col>
-
                   </v-row>
                 </v-container>
                 <small>*indicates required field</small>
@@ -303,28 +300,25 @@ export default {
   }),
   methods: {
     getSpNoteDetails() {
-      NoteFetchRef
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          this.dataRows = [];
-          snapshot.docs.forEach((element) => {
-            this.dataRows.push({docId:element.id, ...element.data() });
-            this.loading = false;
-          });
-        })
-        .catch((e) => {
+      NoteFetchRef.onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
+        this.dataRows = [];
+        snapshot.docs.forEach((element) => {
+          this.dataRows.push({ docId: element.id, ...element.data() });
           this.loading = false;
-          this.alertMessage(e.message, "error");
         });
+      }).catch((e) => {
+        this.loading = false;
+        this.alertMessage(e.message, "error");
+      });
     },
     insertData() {
       try {
         this.loadingBtn = true;
-               NoteRef
-          .add({
-            app_name: this.editItem.app_name,
-            title: this.editItem.title,
-            note: this.editItem.note,
-          })
+        NoteRef.add({
+          app_name: this.editItem.app_name,
+          title: this.editItem.title,
+          note: this.editItem.note,
+        })
           .then(() => {
             this.dialog = !this.dialog;
             this.loadingBtn = !this.loadingBtn;
@@ -349,10 +343,9 @@ export default {
       try {
         this.loadingBtn = true;
 
-        NoteRef
-          .doc(this.editItem.docId)
+        NoteRef.doc(this.editItem.docId)
           .update({
-           app_name: this.editItem.app_name,
+            app_name: this.editItem.app_name,
             title: this.editItem.title,
             note: this.editItem.note,
           })
@@ -382,8 +375,7 @@ export default {
       try {
         this.loadingBtn = true;
 
-        NoteRef
-          .doc(this.deleteID)
+        NoteRef.doc(this.deleteID)
           .delete()
           .then(() => {
             this.dialogDelete = !this.dialogDelete;

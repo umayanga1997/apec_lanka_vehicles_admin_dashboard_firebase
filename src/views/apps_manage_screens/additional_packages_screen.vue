@@ -57,49 +57,47 @@
         :items="dataRows"
         :search="search"
         fixed-tabs
-        item-key="id"
+        item-key="position"
         fixed-header
         :loading="loading"
       >
-        <template v-slot:body="{ items }">
-          <tbody>
-            <tr v-for="item in items" :key="item.position">
-              <td class="d-block d-sm-table-cell">{{ item.position }}</td>
-              <td class="d-block d-sm-table-cell">{{ item.type }}</td>
-              <td class="d-block d-sm-table-cell">{{ item.vehicles }}</td>
-              <td class="d-block d-sm-table-cell">
-                {{ item.valid_years }}
-              </td>
-              <td class="d-block d-sm-table-cell">{{ item.price_origin }}</td>
-              <td class="d-block d-sm-table-cell">{{ item.price_discount }}</td>
-              <td class="d-block d-sm-table-cell">
-                <v-container fluid class="ActionButton__container pa-1">
-                  <ActionButton
-                    class="ma-1"
-                    @click="
-                      isUpdateData = true;
-                      dialog = !dialog;
-                      editItem = item;
-                    "
-                    icon="mdi-pencil"
-                    color="green lighten-2"
-                  />
+        <template v-slot:item="{ item }">
+          <tr>
+            <td class="d-block d-sm-table-cell">{{ item.position }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.type }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.vehicles }}</td>
+            <td class="d-block d-sm-table-cell">
+              {{ item.valid_years }}
+            </td>
+            <td class="d-block d-sm-table-cell">{{ item.price_origin }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.price_discount }}</td>
+            <td class="d-block d-sm-table-cell">
+              <v-container fluid class="ActionButton__container pa-1">
+                <ActionButton
+                  class="ma-1"
+                  @click="
+                    isUpdateData = true;
+                    dialog = !dialog;
+                    editItem = item;
+                  "
+                  icon="mdi-pencil"
+                  color="green lighten-2"
+                />
 
-                  <div class="" v-if="item.type == 'Free'"></div>
-                  <ActionButton
-                    v-else
-                    class="ma-1"
-                    @click="
-                      dialogDelete = !dialogDelete;
-                      deleteID = item.id;
-                    "
-                    icon="mdi-delete"
-                    color="red lighten-1"
-                  />
-                </v-container>
-              </td>
-            </tr>
-          </tbody>
+                <div class="" v-if="item.type == 'Free'"></div>
+                <ActionButton
+                  v-else
+                  class="ma-1"
+                  @click="
+                    dialogDelete = !dialogDelete;
+                    deleteID = item.id;
+                  "
+                  icon="mdi-delete"
+                  color="red lighten-1"
+                />
+              </v-container>
+            </td>
+          </tr>
         </template>
       </v-data-table>
     </v-card>
@@ -374,7 +372,7 @@ export default {
             vehicles: this.editItem.vehicles,
             valid_years: parseInt(this.editItem.valid_years),
             price_origin: parseFloat(this.editItem.price_origin),
-            price_discount: parseFloat(this.editItem.price_discount??0),
+            price_discount: parseFloat(this.editItem.price_discount ?? 0),
           })
           .then(() => {
             this.dialog = !this.dialog;
