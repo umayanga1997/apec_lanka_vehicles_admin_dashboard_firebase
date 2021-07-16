@@ -11,6 +11,7 @@ import AboutUs from '@/views/apps_manage_screens/aboutUs_screen.vue';
 import OurProducts from '@/views/apps_manage_screens/our_products_screen.vue';
 import OtherConfigs from '@/views/apps_manage_screens/other_config_screen.vue';
 import Locations from '@/views/find_screens/locations_screen.vue';
+import VehiclesTypes from '@/views/find_screens/vehicles_types_screen.vue';
 
 Vue.use(VueRouter)
 
@@ -68,6 +69,11 @@ const routes = [{
         path: '/locations_',
         name: 'locations',
         component: Locations,
+    },
+    {
+        path: '/vehicles_types_',
+        name: 'vehicles_types',
+        component: VehiclesTypes,
     },
 
 ]

@@ -45,7 +45,7 @@
     </v-row>
 
     <!-- Data Table -->
-    <v-card class="mt-5 mb-5" style="width:50%">
+    <v-card class="mt-5 mb-5" style="width: 50%">
       <v-card-title>
         <span>Locations Details</span>
       </v-card-title>
@@ -71,6 +71,7 @@
                     @click="
                       isUpdateData = true;
                       dialog = !dialog;
+                      editItem = {};
                       editItem = item;
                     "
                     icon="mdi-pencil"
@@ -245,6 +246,7 @@ export default {
       { text: "Actions", value: "u-actions", width: "190px" },
     ],
     dataRows: [],
+    checkItemList: [],
     //Form
     editItem: {},
     loadingBtn: false,
@@ -263,8 +265,10 @@ export default {
         .orderBy("location_name")
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
+          this.checkItemList = [];
           snapshot.docs.forEach((element) => {
             this.dataRows.push({ ...element.data() });
+            this.checkItemList.push({ ...element.data() });
             this.loading = false;
           });
         })
@@ -273,28 +277,39 @@ export default {
           this.alertMessage(e.message, "error");
         });
     },
-    insertData() {
+    async insertData() {
       try {
         this.loadingBtn = true;
-        const id = uuidv4();
-        locationsRef
-          .doc(id)
-          .set({
-            location_id: id,
-            location_name: this.editItem.location_name,
-          })
-          .then(() => {
-            this.dialog = !this.dialog;
-            this.loadingBtn = !this.loadingBtn;
-            this.editItem = {};
-            this.alertMessage("Data inserted successfully.", "success");
-          })
-          .catch((e) => {
-            this.dialog = !this.dialog;
-            this.loadingBtn = !this.loadingBtn;
-            this.editItem = {};
-            this.alertMessage(e.message, "error");
-          });
+        let check = this.checkItemList.filter(
+          (item) =>
+            item.location_name.toLowerCase() ===
+            this.editItem.location_name.toLowerCase()
+        );
+
+        if (check.length === 0) {
+          const id = uuidv4();
+          locationsRef
+            .doc(id)
+            .set({
+              location_id: id,
+              location_name: this.editItem.location_name,
+            })
+            .then(() => {
+              // this.dialog = !this.dialog;
+              this.loadingBtn = !this.loadingBtn;
+              this.editItem = {};
+              this.alertMessage("Data inserted successfully.", "success");
+            })
+            .catch((e) => {
+              // this.dialog = !this.dialog;
+              this.loadingBtn = !this.loadingBtn;
+              this.editItem = {};
+              this.alertMessage(e.message, "error");
+            });
+        } else {
+          this.loadingBtn = false;
+          this.alertMessage("The Location name is alredy exist.", "error");
+        }
       } catch (error) {
         this.dialog = !this.dialog;
         this.loadingBtn = !this.loadingBtn;
