@@ -15,7 +15,8 @@
           @click="
             dialog = !dialog;
             isUpdateData = false;
-            selectedImage=null;
+            selectedImage = null;
+            croppedImage = null;
             editItem = {};
           "
           dark
@@ -99,6 +100,7 @@
                     dialog = !dialog;
                     editItem = item;
                     selectedImage = item.banner_image;
+                    croppedImage = null;
                   "
                   icon="mdi-pencil"
                   color="green lighten-2"
@@ -222,17 +224,26 @@
                       </v-dialog>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
-
                       <cropper
                         class="cropper"
                         :src="selectedImage"
                         @change="cropperChange"
                       ></cropper>
                       <v-spacer></v-spacer>
-                      <v-btn class="primary" style=" width: 250px;" @click="onPickFile">
+                      <v-btn
+                        class="primary"
+                        style="width: 250px"
+                        @click="onPickFile"
+                      >
                         Pick Image
                       </v-btn>
-                      <input type="file" style="display:none" ref="fileInput" accept="image/*" @change="onPickedFile">
+                      <input
+                        type="file"
+                        style="display: none"
+                        ref="fileInput"
+                        accept="image/*"
+                        @change="onPickedFile"
+                      />
                     </v-col>
                   </v-row>
                 </v-container>
@@ -370,8 +381,8 @@ export default {
     ],
     dataRows: [],
     //Form
-    selectedImage :null,
-    croppedImage :null,
+    selectedImage: null,
+    croppedImage: null,
     editItem: {},
     dateTimeDialog: false,
     loadingBtn: false,
@@ -404,6 +415,10 @@ export default {
       try {
         this.loadingBtn = true;
 
+        //Upload image to database
+        //get link URL
+
+        //Set all details
         customAdsRef
           .add({
             point: parseInt(this.editItem.point),
@@ -437,7 +452,11 @@ export default {
     updateData() {
       try {
         this.loadingBtn = true;
+        //Delete previous image from database
+        //Upload new image to database
+        //get link URL
 
+        //Set all details
         customAdsRef
           .doc(this.editItem.id)
           .update({
@@ -474,7 +493,9 @@ export default {
     deleteData() {
       try {
         this.loadingBtn = true;
+        //Delete previous image from database
 
+        //Delete all the details of selected item
         customAdsRef
           .doc(this.deleteID)
           .delete()
@@ -497,26 +518,26 @@ export default {
         this.alertMessage(error.message, "error");
       }
     },
-   
-    onPickFile(){
+
+    onPickFile() {
       this.$refs.fileInput.click();
     },
-    onPickedFile(event){
-        const file = event.target.files;
-        let fileName = file[0].name;
-        if(fileName.lastIndexOf('.')<=0){
-          return alert('Please select a valid file!')
-        }
-        const fileReader = new FileReader();
-        fileReader.addEventListener('load', ()=>{
-          this.selectedImage = fileReader.result;
-        })
-        fileReader.readAsDataURL(file[0]);
-        // this.selectedImage =file[0];
+    onPickedFile(event) {
+      const file = event.target.files;
+      let fileName = file[0].name;
+      if (fileName.lastIndexOf(".") <= 0) {
+        return alert("Please select a valid file!");
+      }
+      const fileReader = new FileReader();
+      fileReader.addEventListener("load", () => {
+        this.selectedImage = fileReader.result;
+      });
+      fileReader.readAsDataURL(file[0]);
+      // this.selectedImage =file[0];
     },
-     cropperChange({ canvas }) {
-      this.croppedImage = canvas.toDataURL('image/png');
-		},
+    cropperChange({ canvas }) {
+      this.croppedImage = canvas.toDataURL("image/png");
+    },
     alertMessage(message, msgType) {
       this.isMsg = true;
       this.message = message;
