@@ -15,6 +15,7 @@
           @click="
             dialog = !dialog;
             isUpdateData = false;
+            selectedImage=null;
             editItem = {};
           "
           dark
@@ -225,12 +226,13 @@
                       <cropper
                         class="cropper"
                         :src="selectedImage"
-                        @change="change"
+                        @change="cropperChange"
                       ></cropper>
                       <v-spacer></v-spacer>
-                      <v-btn class="primary" style=" width: 250px;">
+                      <v-btn class="primary" style=" width: 250px;" @click="onPickFile">
                         Pick Image
                       </v-btn>
+                      <input type="file" style="display:none" ref="fileInput" accept="image/*" @change="onPickedFile">
                     </v-col>
                   </v-row>
                 </v-container>
@@ -369,6 +371,7 @@ export default {
     dataRows: [],
     //Form
     selectedImage :null,
+    croppedImage :null,
     editItem: {},
     dateTimeDialog: false,
     loadingBtn: false,
@@ -494,8 +497,25 @@ export default {
         this.alertMessage(error.message, "error");
       }
     },
-    change({ coordinates }) {
-			console.log(coordinates);
+   
+    onPickFile(){
+      this.$refs.fileInput.click();
+    },
+    onPickedFile(event){
+        const file = event.target.files;
+        let fileName = file[0].name;
+        if(fileName.lastIndexOf('.')<=0){
+          return alert('Please select a valid file!')
+        }
+        const fileReader = new FileReader();
+        fileReader.addEventListener('load', ()=>{
+          this.selectedImage = fileReader.result;
+        })
+        fileReader.readAsDataURL(file[0]);
+        // this.selectedImage =file[0];
+    },
+     cropperChange({ canvas }) {
+      this.croppedImage = canvas.toDataURL('image/png');
 		},
     alertMessage(message, msgType) {
       this.isMsg = true;
