@@ -182,7 +182,7 @@
 </template>
 
 <script>
-import db from "@/firebaseConfig";
+import {fireStore} from "@/firebaseConfig";
 import { v4 as uuidv4 } from "uuid";
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
@@ -221,7 +221,7 @@ extend("email", {
   message: "Email must be valid",
 });
 
-const vehicleTypessRef = db.collection("vehicle_types");
+const vehicleTypessRef = fireStore.collection("vehicle_types");
 
 export default {
   name: "vehicles_types",

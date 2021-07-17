@@ -52,10 +52,10 @@
 </template>
 
 <script>
-import db from "@/firebaseConfig";
+import {fireStore} from "@/firebaseConfig";
 
-const otherConfigFetchRef = db.collectionGroup("other_configurations");
-const otherConfigRef = db
+const otherConfigFetchRef = fireStore.collectionGroup("other_configurations");
+const otherConfigRef = fireStore
   .collection("apps_management")
   .doc("FU0U4I2n3PuXmL4LWtIy")
   .collection("other_configurations");

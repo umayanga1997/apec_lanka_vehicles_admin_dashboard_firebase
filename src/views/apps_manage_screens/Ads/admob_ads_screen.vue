@@ -93,10 +93,10 @@
 </template>
 
 <script>
-import db from "@/firebaseConfig";
+import {fireStore} from "@/firebaseConfig";
 
-const admobFetchRef = db.collectionGroup("admob_ads_config");
-const admobRef = db
+const admobFetchRef = fireStore.collectionGroup("admob_ads_config");
+const admobRef = fireStore
   .collection("apps_management")
   .doc("FU0U4I2n3PuXmL4LWtIy")
   .collection("admob_ads_config");

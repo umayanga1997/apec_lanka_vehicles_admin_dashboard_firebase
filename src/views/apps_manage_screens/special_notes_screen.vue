@@ -263,7 +263,7 @@
 </template>
 
 <script>
-import db from "@/firebaseConfig";
+import {fireStore} from "@/firebaseConfig";
 import { v4 as uuidv4 } from "uuid";
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
@@ -302,8 +302,8 @@ extend("email", {
   message: "Email must be valid",
 });
 
-const NoteFetchRef = db.collectionGroup("special_notes");
-const NoteRef = db
+const NoteFetchRef = fireStore.collectionGroup("special_notes");
+const NoteRef = fireStore
   .collection("apps_management")
   .doc("FU0U4I2n3PuXmL4LWtIy")
   .collection("special_notes");

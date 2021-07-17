@@ -15,7 +15,7 @@
           @click="
             dialog = !dialog;
             isUpdateData = false;
-            selectedImage = null;
+            selectedImageURL = null;
             croppedImage = null;
             editItem = {};
           "
@@ -99,7 +99,7 @@
                     isUpdateData = true;
                     dialog = !dialog;
                     editItem = item;
-                    selectedImage = item.banner_image;
+                    selectedImageURL = item.banner_image;
                     croppedImage = null;
                   "
                   icon="mdi-pencil"
@@ -109,7 +109,7 @@
                   class="ma-1"
                   @click="
                     dialogDelete = !dialogDelete;
-                    deleteID = item.id;
+                    editItem = item;
                   "
                   icon="mdi-delete"
                   color="red lighten-1"
@@ -150,8 +150,8 @@
                     <!-- Dae Picker -->
                     <v-col cols="12" sm="6" md="6">
                       <v-dialog
-                        ref="dateTimeDialog"
-                        v-model="dateTimeDialog"
+                        ref="stDateDialog"
+                        v-model="stDateDialog"
                         :close-on-content-click="false"
                         :return-value.sync="editItem.st_date"
                         persistent
@@ -172,13 +172,13 @@
                           <v-btn
                             text
                             color="primary"
-                            @click="dateTimeDialog = false"
+                            @click="stDateDialog = false"
                             >Cancel</v-btn
                           >
                           <v-btn
                             text
                             color="primary"
-                            @click="$refs.dateTimeDialog.save(editItem.st_date)"
+                            @click="$refs.stDateDialog.save(editItem.st_date)"
                             >OK</v-btn
                           >
                         </v-date-picker>
@@ -187,8 +187,8 @@
                     <!-- Dae Picker -->
                     <v-col cols="12" sm="6" md="6">
                       <v-dialog
-                        ref="dateTimeDialog"
-                        v-model="dateTimeDialog"
+                        ref="endDateDialog"
+                        v-model="endDateDialog"
                         :close-on-content-click="false"
                         :return-value.sync="editItem.exp_date"
                         persistent
@@ -209,15 +209,13 @@
                           <v-btn
                             text
                             color="primary"
-                            @click="dateTimeDialog = false"
+                            @click="endDateDialog = false"
                             >Cancel</v-btn
                           >
                           <v-btn
                             text
                             color="primary"
-                            @click="
-                              $refs.dateTimeDialog.save(editItem.exp_date)
-                            "
+                            @click="$refs.endDateDialog.save(editItem.exp_date)"
                             >OK</v-btn
                           >
                         </v-date-picker>
@@ -226,7 +224,7 @@
                     <v-col cols="12" sm="6" md="6">
                       <cropper
                         class="cropper"
-                        :src="selectedImage"
+                        :src="selectedImageURL"
                         @change="cropperChange"
                       ></cropper>
                       <v-spacer></v-spacer>
@@ -244,6 +242,12 @@
                         accept="image/*"
                         @change="onPickedFile"
                       />
+                      <!-- <v-img
+                      contain
+                        :src="croppedImage"
+                        width="200px"
+                        height="200px"
+                      ></v-img> -->
                     </v-col>
                   </v-row>
                 </v-container>
@@ -308,7 +312,8 @@
 </template>
 
 <script>
-import db from "@/firebaseConfig";
+import { fireStore, storage } from "@/firebaseConfig";
+import { v4 as uuidv4 } from "uuid";
 import { Cropper } from "vue-advanced-cropper";
 import "vue-advanced-cropper/dist/style.css";
 //Validator Configurations
@@ -348,8 +353,8 @@ extend("email", {
   message: "Email must be valid",
 });
 
-const customAdsFetchRef = db.collectionGroup("custom_ads_config");
-const customAdsRef = db
+const customAdsFetchRef = fireStore.collectionGroup("custom_ads_config");
+const customAdsRef = fireStore
   .collection("apps_management")
   .doc("FU0U4I2n3PuXmL4LWtIy")
   .collection("custom_ads_config");
@@ -381,15 +386,17 @@ export default {
     ],
     dataRows: [],
     //Form
+    selectedImageURL: null,
+    isSelectNewImage: false,
     selectedImage: null,
     croppedImage: null,
     editItem: {},
-    dateTimeDialog: false,
+    stDateDialog: false,
+    endDateDialog: false,
     loadingBtn: false,
     isUpdateData: false,
     dialog: false,
     dialogDelete: false,
-    deleteID: null,
     //message
     message: null,
     isMsg: false,
@@ -402,7 +409,7 @@ export default {
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
           snapshot.docs.forEach((element) => {
-            this.dataRows.push({ id: element.id, ...element.data() });
+            this.dataRows.push({ ...element.data() });
             this.loading = false;
           });
         })
@@ -411,37 +418,43 @@ export default {
           this.alertMessage(e.message, "error");
         });
     },
-    insertData() {
+    async insertData() {
       try {
         this.loadingBtn = true;
-
-        //Upload image to database
-        //get link URL
-
-        //Set all details
-        customAdsRef
-          .add({
-            point: parseInt(this.editItem.point),
-            app_name: this.editItem.app_name,
-            title: this.editItem.title,
-            body: this.editItem.body,
-            link_title: this.editItem.link_title ?? "",
-            link: this.editItem.link ?? "",
-            link_icon: this.editItem.link_icon ?? "",
-          })
-          .then(() => {
-            this.dialog = !this.dialog;
-            this.loadingBtn = !this.loadingBtn;
-            this.editItem = {};
-            this.alertMessage("Data inserted successfully.", "success");
-          })
-          .catch((e) => {
-            this.dialog = !this.dialog;
-            this.loadingBtn = !this.loadingBtn;
-            this.editItem = {};
-            this.alertMessage(e.message, "error");
-          });
+        const id = uuidv4();
+        //Upload new image to storage and get url
+        if (this.isSelectNewImage) {
+          const value = await this.uploadImageToStorage(id);
+          // //Set all details
+          customAdsRef
+            .doc(id)
+            .set({
+              ad_id: id,
+              point: parseInt(this.editItem.point),
+              banner_image: value,
+              thumbnail_image: value,
+              st_date: this.editItem.st_date,
+              exp_date: this.editItem.exp_date,
+            })
+            .then(() => {
+              this.isSelectNewImage = false;
+              this.dialog = !this.dialog;
+              this.loadingBtn = !this.loadingBtn;
+              this.editItem = {};
+              this.alertMessage("Data inserted successfully.", "success");
+            })
+            .catch((e) => {
+              this.isSelectNewImage = false;
+              this.dialog = !this.dialog;
+              this.loadingBtn = !this.loadingBtn;
+              this.editItem = {};
+              this.alertMessage(e.message, "error");
+            });
+        } else {
+          this.alertMessage("Please select a banner image.", "error");
+        }
       } catch (error) {
+        this.isSelectNewImage = false;
         this.dialog = !this.dialog;
         this.loadingBtn = !this.loadingBtn;
         this.editItem = {};
@@ -449,24 +462,29 @@ export default {
       }
     },
 
-    updateData() {
+    async updateData() {
       try {
         this.loadingBtn = true;
-        //Delete previous image from database
-        //Upload new image to database
-        //get link URL
-
+        //Delete previous image from storage
+        var value;
+        //Upload new image to storage and get url
+        if (this.isSelectNewImage) {
+          console.log("New")
+          await this.deleteImageFromStorage();
+          value = await this.uploadImageToStorage(this.editItem.id);
+        } else {
+          value = this.editItem.banner_image;
+          console.log("Previous")
+        }
         //Set all details
         customAdsRef
-          .doc(this.editItem.id)
+          .doc(this.editItem.ad_id)
           .update({
             point: parseInt(this.editItem.point),
-            app_name: this.editItem.app_name,
-            title: this.editItem.title,
-            body: this.editItem.body,
-            link_title: this.editItem.link_title ?? "",
-            link: this.editItem.link ?? "",
-            link_icon: this.editItem.link_icon ?? "",
+            banner_image: value,
+            thumbnail_image: value,
+            st_date: this.editItem.st_date,
+            exp_date: this.editItem.exp_date,
           })
           .then(() => {
             this.dialog = !this.dialog;
@@ -490,37 +508,42 @@ export default {
         this.alertMessage(error.message, "error");
       }
     },
-    deleteData() {
+    async deleteData() {
       try {
         this.loadingBtn = true;
-        //Delete previous image from database
+        //Delete image from storage
+        await this.deleteImageFromStorage();
 
         //Delete all the details of selected item
         customAdsRef
-          .doc(this.deleteID)
+          .doc(this.editItem.ad_id)
           .delete()
           .then(() => {
             this.dialogDelete = !this.dialogDelete;
             this.loadingBtn = !this.loadingBtn;
             this.deleteID = null;
+             this.editItem = {};
             this.alertMessage("Data deleted successfully.", "success");
           })
           .catch((e) => {
             this.dialogDelete = !this.dialogDelete;
             this.loadingBtn = !this.loadingBtn;
             this.deleteID = null;
+             this.editItem = {};
             this.alertMessage(e.message, "error");
           });
       } catch (error) {
         this.dialogDelete = !this.dialogDelete;
         this.loadingBtn = !this.loadingBtn;
         this.deleteID = null;
+         this.editItem = {};
         this.alertMessage(error.message, "error");
       }
     },
 
     onPickFile() {
       this.$refs.fileInput.click();
+      this.isSelectNewImage = true;
     },
     onPickedFile(event) {
       const file = event.target.files;
@@ -530,13 +553,28 @@ export default {
       }
       const fileReader = new FileReader();
       fileReader.addEventListener("load", () => {
-        this.selectedImage = fileReader.result;
+        this.selectedImageURL = fileReader.result;
       });
       fileReader.readAsDataURL(file[0]);
-      // this.selectedImage =file[0];
+      this.selectedImage = file[0];
     },
     cropperChange({ canvas }) {
-      this.croppedImage = canvas.toDataURL("image/png");
+      this.croppedImage = canvas.toDataURL("image/*");
+    },
+    async uploadImageToStorage(id) {
+      const value = await storage
+        .ref("custom_ads_images/")
+        .child("cus_ad_" + id + "_" + this.selectedImage.name)
+        .putString(this.croppedImage, "data_url")
+        .then((value) => {
+          return value.ref.getDownloadURL();
+        });
+      return value;
+    },
+   async deleteImageFromStorage() {
+      await storage
+        .refFromURL(this.editItem.banner_image)
+        .delete();
     },
     alertMessage(message, msgType) {
       this.isMsg = true;

@@ -15,4 +15,9 @@ firebaseApp.firestore().settings({
     cacheSizeBytes: firebase.firestore.CACHE_SIZE_UNLIMITED,
 });
 firebaseApp.firestore().enablePersistence();
-export default firebaseApp.firestore();
+const fireStore = firebaseApp.firestore();
+const storage = firebaseApp.storage();
+export {
+    fireStore,
+    storage
+};
