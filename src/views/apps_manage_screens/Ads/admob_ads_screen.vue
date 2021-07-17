@@ -3,13 +3,14 @@
     fill-height
     fluid
     justify-center
-    style="height: 75rem"
+    style="height: 75rem;align-content: flex-start;"
     v-if="this.loading"
   >
     <v-progress-circular
       :size="30"
       :width="3"
       color="purple"
+      style="margin-top: 100px"
       indeterminate
     ></v-progress-circular>
   </v-container>
@@ -129,7 +130,7 @@ export default {
               isShowCustomers: element.data().isShowCustomers,
               isShowOwner: element.data().isShowOwner,
             });
-            this.loading = false;
+            // this.loading = false;
           });
         })
         .catch((e) => {
