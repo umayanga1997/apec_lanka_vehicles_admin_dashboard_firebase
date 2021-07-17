@@ -99,7 +99,7 @@
                     isUpdateData = true;
                     dialog = !dialog;
                     editItem = item;
-                    selectedImageURL = item.banner_image;
+                    selectedImageURL = null;
                     croppedImage = null;
                   "
                   icon="mdi-pencil"
@@ -158,15 +158,24 @@
                         width="290px"
                       >
                         <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="editItem.st_date"
-                            label="ST date"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"
-                          ></v-text-field>
+                          <validation-provider
+                            v-slot="{ errors }"
+                            rules="required"
+                            name="ST Date"
+                          >
+                            <v-text-field
+                              v-model="editItem.st_date"
+                              label="ST date"
+                              prepend-icon="mdi-calendar"
+                              readonly
+                              v-bind="attrs"
+                              v-on="on"
+                              required
+                              :error-messages="errors"
+                            ></v-text-field>
+                          </validation-provider>
                         </template>
+
                         <v-date-picker v-model="editItem.st_date" scrollable>
                           <v-spacer></v-spacer>
                           <v-btn
@@ -195,14 +204,22 @@
                         width="290px"
                       >
                         <template v-slot:activator="{ on, attrs }">
-                          <v-text-field
-                            v-model="editItem.exp_date"
-                            label="Exp date"
-                            prepend-icon="mdi-calendar"
-                            readonly
-                            v-bind="attrs"
-                            v-on="on"
-                          ></v-text-field>
+                          <validation-provider
+                            v-slot="{ errors }"
+                            rules="required"
+                            name="Exp Date"
+                          >
+                            <v-text-field
+                              v-model="editItem.exp_date"
+                              label="Exp date"
+                              prepend-icon="mdi-calendar"
+                              readonly
+                              v-bind="attrs"
+                              v-on="on"
+                              required
+                              :error-messages="errors"
+                            ></v-text-field>
+                          </validation-provider>
                         </template>
                         <v-date-picker v-model="editItem.exp_date" scrollable>
                           <v-spacer></v-spacer>
@@ -223,10 +240,17 @@
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
                       <cropper
+                        v-if="selectedImageURL !== null"
                         class="cropper"
                         :src="selectedImageURL"
                         @change="cropperChange"
                       ></cropper>
+                      <v-img
+                        v-else
+                        contain
+                        :src="editItem.banner_image"
+                        class="cropper"
+                      ></v-img>
                       <v-spacer></v-spacer>
                       <v-btn
                         class="primary"
@@ -242,12 +266,6 @@
                         accept="image/*"
                         @change="onPickedFile"
                       />
-                      <!-- <v-img
-                      contain
-                        :src="croppedImage"
-                        width="200px"
-                        height="200px"
-                      ></v-img> -->
                     </v-col>
                   </v-row>
                 </v-container>
@@ -469,12 +487,12 @@ export default {
         var value;
         //Upload new image to storage and get url
         if (this.isSelectNewImage) {
-          console.log("New")
+          // console.log("New");
           await this.deleteImageFromStorage();
           value = await this.uploadImageToStorage(this.editItem.id);
         } else {
           value = this.editItem.banner_image;
-          console.log("Previous")
+          // console.log("Previous");
         }
         //Set all details
         customAdsRef
@@ -522,21 +540,21 @@ export default {
             this.dialogDelete = !this.dialogDelete;
             this.loadingBtn = !this.loadingBtn;
             this.deleteID = null;
-             this.editItem = {};
+            this.editItem = {};
             this.alertMessage("Data deleted successfully.", "success");
           })
           .catch((e) => {
             this.dialogDelete = !this.dialogDelete;
             this.loadingBtn = !this.loadingBtn;
             this.deleteID = null;
-             this.editItem = {};
+            this.editItem = {};
             this.alertMessage(e.message, "error");
           });
       } catch (error) {
         this.dialogDelete = !this.dialogDelete;
         this.loadingBtn = !this.loadingBtn;
         this.deleteID = null;
-         this.editItem = {};
+        this.editItem = {};
         this.alertMessage(error.message, "error");
       }
     },
@@ -571,10 +589,17 @@ export default {
         });
       return value;
     },
-   async deleteImageFromStorage() {
-      await storage
+    async deleteImageFromStorage() {
+     try {
+        await storage
         .refFromURL(this.editItem.banner_image)
-        .delete();
+        .delete()
+        .catch((e) => {
+          this.alertMessage(e.message, "error");
+        });
+     } catch (error) {
+       this.alertMessage(error.message, "error");
+     }
     },
     alertMessage(message, msgType) {
       this.isMsg = true;
