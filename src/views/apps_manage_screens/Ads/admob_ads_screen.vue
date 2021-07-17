@@ -130,7 +130,7 @@ export default {
               isShowCustomers: element.data().isShowCustomers,
               isShowOwner: element.data().isShowOwner,
             });
-            // this.loading = false;
+            this.loading = false;
           });
         })
         .catch((e) => {
