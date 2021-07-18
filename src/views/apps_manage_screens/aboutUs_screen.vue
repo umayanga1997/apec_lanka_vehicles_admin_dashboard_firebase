@@ -15,6 +15,8 @@
           @click="
             dialog = !dialog;
             isUpdateData = false;
+            selectedImageURL = null;
+            croppedImage = null;
             editItem = {};
           "
           dark
@@ -72,6 +74,7 @@
                 :lazy-src="item.profile_image"
                 width="130px"
                 height="130px"
+                contain
                 class="grey lighten-2"
               >
                 <template v-slot:placeholder>
@@ -97,6 +100,8 @@
                     isUpdateData = true;
                     dialog = !dialog;
                     editItem = item;
+                    selectedImageURL = null;
+                    croppedImage = null;
                   "
                   icon="mdi-pencil"
                   color="green lighten-2"
@@ -105,7 +110,7 @@
                   class="ma-1"
                   @click="
                     dialogDelete = !dialogDelete;
-                    deleteID = item.id;
+                    editItem = item;
                   "
                   icon="mdi-delete"
                   color="red lighten-1"
@@ -173,8 +178,35 @@
                         ></v-text-field>
                       </validation-provider>
                     </v-col>
-
-                    <v-col cols="12" sm="6" md="6"> Image </v-col>
+                    <v-col cols="12" sm="6" md="6">
+                      <cropper
+                        v-if="selectedImageURL !== null"
+                        class="cropp"
+                        :src="selectedImageURL"
+                        @change="cropperChange"
+                      ></cropper>
+                      <v-img
+                        v-else
+                        contain
+                        :src="editItem.profile_image"
+                        class="cropp"
+                      ></v-img>
+                      <v-spacer></v-spacer>
+                      <v-btn
+                        class="primary"
+                        style="width: 250px"
+                        @click="onPickFile"
+                      >
+                        Pick Image
+                      </v-btn>
+                      <input
+                        type="file"
+                        style="display: none"
+                        ref="fileInput"
+                        accept="image/*"
+                        @change="onPickedFile"
+                      />
+                    </v-col>
                   </v-row>
                 </v-container>
                 <small>*indicates required field</small>
@@ -238,7 +270,10 @@
 </template>
 
 <script>
-import {fireStore} from "@/firebaseConfig";
+import { fireStore, storage } from "@/firebaseConfig";
+import { v4 as uuidv4 } from "uuid";
+import { Cropper } from "vue-advanced-cropper";
+import "vue-advanced-cropper/dist/style.css";
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
 import {
@@ -286,6 +321,7 @@ export default {
   name: "about_us",
   components: {
     ActionButton,
+    Cropper,
     ValidationObserver,
     ValidationProvider,
   },
@@ -307,7 +343,13 @@ export default {
       { text: "Actions", value: "u-actions", width: "190px" },
     ],
     dataRows: [],
-    //Form
+    ////Form
+    //Image
+    selectedImageURL: null,
+    isSelectNewImage: false,
+    selectedImage: null,
+    croppedImage: null,
+    //Other
     editItem: {},
     dateTimeDialog: false,
     loadingBtn: false,
@@ -326,7 +368,7 @@ export default {
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
           snapshot.docs.forEach((element) => {
-            this.dataRows.push({ id: element.id, ...element.data() });
+            this.dataRows.push({ ...element.data() });
             this.loading = false;
           });
         })
@@ -335,32 +377,39 @@ export default {
           this.alertMessage(e.message, "error");
         });
     },
-    insertData() {
+    async insertData() {
       try {
         this.loadingBtn = true;
-
-        AboutUsRef.add({
-          point: parseInt(this.editItem.point),
-          app_name: this.editItem.app_name,
-          title: this.editItem.title,
-          body: this.editItem.body,
-          link_title: this.editItem.link_title ?? "",
-          link: this.editItem.link ?? "",
-          link_icon: this.editItem.link_icon ?? "",
-        })
-          .then(() => {
-            this.dialog = !this.dialog;
-            this.loadingBtn = !this.loadingBtn;
-            this.editItem = {};
-            this.alertMessage("Data inserted successfully.", "success");
+        const id = uuidv4();
+        if (this.isSelectNewImage) {
+          const value = await this.uploadImageToStorage(id);
+          // //Set all details
+          AboutUsRef.add({
+            id: id,
+            point: parseInt(this.editItem.point),
+            name: this.editItem.name,
+            designation: this.editItem.designation,
+            profile_image: value,
           })
-          .catch((e) => {
-            this.dialog = !this.dialog;
-            this.loadingBtn = !this.loadingBtn;
-            this.editItem = {};
-            this.alertMessage(e.message, "error");
-          });
+            .then(() => {
+              this.isSelectNewImage = false;
+              this.dialog = !this.dialog;
+              this.loadingBtn = !this.loadingBtn;
+              this.editItem = {};
+              this.alertMessage("Data inserted successfully.", "success");
+            })
+            .catch((e) => {
+              this.isSelectNewImage = false;
+              this.dialog = !this.dialog;
+              this.loadingBtn = !this.loadingBtn;
+              this.editItem = {};
+              this.alertMessage(e.message, "error");
+            });
+        } else {
+          this.alertMessage("Please select a profile image.", "error");
+        }
       } catch (error) {
+        this.isSelectNewImage = false;
         this.dialog = !this.dialog;
         this.loadingBtn = !this.loadingBtn;
         this.editItem = {};
@@ -368,21 +417,31 @@ export default {
       }
     },
 
-    updateData() {
+    async updateData() {
       try {
         this.loadingBtn = true;
+        //Delete previous image from storage
+        var value;
+        //Upload new image to storage and get url
+        if (this.isSelectNewImage) {
+          // console.log("New");
+          await this.deleteImageFromStorage();
+          value = await this.uploadImageToStorage(this.editItem.id);
+        } else {
+          value = this.editItem.profile_image;
+          // console.log("Previous");
+        }
+        //Set all details
 
         AboutUsRef.doc(this.editItem.id)
           .update({
             point: parseInt(this.editItem.point),
-            app_name: this.editItem.app_name,
-            title: this.editItem.title,
-            body: this.editItem.body,
-            link_title: this.editItem.link_title ?? "",
-            link: this.editItem.link ?? "",
-            link_icon: this.editItem.link_icon ?? "",
+            name: this.editItem.name,
+            designation: this.editItem.designation,
+            profile_image: value,
           })
           .then(() => {
+            this.isSelectNewImage = false;
             this.dialog = !this.dialog;
             this.loadingBtn = !this.loadingBtn;
             this.isUpdateData = !this.isUpdateData;
@@ -390,6 +449,7 @@ export default {
             this.alertMessage("Data updated successfully.", "success");
           })
           .catch((e) => {
+            this.isSelectNewImage = false;
             this.dialog = !this.dialog;
             this.loadingBtn = !this.loadingBtn;
             this.isUpdateData = !this.isUpdateData;
@@ -397,6 +457,7 @@ export default {
             this.alertMessage(e.message, "error");
           });
       } catch (error) {
+        this.isSelectNewImage = false;
         this.dialog = !this.dialog;
         this.loadingBtn = !this.loadingBtn;
         this.isUpdateData = !this.isUpdateData;
@@ -404,11 +465,12 @@ export default {
         this.alertMessage(error.message, "error");
       }
     },
-    deleteData() {
+    async deleteData() {
       try {
         this.loadingBtn = true;
-
-        AboutUsRef.doc(this.deleteID)
+        //Delete image from storage
+        await this.deleteImageFromStorage();
+        AboutUsRef.doc(this.editItem.id)
           .delete()
           .then(() => {
             this.dialogDelete = !this.dialogDelete;
@@ -429,7 +491,48 @@ export default {
         this.alertMessage(error.message, "error");
       }
     },
-
+    onPickFile() {
+      this.$refs.fileInput.click();
+      this.isSelectNewImage = true;
+    },
+    onPickedFile(event) {
+      const file = event.target.files;
+      let fileName = file[0].name;
+      if (fileName.lastIndexOf(".") <= 0) {
+        return alert("Please select a valid file!");
+      }
+      const fileReader = new FileReader();
+      fileReader.addEventListener("load", () => {
+        this.selectedImageURL = fileReader.result;
+      });
+      fileReader.readAsDataURL(file[0]);
+      this.selectedImage = file[0];
+    },
+    cropperChange({ canvas }) {
+      this.croppedImage = canvas.toDataURL("image/*");
+    },
+    async uploadImageToStorage(id) {
+      const value = await storage
+        .ref("profiles_images/")
+        .child("profile_" + id + "_" + this.selectedImage.name)
+        .putString(this.croppedImage, "data_url")
+        .then((value) => {
+          return value.ref.getDownloadURL();
+        });
+      return value;
+    },
+    async deleteImageFromStorage() {
+      try {
+        await storage
+          .refFromURL(this.editItem.profile_image)
+          .delete()
+          .catch((e) => {
+            this.alertMessage(e.message, "error");
+          });
+      } catch (error) {
+        this.alertMessage(error.message, "error");
+      }
+    },
     alertMessage(message, msgType) {
       this.isMsg = true;
       this.message = message;

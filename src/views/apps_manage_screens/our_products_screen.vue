@@ -66,6 +66,7 @@
               <v-img
                 :src="item.app_icon_url"
                 :lazy-src="item.app_icon_url"
+                contain
                 width="50"
                 height="50"
                 class="grey lighten-2"

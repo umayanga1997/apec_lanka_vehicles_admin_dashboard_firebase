@@ -74,6 +74,7 @@
                 :lazy-src="item.banner_image"
                 width="130px"
                 height="130px"
+                contain
                 class="grey lighten-2"
               >
                 <template v-slot:placeholder>
