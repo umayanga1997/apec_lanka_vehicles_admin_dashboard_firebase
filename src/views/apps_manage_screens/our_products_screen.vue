@@ -169,7 +169,7 @@
                           type="file"
                           style="display: none"
                           ref="fileInput"
-                          accept="image/*"
+                          accept="image/webp"
                           @change="onPickedFile"
                         />
                       </v-col>
@@ -581,7 +581,7 @@ export default {
       this.selectedImage = file[0];
     },
     cropperChange({ canvas }) {
-      this.croppedImage = canvas.toDataURL("image/*");
+      this.croppedImage = canvas.toDataURL("image/webp");
     },
     async uploadImageToStorage(id) {
       const value = await storage

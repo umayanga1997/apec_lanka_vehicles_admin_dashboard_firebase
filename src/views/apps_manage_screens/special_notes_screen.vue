@@ -7,6 +7,9 @@
       :type="msgType"
       >{{ message }}</v-alert
     >
+    
+    <!-- {{screenName}}
+    <v-btn @click="changeScreenName">Change</v-btn> -->
     <v-row no-gutters class="mt-2 justify-center">
       <!-- Bottom sheet Toggle ActionButton -->
       <v-col cols="12" sm="4" class="pa-1 content-center">
@@ -348,7 +351,17 @@ export default {
     isMsg: false,
     msgType: null,
   }),
+  computed:{
+    // screenName(){
+    //   console.log(this.$store)
+    //   return this.$store.state.screenName;
+    // },
+
+  },
   methods: {
+    // changeScreenName(){
+    //   this.$store.commit('changeScreenName',"New");
+    // },
     getSpNoteDetails() {
       NoteFetchRef.onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
         this.dataRows = [];
