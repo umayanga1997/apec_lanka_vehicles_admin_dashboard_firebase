@@ -15,6 +15,8 @@
           @click="
             dialog = !dialog;
             isUpdateData = false;
+            selectedImageURL = null;
+            croppedImage = null;
             editItem = {};
           "
           dark
@@ -26,9 +28,6 @@
           <span style="font-size: 12px" lowercase>Create new</span>
         </v-btn>
       </v-col>
-
-      <!-- Search Field -->
-      <!-- <v-spacer ></v-spacer> -->
       <v-col cols="12" sm="4" class="pa-1">
         <v-text-field
           fixed
@@ -101,6 +100,8 @@
                     isUpdateData = true;
                     dialog = !dialog;
                     editItem = item;
+                    selectedImageURL = null;
+                    croppedImage = null;
                   "
                   icon="mdi-pencil"
                   color="green lighten-2"
@@ -109,7 +110,7 @@
                   class="ma-1"
                   @click="
                     dialogDelete = !dialogDelete;
-                    deleteID = item.product_id;
+                    editItem = item;
                   "
                   icon="mdi-delete"
                   color="red lighten-1"
@@ -132,80 +133,140 @@
               <v-card-text>
                 <v-container>
                   <v-row class="mt-4">
-                    <v-col cols="12" sm="6" md="6">
-                      <v-text-field
-                        v-model="editItem.point"
-                        label="Point"
-                        hint="Enter point of help"
-                      ></v-text-field>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="6">
-                      <validation-provider
-                        v-slot="{ errors }"
-                        rules="required"
-                        name="App Name"
+                    <v-row>
+                      <v-col
+                        cols="6"
+                        sm="6"
+                        md="6"
+                        style="
+                          justify-content: center;
+                          display: grid;
+                          margin-bottom: 15px;
+                        "
                       >
-                        <v-text-field
-                          v-model="editItem.app_name"
-                          :error-messages="errors"
-                          label="App Name *"
-                          hint="Enter app name"
-                          required
-                        ></v-text-field>
-                      </validation-provider>
-                    </v-col>
-                    <v-col cols="12" sm="6" md="6">
-                      <validation-provider
-                        v-slot="{ errors }"
-                        rules="required"
-                        name="Title"
-                      >
-                        <v-text-field
-                          v-model="editItem.title"
-                          :error-messages="errors"
-                          required
-                          label="Title *"
-                          hint="Enter title of help"
-                        ></v-text-field>
-                      </validation-provider>
-                    </v-col>
+                        <cropper
+                          v-if="selectedImageURL !== null"
+                          class="cropper"
+                          :src="selectedImageURL"
+                          @change="cropperChange"
+                        ></cropper>
+                        <v-img
+                          v-else
+                          contain
+                          :src="editItem.app_icon_url"
+                          class="cropper"
+                        ></v-img>
+
+                        <v-btn
+                          class="primary"
+                          style="width: 100px"
+                          @click="onPickFile"
+                        >
+                          Pick Image
+                        </v-btn>
+                        <input
+                          type="file"
+                          style="display: none"
+                          ref="fileInput"
+                          accept="image/*"
+                          @change="onPickedFile"
+                        />
+                      </v-col>
+                      <v-col cols="6" sm="6" md="6">
+                        <v-col cols="12" sm="12" md="12">
+                          <validation-provider
+                            v-slot="{ errors }"
+                            rules="required"
+                            name="App Name"
+                          >
+                            <v-text-field
+                              v-model="editItem.app_name"
+                              :error-messages="errors"
+                              label="App Name *"
+                              hint="Enter app name"
+                              required
+                            ></v-text-field>
+                          </validation-provider>
+                        </v-col>
+                        <v-col cols="12" sm="12" md="12">
+                          <validation-provider
+                            v-slot="{ errors }"
+                            rules="required"
+                            name="Title"
+                          >
+                            <v-text-field
+                              v-model="editItem.app_title"
+                              :error-messages="errors"
+                              required
+                              label="Title *"
+                              hint="Enter title of the app"
+                            ></v-text-field>
+                          </validation-provider>
+                        </v-col>
+                      </v-col>
+                    </v-row>
+
                     <v-col cols="12" sm="12" md="12">
                       <validation-provider
                         v-slot="{ errors }"
                         rules="required"
-                        name="Description"
+                        name="App Description"
                       >
                         <v-textarea
-                          v-model="editItem.body"
+                          v-model="editItem.app_description"
                           :error-messages="errors"
                           required
                           auto-grow
                           rows="1"
-                          label="Description *"
-                          hint="Enter description of help"
+                          label="App Description *"
+                          hint="Enter description of the app"
                         ></v-textarea>
                       </validation-provider>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
-                      <v-text-field
-                        v-model="editItem.link_title"
-                        label="Link Title"
-                        hint="Enter link title of help"
-                      ></v-text-field>
+                      <validation-provider
+                        v-slot="{ errors }"
+                        rules="required"
+                        name="Link Title"
+                      >
+                        <v-text-field
+                          :error-messages="errors"
+                          required
+                          v-model="editItem.link_title"
+                          label="Link Title"
+                          hint="Enter link title of the app"
+                        ></v-text-field>
+                      </validation-provider>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
-                      <v-text-field
-                        v-model="editItem.link"
-                        label="Link"
-                        hint="Enter link of help"
-                      ></v-text-field>
+                      <validation-provider
+                        v-slot="{ errors }"
+                        rules="required"
+                        name="Link Icon"
+                      >
+                        <v-text-field
+                          :error-messages="errors"
+                          required
+                          v-model="editItem.link_icon"
+                          label="Link Icon"
+                          hint="Enter link icon of the app"
+                        ></v-text-field>
+                      </validation-provider>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
-                      <v-text-field
-                        v-model="editItem.link_icon"
-                        label="Link Icon"
-                        hint="Enter link icon of help"
-                      ></v-text-field>
+                      <validation-provider
+                        v-slot="{ errors }"
+                        rules="required"
+                        name="Link"
+                      >
+                        <v-text-field
+                          :error-messages="errors"
+                          required
+                          v-model="editItem.app_link"
+                          label="Link"
+                          hint="Enter link of the app"
+                        ></v-text-field>
+                      </validation-provider>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -270,7 +331,9 @@
 </template>
 
 <script>
-import {fireStore} from "@/firebaseConfig";
+import { fireStore, storage } from "@/firebaseConfig";
+import { Cropper } from "vue-advanced-cropper";
+import "vue-advanced-cropper/dist/style.css";
 //Validator Configurations
 import { v4 as uuidv4 } from "uuid";
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
@@ -321,6 +384,7 @@ export default {
     ActionButton,
     ValidationObserver,
     ValidationProvider,
+    Cropper,
   },
 
   created() {
@@ -343,13 +407,18 @@ export default {
       { text: "Actions", value: "u-actions", width: "190px" },
     ],
     dataRows: [],
-    //Form
+    ////Form
+    //Image
+    selectedImageURL: null,
+    isSelectNewImage: false,
+    selectedImage: null,
+    croppedImage: null,
+    //Other
     editItem: {},
     loadingBtn: false,
     isUpdateData: false,
     dialog: false,
     dialogDelete: false,
-    deleteID: null,
     //message
     message: null,
     isMsg: false,
@@ -361,7 +430,7 @@ export default {
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
           snapshot.docs.forEach((element) => {
-            this.dataRows.push({ id: element.id, ...element.data() });
+            this.dataRows.push({ ...element.data() });
             this.loading = false;
           });
         })
@@ -370,35 +439,43 @@ export default {
           this.alertMessage(e.message, "error");
         });
     },
-    insertData() {
+    async insertData() {
       try {
         this.loadingBtn = true;
         const id = uuidv4();
-        ourProductsRef
-          .doc(id)
-          .set({
-            product_id: id,
-            app_icon_url: this.editItem.app_icon_url,
-            app_name: this.editItem.app_name,
-            app_title: this.editItem.app_title,
-            app_description: this.editItem.app_description,
-            link_title: this.editItem.link_title ?? "",
-            app_link: this.editItem.app_link ?? "",
-            link_icon: this.editItem.link_icon ?? "",
-          })
-          .then(() => {
-            this.dialog = !this.dialog;
-            this.loadingBtn = !this.loadingBtn;
-            this.editItem = {};
-            this.alertMessage("Data inserted successfully.", "success");
-          })
-          .catch((e) => {
-            this.dialog = !this.dialog;
-            this.loadingBtn = !this.loadingBtn;
-            this.editItem = {};
-            this.alertMessage(e.message, "error");
-          });
+        if (this.isSelectNewImage) {
+          const value = await this.uploadImageToStorage(id);
+          ourProductsRef
+            .doc(id)
+            .set({
+              product_id: id,
+              app_icon_url: value,
+              app_name: this.editItem.app_name,
+              app_title: this.editItem.app_title,
+              app_description: this.editItem.app_description,
+              link_title: this.editItem.link_title ?? "",
+              app_link: this.editItem.app_link ?? "",
+              link_icon: this.editItem.link_icon ?? "",
+            })
+            .then(() => {
+              this.isSelectNewImage = false;
+              this.dialog = !this.dialog;
+              this.loadingBtn = !this.loadingBtn;
+              this.editItem = {};
+              this.alertMessage("Data inserted successfully.", "success");
+            })
+            .catch((e) => {
+              this.isSelectNewImage = false;
+              this.dialog = !this.dialog;
+              this.loadingBtn = !this.loadingBtn;
+              this.editItem = {};
+              this.alertMessage(e.message, "error");
+            });
+        } else {
+          this.alertMessage("Please select a app icon image.", "error");
+        }
       } catch (error) {
+        this.isSelectNewImage = false;
         this.dialog = !this.dialog;
         this.loadingBtn = !this.loadingBtn;
         this.editItem = {};
@@ -406,14 +483,24 @@ export default {
       }
     },
 
-    updateData() {
+    async updateData() {
       try {
         this.loadingBtn = true;
-
+        //Delete previous image from storage
+        var value;
+        //Upload new image to storage and get url
+        if (this.isSelectNewImage) {
+          // console.log("New");
+          await this.deleteImageFromStorage();
+          value = await this.uploadImageToStorage(this.editItem.product_id);
+        } else {
+          value = this.editItem.app_icon_url;
+          // console.log("Previous");
+        }
         ourProductsRef
           .doc(this.editItem.product_id)
           .update({
-            app_icon_url: this.editItem.app_icon_url,
+            app_icon_url: value,
             app_name: this.editItem.app_name,
             app_title: this.editItem.app_title,
             app_description: this.editItem.app_description,
@@ -422,6 +509,7 @@ export default {
             link_icon: this.editItem.link_icon ?? "",
           })
           .then(() => {
+            this.isSelectNewImage = false;
             this.dialog = !this.dialog;
             this.loadingBtn = !this.loadingBtn;
             this.isUpdateData = !this.isUpdateData;
@@ -429,6 +517,7 @@ export default {
             this.alertMessage("Data updated successfully.", "success");
           })
           .catch((e) => {
+            this.isSelectNewImage = false;
             this.dialog = !this.dialog;
             this.loadingBtn = !this.loadingBtn;
             this.isUpdateData = !this.isUpdateData;
@@ -436,6 +525,7 @@ export default {
             this.alertMessage(e.message, "error");
           });
       } catch (error) {
+        this.isSelectNewImage = false;
         this.dialog = !this.dialog;
         this.loadingBtn = !this.loadingBtn;
         this.isUpdateData = !this.isUpdateData;
@@ -443,33 +533,77 @@ export default {
         this.alertMessage(error.message, "error");
       }
     },
-    deleteData() {
+    async deleteData() {
       try {
         this.loadingBtn = true;
+        //Delete image from storage
+        await this.deleteImageFromStorage();
 
+        //Delete all the details of selected item
         ourProductsRef
-          .doc(this.deleteID)
+          .doc(this.editItem.product_id)
           .delete()
           .then(() => {
             this.dialogDelete = !this.dialogDelete;
             this.loadingBtn = !this.loadingBtn;
-            this.deleteID = null;
+            this.editItem = {};
             this.alertMessage("Data deleted successfully.", "success");
           })
           .catch((e) => {
             this.dialogDelete = !this.dialogDelete;
             this.loadingBtn = !this.loadingBtn;
-            this.deleteID = null;
+            this.editItem = {};
             this.alertMessage(e.message, "error");
           });
       } catch (error) {
         this.dialogDelete = !this.dialogDelete;
         this.loadingBtn = !this.loadingBtn;
-        this.deleteID = null;
+        this.editItem = {};
         this.alertMessage(error.message, "error");
       }
     },
-
+    onPickFile() {
+      this.$refs.fileInput.click();
+      this.isSelectNewImage = true;
+    },
+    onPickedFile(event) {
+      const file = event.target.files;
+      let fileName = file[0].name;
+      if (fileName.lastIndexOf(".") <= 0) {
+        return alert("Please select a valid file!");
+      }
+      const fileReader = new FileReader();
+      fileReader.addEventListener("load", () => {
+        this.selectedImageURL = fileReader.result;
+      });
+      fileReader.readAsDataURL(file[0]);
+      this.selectedImage = file[0];
+    },
+    cropperChange({ canvas }) {
+      this.croppedImage = canvas.toDataURL("image/*");
+    },
+    async uploadImageToStorage(id) {
+      const value = await storage
+        .ref("products_images/")
+        .child("product_" + id + "_" + this.selectedImage.name)
+        .putString(this.croppedImage, "data_url")
+        .then((value) => {
+          return value.ref.getDownloadURL();
+        });
+      return value;
+    },
+    async deleteImageFromStorage() {
+      try {
+        await storage
+          .refFromURL(this.editItem.app_icon_url)
+          .delete()
+          .catch((e) => {
+            this.alertMessage(e.message, "error");
+          });
+      } catch (error) {
+        this.alertMessage(error.message, "error");
+      }
+    },
     alertMessage(message, msgType) {
       this.isMsg = true;
       this.message = message;
@@ -526,5 +660,12 @@ export default {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.cropper {
+  /* aspect-ratio: 16/9; */
+  height: 100px;
+  width: 100px;
+  background: #ddd;
+  margin-bottom: 10px;
 }
 </style>

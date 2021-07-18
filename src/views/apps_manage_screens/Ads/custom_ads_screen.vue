@@ -241,7 +241,7 @@
                     <v-col cols="12" sm="6" md="6">
                       <cropper
                         v-if="selectedImageURL !== null"
-                        class="cropper"
+                        class="cropp"
                         :src="selectedImageURL"
                         @change="cropperChange"
                       ></cropper>
@@ -249,7 +249,7 @@
                         v-else
                         contain
                         :src="editItem.banner_image"
-                        class="cropper"
+                        class="cropp"
                       ></v-img>
                       <v-spacer></v-spacer>
                       <v-btn
@@ -403,11 +403,13 @@ export default {
       { text: "Actions", value: "u-actions", width: "190px" },
     ],
     dataRows: [],
-    //Form
+    ////Form
+    //Image
     selectedImageURL: null,
     isSelectNewImage: false,
     selectedImage: null,
     croppedImage: null,
+    //Other
     editItem: {},
     stDateDialog: false,
     endDateDialog: false,
@@ -505,6 +507,7 @@ export default {
             exp_date: this.editItem.exp_date,
           })
           .then(() => {
+            this.isSelectNewImage = false;
             this.dialog = !this.dialog;
             this.loadingBtn = !this.loadingBtn;
             this.isUpdateData = !this.isUpdateData;
@@ -512,6 +515,7 @@ export default {
             this.alertMessage("Data updated successfully.", "success");
           })
           .catch((e) => {
+            this.isSelectNewImage = false;
             this.dialog = !this.dialog;
             this.loadingBtn = !this.loadingBtn;
             this.isUpdateData = !this.isUpdateData;
@@ -519,6 +523,7 @@ export default {
             this.alertMessage(e.message, "error");
           });
       } catch (error) {
+        this.isSelectNewImage = false;
         this.dialog = !this.dialog;
         this.loadingBtn = !this.loadingBtn;
         this.isUpdateData = !this.isUpdateData;
@@ -539,26 +544,22 @@ export default {
           .then(() => {
             this.dialogDelete = !this.dialogDelete;
             this.loadingBtn = !this.loadingBtn;
-            this.deleteID = null;
             this.editItem = {};
             this.alertMessage("Data deleted successfully.", "success");
           })
           .catch((e) => {
             this.dialogDelete = !this.dialogDelete;
             this.loadingBtn = !this.loadingBtn;
-            this.deleteID = null;
             this.editItem = {};
             this.alertMessage(e.message, "error");
           });
       } catch (error) {
         this.dialogDelete = !this.dialogDelete;
         this.loadingBtn = !this.loadingBtn;
-        this.deleteID = null;
         this.editItem = {};
         this.alertMessage(error.message, "error");
       }
     },
-
     onPickFile() {
       this.$refs.fileInput.click();
       this.isSelectNewImage = true;
@@ -590,16 +591,16 @@ export default {
       return value;
     },
     async deleteImageFromStorage() {
-     try {
+      try {
         await storage
-        .refFromURL(this.editItem.banner_image)
-        .delete()
-        .catch((e) => {
-          this.alertMessage(e.message, "error");
-        });
-     } catch (error) {
-       this.alertMessage(error.message, "error");
-     }
+          .refFromURL(this.editItem.banner_image)
+          .delete()
+          .catch((e) => {
+            this.alertMessage(e.message, "error");
+          });
+      } catch (error) {
+        this.alertMessage(error.message, "error");
+      }
     },
     alertMessage(message, msgType) {
       this.isMsg = true;
@@ -652,10 +653,10 @@ export default {
 .ActionButton__container {
   text-align: center;
 }
-.cropper {
+.cropp {
   /* aspect-ratio: 16/9; */
-  height: auto;
-  width: 250px;
+  height: auto !important;
+  width: 250px !important;
   background: #ddd;
   margin-bottom: 10px;
 }
