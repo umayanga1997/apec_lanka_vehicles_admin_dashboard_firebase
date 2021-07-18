@@ -492,7 +492,7 @@ export default {
         if (this.isSelectNewImage) {
           // console.log("New");
           await this.deleteImageFromStorage();
-          value = await this.uploadImageToStorage(this.editItem.id);
+          value = await this.uploadImageToStorage(this.editItem.ad_id);
         } else {
           value = this.editItem.banner_image;
           // console.log("Previous");

@@ -356,7 +356,6 @@ export default {
     isUpdateData: false,
     dialog: false,
     dialogDelete: false,
-    deleteID: null,
     //message
     message: null,
     isMsg: false,
@@ -475,19 +474,19 @@ export default {
           .then(() => {
             this.dialogDelete = !this.dialogDelete;
             this.loadingBtn = !this.loadingBtn;
-            this.deleteID = null;
+            this.editItem = {};
             this.alertMessage("Data deleted successfully.", "success");
           })
           .catch((e) => {
             this.dialogDelete = !this.dialogDelete;
             this.loadingBtn = !this.loadingBtn;
-            this.deleteID = null;
+            this.editItem = {};
             this.alertMessage(e.message, "error");
           });
       } catch (error) {
         this.dialogDelete = !this.dialogDelete;
         this.loadingBtn = !this.loadingBtn;
-        this.deleteID = null;
+        this.editItem = {};
         this.alertMessage(error.message, "error");
       }
     },
