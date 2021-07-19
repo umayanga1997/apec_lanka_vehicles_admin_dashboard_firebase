@@ -12,6 +12,8 @@ import OurProducts from '@/views/apps_manage_screens/our_products_screen.vue';
 import OtherConfigs from '@/views/apps_manage_screens/other_config_screen.vue';
 import Locations from '@/views/find_screens/locations_screen.vue';
 import VehiclesTypes from '@/views/find_screens/vehicles_types_screen.vue';
+import AdminsAccounts from '@/views/Accounts/admins_accounts_screen.vue';
+import OwnersAccounts from '@/views/Accounts/owners_accounts_screen.vue';
 
 Vue.use(VueRouter)
 
@@ -21,59 +23,69 @@ const routes = [{
         component: Home
     },
     {
-        path: '/helps_',
+        path: '/app_manage/helps_',
         name: 'helps',
         component: Helps,
     },
     {
-        path: '/ads_conf_',
+        path: '/app_manage/ads_conf_',
         name: 'ads',
         component: Ads,
     },
     {
-        path: '/special_notes_',
+        path: '/app_manage/special_notes_',
         name: 'special_notes',
         component: SpecialNotes,
     },
     {
-        path: '/additional_packages_',
+        path: '/app_manage/additional_packages_',
         name: 'additional_packages',
         component: AdditionalPackages,
     },
     {
-        path: '/what_is_new_details_',
+        path: '/app_manage/what_is_new_details_',
         name: 'what_is_new_details',
         component: WhatIsNew,
     },
     {
-        path: '/instructions_',
+        path: '/app_manage/instructions_',
         name: 'instructions',
         component: Introductions,
     },
     {
-        path: '/about_us_details_',
+        path: '/app_manage/about_us_details_',
         name: 'about_us',
         component: AboutUs,
     },
     {
-        path: '/our_products_',
+        path: '/app_manage/our_products_',
         name: 'our_products',
         component: OurProducts,
     },
     {
-        path: '/other_config_',
+        path: '/app_manage/other_config_',
         name: 'other_config',
         component: OtherConfigs,
     },
     {
-        path: '/locations_',
+        path: '/find_options/locations_',
         name: 'locations',
         component: Locations,
     },
     {
-        path: '/vehicles_types_',
+        path: '/find_options/vehicles_types_',
         name: 'vehicles_types',
         component: VehiclesTypes,
+    },
+    {
+        path: '/accounts/admin_acc_',
+        name: 'admins_accounts',
+        component: AdminsAccounts,
+    },
+    {
+        path: '/accounts/owners_acc_',
+        name: 'owners_accounts',
+        component: OwnersAccounts,
     },
 
 ]

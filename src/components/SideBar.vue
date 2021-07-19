@@ -83,47 +83,47 @@ export default {
         subLinks: [
           {
             subTitle: "Ads",
-            suRoute: "/ads_conf_",
+            suRoute: "/app_manage/ads_conf_",
             active: false,
           },
           {
             subTitle: "Special Notes",
-            suRoute: "/special_notes_",
+            suRoute: "/app_manage/special_notes_",
             active: false,
           },
           {
             subTitle: "Additional Packages",
-            suRoute: "/additional_packages_",
+            suRoute: "/app_manage/additional_packages_",
             active: false,
           },
           {
             subTitle: "What is new details",
-            suRoute: "/what_is_new_details_",
+            suRoute: "/app_manage/what_is_new_details_",
             active: false,
           },
           {
             subTitle: "Helps",
-            suRoute: "/helps_",
+            suRoute: "/app_manage/helps_",
             active: false,
           },
           {
             subTitle: "Instructions",
-            suRoute: "/instructions_",
+            suRoute: "/app_manage/instructions_",
             active: false,
           },
           {
             subTitle: "About Us",
-            suRoute: "/about_us_details_",
+            suRoute: "/app_manage/about_us_details_",
             active: false,
           },
           {
             subTitle: "Our Products",
-            suRoute: "/our_products_",
+            suRoute: "/app_manage/our_products_",
             active: false,
           },
           {
             subTitle: "Other Configurations",
-            suRoute: "/other_config_",
+            suRoute: "/app_manage/other_config_",
             active: false,
           },
         ],
@@ -136,12 +136,12 @@ export default {
         subLinks: [
           {
             subTitle: "Locations",
-            suRoute: "/locations_",
+            suRoute: "/find_options/locations_",
             active: false,
           },
           {
             subTitle: "Vehicles Types",
-            suRoute: "/vehicles_types_",
+            suRoute: "/find_options/vehicles_types_",
             active: false,
           },
         ],
@@ -152,16 +152,17 @@ export default {
         active: false,
         route: "/#/",
         subLinks: [
+           {
+            subTitle: "Owners",
+            suRoute: "/accounts/owners_acc_",
+            active: false,
+          },
           {
             subTitle: "Admins",
-            suRoute: "/admin_acc_",
+            suRoute: "/accounts/admin_acc_",
             active: false,
           },
-          {
-            subTitle: "Owners",
-            suRoute: "/owners_acc_",
-            active: false,
-          },
+         
         ],
       },
       {
