@@ -5,15 +5,15 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
     state: {
-        screenName: "Welcome"
+        // welcomeTag: "Welcome"
     },
     getters: {
 
     },
     mutations: {
-        changeScreenName: (state, payload) => {
-            state.screenName = payload;
-        }
+        // setWelcomeTag: (state, payload) => {
+        //     state.welcomeTag = payload;
+        // }
     },
     actions: {},
     modules: {}

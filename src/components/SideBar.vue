@@ -1,9 +1,9 @@
 <template>
   <nav>
     <v-app-bar elevation="10" app dense dark fixed color="#1E1E1E">
-      <v-app-bar-nav-icon @click="isDrawerOpen=!isDrawerOpen" />
+      <v-app-bar-nav-icon @click="isDrawerOpen=!isDrawerOpen; setWelcomeTag('Welcome...!');" />
       <v-app-bar-title>
-        <span class="font_size">Welcome.!</span>
+        <span class="font_size">{{welcomeTag}}</span>
       </v-app-bar-title>
     </v-app-bar>
     <v-navigation-drawer
@@ -59,8 +59,9 @@
               route
               :to="subLink.suRoute"
               active-class="subLinkColor"
+              @click="setWelcomeTag(linkItem.title + ' \\ ' + subLink.subTitle)"
             >
-              <v-list-item-title>{{ subLink.subTitle }}</v-list-item-title>
+              <v-list-item-title >{{ subLink.subTitle }}</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-list-group>
@@ -72,6 +73,7 @@
 export default {
   name: "sidebar",
   data: () => ({
+    welcomeTag :"Welcome...!",
     isDrawerOpen: true,
     isDashBoard: true,
     links: [
@@ -185,7 +187,19 @@ export default {
       },
     ],
   }),
+  watch:{
+
+  },
+  // computed:{
+  //   welcomeTag(){
+  //     return this.$store.state.welcomeTag;
+  //   }
+  // },
   methods: {
+    setWelcomeTag(tag){
+      // this.$store.commit("setWelcomeTag", tag)
+      this.welcomeTag = tag;
+    },
     cleanSelect() {
       this.isDashBoard = true;
       this.links.forEach((link) => {

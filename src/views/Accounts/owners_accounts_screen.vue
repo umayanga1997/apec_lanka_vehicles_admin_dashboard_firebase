@@ -7,22 +7,21 @@
       :type="msgType"
       >{{ message }}</v-alert
     >
-      <!-- Search Field -->
-      <!-- <v-spacer ></v-spacer> -->
-      <v-col cols="12" sm="4" class="pa-1">
-        <v-text-field
-          fixed
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Search"
-          solo
-          dense
-          clearable
-          dark
-          hide-details
-        ></v-text-field>
-      </v-col>
-    
+    <!-- Search Field -->
+    <!-- <v-spacer ></v-spacer> -->
+    <v-col cols="12" sm="4" class="pa-1">
+      <v-text-field
+        fixed
+        v-model="search"
+        append-icon="mdi-magnify"
+        label="Search"
+        solo
+        dense
+        clearable
+        dark
+        hide-details
+      ></v-text-field>
+    </v-col>
 
     <!-- Data Table -->
     <v-card class="mt-5 mb-5">
@@ -46,12 +45,22 @@
             <td class="d-block d-sm-table-cell">{{ item.user_name }}</td>
             <td class="d-block d-sm-table-cell">{{ item.phone_no }}</td>
             <td class="d-block d-sm-table-cell">{{ item.user_qr_id }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.number_of_vehicles }}</td>
-            <td class="d-block d-sm-table-cell truncate">{{ item.user_type }}</td>
-            <td class="d-block d-sm-table-cell truncate">{{ item.account_type }}</td>
-            <td class="d-block d-sm-table-cell truncate">{{ item.accActive }}</td>
-            <td class="d-block d-sm-table-cell truncate">{{ item.reg_date }}</td>
-            
+            <td class="d-block d-sm-table-cell">
+              {{ item.number_of_vehicles }}
+            </td>
+            <td class="d-block d-sm-table-cell truncate">
+              {{ item.user_type }}
+            </td>
+            <td class="d-block d-sm-table-cell truncate">
+              {{ item.account_type }}
+            </td>
+            <td class="d-block d-sm-table-cell truncate">
+              {{ item.accActive }}
+            </td>
+            <td class="d-block d-sm-table-cell truncate">
+              {{ item.reg_date }}
+            </td>
+
             <td class="d-block d-sm-table-cell">
               <v-container fluid class="ActionButton__container pa-1">
                 <ActionButton
@@ -106,21 +115,21 @@
                 <v-container>
                   <v-row class="mt-4">
                     <v-col cols="12" md="12" sm="12">
-                         <validation-provider
-                            v-slot="{ errors }"
-                            rules="required"
-                            name="Is Active Account"
-                          >
-            <v-select
-              v-model="editItem.accActive"
-              :items="items"
-              :error-messages="errors"
-              label="Is Active Account"
-              required
-            >
-            </v-select>
-                         </validation-provider>
-          </v-col>
+                      <validation-provider
+                        v-slot="{ errors }"
+                        rules="required"
+                        name="Is Active Account"
+                      >
+                        <v-select
+                          v-model="editItem.accActive"
+                          :items="items"
+                          :error-messages="errors"
+                          label="Is Active Account"
+                          required
+                        >
+                        </v-select>
+                      </validation-provider>
+                    </v-col>
                   </v-row>
                 </v-container>
                 <small>*indicates required field</small>
@@ -184,7 +193,7 @@
 </template>
 
 <script>
-import {fireStore} from "@/firebaseConfig";
+import { fireStore } from "@/firebaseConfig";
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
 import {
@@ -242,10 +251,15 @@ export default {
     // Table
     loading: true,
     headers: [
-      { text: "User Name", value: "user_name", align: "center", width:"150px" },
+      {
+        text: "User Name",
+        value: "user_name",
+        align: "center",
+        width: "150px",
+      },
       { text: "Phone No", value: "phone_no" },
       { text: "User QR", value: "user_qr_id" },
-      { text: "Number of Vehicles", value: "number_of_vehicles"},
+      { text: "Number of Vehicles", value: "number_of_vehicles" },
       { text: "User Type", value: "user_type" },
       { text: "Account Type", value: "account_type" },
       { text: "Is Account Active", value: "accActive" },
@@ -255,7 +269,7 @@ export default {
     ],
     dataRows: [],
     //Form
-    items :[true, false],
+    items: [true, false],
     editItem: {},
     loadingBtn: false,
     isUpdateData: false,
@@ -269,7 +283,8 @@ export default {
   }),
   methods: {
     getHelpDetails() {
-      ownersAccountsRef.onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
+      ownersAccountsRef
+        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
           snapshot.docs.forEach((element) => {
             this.dataRows.push({ ...element.data() });
@@ -423,10 +438,10 @@ export default {
 .ActionButton__container {
   text-align: center;
 }
-.truncate {
+/* .truncate {
   max-width: 300px !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
+} */
 </style>
