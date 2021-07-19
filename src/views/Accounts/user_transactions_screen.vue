@@ -72,10 +72,14 @@ export default {
   created() {
     this.getHelpDetails();
   },
+  
   computed: {
     id() {
       return this.$route.params.id;
     },
+   userId(){
+     return this.$route.params.user_id;
+   }
   },
   data: () => ({
     //Other
@@ -99,7 +103,7 @@ export default {
   methods: {
     getHelpDetails() {
       transactionRef
-        .doc(this.id)
+        .doc(this.userId)
         .collection("transactions")
         .orderBy("dateForOrderBy")
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {

@@ -80,7 +80,7 @@
                 <ActionButton
                   class="ma-1"
                   @click="
-                    route(`/accounts/owners_acc_/vehicles/${item.user_id}`)
+                    route('user_vehicles',item.user_qr_id, item.user_id)
                   "
                   icon="mdi-taxi"
                   color="green lighten-1"
@@ -88,7 +88,7 @@
                 <ActionButton
                   class="ma-1"
                   @click="
-                    route(`/accounts/owners_acc_/transactions/${item.user_id}`)
+                    route('user_transactions',item.user_qr_id, item.user_id)
                   "
                   icon="mdi-cash-multiple"
                   color="green lighten-1"
@@ -326,8 +326,8 @@ export default {
       }
     },
     
-    route(path) {
-      this.$router.push(path);
+    route(name, qr, id) {
+      this.$router.push({name:name,params:{id:qr, user_id: id }});
     },
     alertMessage(message, msgType) {
       this.isMsg = true;
