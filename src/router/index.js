@@ -14,6 +14,8 @@ import Locations from '@/views/find_screens/locations_screen.vue';
 import VehiclesTypes from '@/views/find_screens/vehicles_types_screen.vue';
 import AdminsAccounts from '@/views/Accounts/admins_accounts_screen.vue';
 import OwnersAccounts from '@/views/Accounts/owners_accounts_screen.vue';
+import UserTransactions from '@/views/Accounts/user_transactions_screen.vue';
+import UserVehicles from '@/views/Accounts/user_vehicles_screen.vue';
 
 Vue.use(VueRouter)
 
@@ -86,6 +88,16 @@ const routes = [{
         path: '/accounts/owners_acc_',
         name: 'owners_accounts',
         component: OwnersAccounts,
+    },
+    {
+        path: '/accounts/owners_acc_/vehicles/:id',
+        name: 'user_vehicles',
+        component: UserVehicles,
+    },
+    {
+        path: '/accounts/owners_acc_/transactions/:id',
+        name: 'user_transactions',
+        component: UserTransactions,
     },
 
 ]

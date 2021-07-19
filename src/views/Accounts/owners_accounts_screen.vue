@@ -26,7 +26,7 @@
     <!-- Data Table -->
     <v-card class="mt-5 mb-5">
       <v-card-title>
-        <span>Owner's Details</span>
+        <span>Owners Details</span>
       </v-card-title>
 
       <v-data-table
@@ -79,21 +79,14 @@
               <v-container fluid class="ActionButton__container pa-1">
                 <ActionButton
                   class="ma-1"
-                  @click="
-                    isUpdateData = true;
-                    dialog = !dialog;
-                    editItem = item;
-                  "
-                  icon="mdi-cash-multiple"
+                  @click="route(`/accounts/owners_acc_/vehicles/${item.user_qr_id}`)"
+                  icon="mdi-taxi"
                   color="green lighten-1"
                 />
-                <ActionButton
+                 <ActionButton
                   class="ma-1"
-                  @click="
-                    dialogDelete = !dialogDelete;
-                    deleteID = item.id;
-                  "
-                  icon="mdi-taxi"
+                  @click="route(`/accounts/owners_acc_/transactions/${item.user_qr_id}`)"
+                  icon="mdi-cash-multiple"
                   color="green lighten-1"
                 />
               </v-container>
@@ -283,53 +276,19 @@ export default {
   }),
   methods: {
     getHelpDetails() {
-      ownersAccountsRef
+      ownersAccountsRef.where('user_type', "==", "owner")
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
-          snapshot.docs.forEach((element) => {
-            this.dataRows.push({ ...element.data() });
-            this.loading = false;
-          });
+          for (const key in snapshot.docs) {
+              this.dataRows.push({ ...snapshot.docs[key].data() });
+          }
+          this.loading = false;
         })
         .catch((e) => {
           this.loading = false;
           this.alertMessage(e.message, "error");
         });
     },
-    // insertData() {
-    //   try {
-    //     this.loadingBtn = true;
-
-    //     ownersAccountsRef
-    //       .add({
-    //         point: parseInt(this.editItem.point),
-    //         app_name: this.editItem.app_name,
-    //         title: this.editItem.title,
-    //         body: this.editItem.body,
-    //         link_title: this.editItem.link_title ?? "",
-    //         link: this.editItem.link ?? "",
-    //         link_icon: this.editItem.link_icon ?? "",
-    //       })
-    //       .then(() => {
-    //         this.dialog = !this.dialog;
-    //         this.loadingBtn = !this.loadingBtn;
-    //         this.editItem = {};
-    //         this.alertMessage("Data inserted successfully.", "success");
-    //       })
-    //       .catch((e) => {
-    //         this.dialog = !this.dialog;
-    //         this.loadingBtn = !this.loadingBtn;
-    //         this.editItem = {};
-    //         this.alertMessage(e.message, "error");
-    //       });
-    //   } catch (error) {
-    //     this.dialog = !this.dialog;
-    //     this.loadingBtn = !this.loadingBtn;
-    //     this.editItem = {};
-    //     this.alertMessage(error.message, "error");
-    //   }
-    // },
-
     updateData() {
       try {
         this.loadingBtn = true;
@@ -387,6 +346,10 @@ export default {
     //     this.alertMessage(error.message, "error");
     //   }
     // },
+    route(path){
+      this.$router.push(path);
+      // console.log(path)
+    },
     alertMessage(message, msgType) {
       this.isMsg = true;
       this.message = message;
