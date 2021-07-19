@@ -1,9 +1,9 @@
 <template>
   <nav>
     <v-app-bar elevation="10" app dense dark fixed color="#1E1E1E">
-      <v-app-bar-nav-icon @click="isDrawerOpen=!isDrawerOpen; setWelcomeTag('Welcome...!');" />
+      <v-app-bar-nav-icon @click="isDrawerOpen=!isDrawerOpen" />
       <v-app-bar-title>
-        <span class="font_size">{{welcomeTag}}</span>
+        <span class="font_size welcomeTag">{{welcomeTag}}</span>
       </v-app-bar-title>
     </v-app-bar>
     <v-navigation-drawer
@@ -209,6 +209,7 @@ export default {
           return false;
         }
       });
+      this.setWelcomeTag('Welcome...!');
       this.$router.push({ name: "Home" });
     },
   },
@@ -230,5 +231,17 @@ export default {
 }
 .v-list-group__header__prepend-icon{
   margin-right: 10px !important
+}
+.welcomeTag {
+  /* margin-bottom: 2px; */
+  color: #46f9ff;
+  /* background-color: rgb(0, 105, 100); */
+  /* color: rgb(254, 254, 255); */
+  /* border-bottom-left-radius: 4px; */
+  /* border-bottom-right-radius: 4px; */
+  font-size: 18px;
+  font-weight: 500;
+  padding: 5px;
+  justify-content: center;
 }
 </style>
