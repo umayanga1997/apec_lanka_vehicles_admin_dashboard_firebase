@@ -79,13 +79,17 @@
               <v-container fluid class="ActionButton__container pa-1">
                 <ActionButton
                   class="ma-1"
-                  @click="route(`/accounts/owners_acc_/vehicles/${item.user_qr_id}`)"
+                  @click="
+                    route(`/accounts/owners_acc_/vehicles/${item.user_id}`)
+                  "
                   icon="mdi-taxi"
                   color="green lighten-1"
                 />
-                 <ActionButton
+                <ActionButton
                   class="ma-1"
-                  @click="route(`/accounts/owners_acc_/transactions/${item.user_qr_id}`)"
+                  @click="
+                    route(`/accounts/owners_acc_/transactions/${item.user_id}`)
+                  "
                   icon="mdi-cash-multiple"
                   color="green lighten-1"
                 />
@@ -276,11 +280,12 @@ export default {
   }),
   methods: {
     getHelpDetails() {
-      ownersAccountsRef.where('user_type', "==", "owner")
+      ownersAccountsRef
+        .where("user_type", "==", "owner")
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
           for (const key in snapshot.docs) {
-              this.dataRows.push({ ...snapshot.docs[key].data() });
+            this.dataRows.push({ ...snapshot.docs[key].data() });
           }
           this.loading = false;
         })
@@ -320,35 +325,9 @@ export default {
         this.alertMessage(error.message, "error");
       }
     },
-    // deleteData() {
-    //   try {
-    //     this.loadingBtn = true;
-
-    //     ownersAccountsRef
-    //       .doc(this.deleteID)
-    //       .delete()
-    //       .then(() => {
-    //         this.dialogDelete = !this.dialogDelete;
-    //         this.loadingBtn = !this.loadingBtn;
-    //         this.deleteID = null;
-    //         this.alertMessage("Data deleted successfully.", "success");
-    //       })
-    //       .catch((e) => {
-    //         this.dialogDelete = !this.dialogDelete;
-    //         this.loadingBtn = !this.loadingBtn;
-    //         this.deleteID = null;
-    //         this.alertMessage(e.message, "error");
-    //       });
-    //   } catch (error) {
-    //     this.dialogDelete = !this.dialogDelete;
-    //     this.loadingBtn = !this.loadingBtn;
-    //     this.deleteID = null;
-    //     this.alertMessage(error.message, "error");
-    //   }
-    // },
-    route(path){
+    
+    route(path) {
       this.$router.push(path);
-      // console.log(path)
     },
     alertMessage(message, msgType) {
       this.isMsg = true;
@@ -401,10 +380,4 @@ export default {
 .ActionButton__container {
   text-align: center;
 }
-/* .truncate {
-  max-width: 300px !important;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-} */
 </style>

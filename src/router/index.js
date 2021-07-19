@@ -93,11 +93,13 @@ const routes = [{
         path: '/accounts/owners_acc_/vehicles/:id',
         name: 'user_vehicles',
         component: UserVehicles,
+        // props: true
     },
     {
         path: '/accounts/owners_acc_/transactions/:id',
         name: 'user_transactions',
         component: UserTransactions,
+        // props: true
     },
 
 ]
