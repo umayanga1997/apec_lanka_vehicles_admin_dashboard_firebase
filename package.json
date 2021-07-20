@@ -23,6 +23,7 @@
         "firebase": "^8.7.1",
         "image-compressor": "^2.0.3",
         "material-design-icons-iconfont": "^6.1.0",
+        "moment": "^2.29.1",
         "plist": "^3.0.2",
         "register-service-worker": "^1.7.2",
         "smart-buffer": "^4.1.0",

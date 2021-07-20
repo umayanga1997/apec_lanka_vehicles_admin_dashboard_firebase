@@ -260,7 +260,7 @@ export default {
       { text: "User Type", value: "user_type" },
       { text: "Account Type", value: "account_type" },
       { text: "Is Account Active", value: "accActive" },
-      { text: "Reg.Date", value: "u-reg_date" },
+      { text: "Reg.Date", value: "reg_date" },
       { text: "User Actions", value: "u-actions", width: "190px" },
       { text: "User Activity", value: "o-actions", width: "190px" },
     ],

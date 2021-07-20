@@ -67,11 +67,11 @@
           <tr>
             <td class="d-block d-sm-table-cell">{{ item.user_name }}</td>
             <td class="d-block d-sm-table-cell">{{ item.phone_no }}</td>
-            
+
             <td class="d-block d-sm-table-cell truncate">
               {{ item.user_type }}
             </td>
-            
+
             <td class="d-block d-sm-table-cell truncate">
               {{ item.accActive }}
             </td>
@@ -91,9 +91,17 @@
                   icon="mdi-pencil"
                   color="green lighten-2"
                 />
+                <ActionButton
+                  class="ma-1"
+                  @click="
+                    dialogDelete = !dialogDelete;
+                    deleteID = item.user_id;
+                  "
+                  icon="mdi-delete"
+                  color="red lighten-1"
+                />
               </v-container>
             </td>
-            
           </tr>
         </template>
       </v-data-table>
@@ -108,7 +116,7 @@
                 <span class="headline">Admin Details</span>
               </v-card-title>
               <v-card-text>
-                <v-container>
+                <v-container v-if="isUpdateData === true">
                   <v-row class="mt-4">
                     <v-col cols="12" md="12" sm="12">
                       <validation-provider
@@ -124,6 +132,40 @@
                           required
                         >
                         </v-select>
+                      </validation-provider>
+                    </v-col>
+                  </v-row>
+                </v-container>
+                <v-container v-else>
+                  <v-row class="mt-4">
+                    <v-col cols="12" sm="12" md="12">
+                      <validation-provider
+                        v-slot="{ errors }"
+                        rules="required"
+                        name="User Name"
+                      >
+                        <v-text-field
+                          v-model="editItem.user_name"
+                          :error-messages="errors"
+                          label="User name *"
+                          hint="Enter user name"
+                          required
+                        ></v-text-field>
+                      </validation-provider>
+                    </v-col>
+                    <v-col cols="12" sm="12" md="12">
+                      <validation-provider
+                        v-slot="{ errors }"
+                        rules="required"
+                        name="Mobile No"
+                      >
+                        <v-text-field
+                          v-model="editItem.phone_no"
+                          :error-messages="errors"
+                          label="Mobile No *"
+                          hint="Enter mobile No"
+                          required
+                        ></v-text-field>
                       </validation-provider>
                     </v-col>
                   </v-row>
@@ -158,6 +200,7 @@
         </v-dialog>
       </v-row>
     </template>
+
     <template>
       <v-row justify="center">
         <v-dialog v-model="dialogDelete" max-width="290">
@@ -190,6 +233,8 @@
 
 <script>
 import { fireStore } from "@/firebaseConfig";
+import moment from "moment";
+import { v4 as uuidv4 } from "uuid";
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
 import {
@@ -256,10 +301,11 @@ export default {
       { text: "Phone No", value: "phone_no" },
       { text: "User Type", value: "user_type" },
       { text: "Is Account Active", value: "accActive" },
-      { text: "Reg.Date", value: "u-reg_date" },
+      { text: "Reg.Date", value: "reg_date" },
       { text: "User Actions", value: "u-actions", width: "190px" },
     ],
     dataRows: [],
+    checkItemList: [],
     //Form
     items: [true, false],
     editItem: {},
@@ -275,11 +321,13 @@ export default {
   }),
   methods: {
     getHelpDetails() {
-      adminsAccountsRef.where('user_type', "==", "admin")
+      adminsAccountsRef
+        .where("user_type", "==", "admin")
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
           for (const key in snapshot.docs) {
-              this.dataRows.push({ ...snapshot.docs[key].data() });
+            this.dataRows.push({ ...snapshot.docs[key].data() });
+            this.checkItemList.push({ ...snapshot.docs[key].data() });
           }
           this.loading = false;
         })
@@ -288,44 +336,57 @@ export default {
           this.alertMessage(e.message, "error");
         });
     },
-    // insertData() {
-    //   try {
-    //     this.loadingBtn = true;
-
-    //     adminsAccountsRef
-    //       .add({
-    //         point: parseInt(this.editItem.point),
-    //         app_name: this.editItem.app_name,
-    //         title: this.editItem.title,
-    //         body: this.editItem.body,
-    //         link_title: this.editItem.link_title ?? "",
-    //         link: this.editItem.link ?? "",
-    //         link_icon: this.editItem.link_icon ?? "",
-    //       })
-    //       .then(() => {
-    //         this.dialog = !this.dialog;
-    //         this.loadingBtn = !this.loadingBtn;
-    //         this.editItem = {};
-    //         this.alertMessage("Data inserted successfully.", "success");
-    //       })
-    //       .catch((e) => {
-    //         this.dialog = !this.dialog;
-    //         this.loadingBtn = !this.loadingBtn;
-    //         this.editItem = {};
-    //         this.alertMessage(e.message, "error");
-    //       });
-    //   } catch (error) {
-    //     this.dialog = !this.dialog;
-    //     this.loadingBtn = !this.loadingBtn;
-    //     this.editItem = {};
-    //     this.alertMessage(error.message, "error");
-    //   }
-    // },
+    insertData() {
+      try {
+        this.loadingBtn = true;
+        let check = this.checkItemList.filter(
+          (item) => item.phone_no === this.editItem.phone_no
+        );
+        if (check.length >= 1) {
+          this.loadingBtn = !this.loadingBtn;
+          this.editItem.phone_no = null;
+          this.alertMessage(
+            "This mobile no is already exist. Please try another one.",
+            "error"
+          );
+        } else {
+          const id = uuidv4();
+          var dateTiem = moment(new Date()).format("YYYY-MM-DD h:mm:ss");
+          console.log(this.editItem.user_name);
+          adminsAccountsRef
+            .doc(id)
+            .set({
+              user_id: id,
+              user_name: this.editItem.user_name,
+              phone_no: this.editItem.phone_no,
+              user_type: "admin",
+              accActive: true,
+              reg_date: dateTiem, //YYYY-MM-DD h:mm:ss
+            })
+            .then(() => {
+              this.dialog = !this.dialog;
+              this.loadingBtn = !this.loadingBtn;
+              this.editItem = {};
+              this.alertMessage("Data inserted successfully.", "success");
+            })
+            .catch((e) => {
+              this.dialog = !this.dialog;
+              this.loadingBtn = !this.loadingBtn;
+              this.editItem = {};
+              this.alertMessage(e.message, "error");
+            });
+        }
+      } catch (error) {
+        this.dialog = !this.dialog;
+        this.loadingBtn = !this.loadingBtn;
+        // this.editItem = {};
+        this.alertMessage(error.message, "error");
+      }
+    },
 
     updateData() {
       try {
         this.loadingBtn = true;
-
         adminsAccountsRef
           .doc(this.editItem.user_id)
           .update({
@@ -353,32 +414,32 @@ export default {
         this.alertMessage(error.message, "error");
       }
     },
-    // deleteData() {
-    //   try {
-    //     this.loadingBtn = true;
+    deleteData() {
+      try {
+        this.loadingBtn = true;
 
-    //     adminsAccountsRef
-    //       .doc(this.deleteID)
-    //       .delete()
-    //       .then(() => {
-    //         this.dialogDelete = !this.dialogDelete;
-    //         this.loadingBtn = !this.loadingBtn;
-    //         this.deleteID = null;
-    //         this.alertMessage("Data deleted successfully.", "success");
-    //       })
-    //       .catch((e) => {
-    //         this.dialogDelete = !this.dialogDelete;
-    //         this.loadingBtn = !this.loadingBtn;
-    //         this.deleteID = null;
-    //         this.alertMessage(e.message, "error");
-    //       });
-    //   } catch (error) {
-    //     this.dialogDelete = !this.dialogDelete;
-    //     this.loadingBtn = !this.loadingBtn;
-    //     this.deleteID = null;
-    //     this.alertMessage(error.message, "error");
-    //   }
-    // },
+        adminsAccountsRef
+          .doc(this.deleteID)
+          .delete()
+          .then(() => {
+            this.dialogDelete = !this.dialogDelete;
+            this.loadingBtn = !this.loadingBtn;
+            this.deleteID = null;
+            this.alertMessage("Data deleted successfully.", "success");
+          })
+          .catch((e) => {
+            this.dialogDelete = !this.dialogDelete;
+            this.loadingBtn = !this.loadingBtn;
+            this.deleteID = null;
+            this.alertMessage(e.message, "error");
+          });
+      } catch (error) {
+        this.dialogDelete = !this.dialogDelete;
+        this.loadingBtn = !this.loadingBtn;
+        this.deleteID = null;
+        this.alertMessage(error.message, "error");
+      }
+    },
     alertMessage(message, msgType) {
       this.isMsg = true;
       this.message = message;

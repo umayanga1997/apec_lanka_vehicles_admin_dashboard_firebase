@@ -10,24 +10,7 @@
     <!-- Search Field -->
     <!-- <v-spacer ></v-spacer> -->
     <v-row no-gutters class="mt-2 justify-center">
-      <!-- Bottom sheet Toggle ActionButton -->
-      <v-col cols="12" sm="4" class="pa-1 content-center">
-        <v-btn
-          class="mx-2"
-          @click="
-            dialog = !dialog;
-            isUpdateData = false;
-            editItem = {};
-          "
-          dark
-          elevation="10"
-          color="primary"
-        >
-          <v-icon dark left>mdi-plus</v-icon>
-
-          <span style="font-size: 12px" lowercase>Create new</span>
-        </v-btn>
-      </v-col>
+      
 
       <!-- Search Field -->
       <!-- <v-spacer ></v-spacer> -->
@@ -49,7 +32,7 @@
     <!-- Data Table -->
     <v-card class="mt-5 mb-5">
       <v-card-title>
-        <span>Admins Details</span>
+        <span>Vehicles Details</span>
       </v-card-title>
 
       <v-data-table
@@ -66,19 +49,18 @@
         <template v-slot:item="{ item }">
           <tr>
             <td class="d-block d-sm-table-cell">{{ item.user_name }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.user_qr_id }}</td>
             <td class="d-block d-sm-table-cell">{{ item.phone_no }}</td>
-            
-            <td class="d-block d-sm-table-cell truncate">
-              {{ item.user_type }}
-            </td>
-            
-            <td class="d-block d-sm-table-cell truncate">
-              {{ item.accActive }}
-            </td>
-            <td class="d-block d-sm-table-cell truncate">
-              {{ item.reg_date }}
-            </td>
-
+            <td class="d-block d-sm-table-cell">{{ item.acc_status_active }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.v_name }}</td>
+            <td class="d-block d-sm-table-cell truncate">{{ item.v_description }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.v_type_name }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.v_no_letter }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.v_no_number }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.v_status }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.exp_date }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.isExpired }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.package }}</td>
             <td class="d-block d-sm-table-cell">
               <v-container fluid class="ActionButton__container pa-1">
                 <ActionButton
@@ -91,9 +73,13 @@
                   icon="mdi-pencil"
                   color="green lighten-2"
                 />
+                <ActionButton
+                  class="ma-1"
+                  icon="mdi-archive"
+                  color="green lighten-2"
+                />
               </v-container>
             </td>
-            
           </tr>
         </template>
       </v-data-table>
@@ -105,7 +91,7 @@
           <ValidationObserver ref="observer" v-slot="{ invalid }">
             <v-card>
               <v-card-title fixed>
-                <span class="headline">Admin Details</span>
+                <span class="headline">Vehicle Details</span>
               </v-card-title>
               <v-card-text>
                 <v-container>
@@ -114,13 +100,29 @@
                       <validation-provider
                         v-slot="{ errors }"
                         rules="required"
-                        name="Is Active Account"
+                        name="Is Account Active"
                       >
                         <v-select
-                          v-model="editItem.accActive"
+                          v-model="editItem.acc_status_active"
                           :items="items"
                           :error-messages="errors"
-                          label="Is Active Account"
+                          label="Is Account Active"
+                          required
+                        >
+                        </v-select>
+                      </validation-provider>
+                    </v-col>
+                    <v-col cols="12" md="12" sm="12">
+                      <validation-provider
+                        v-slot="{ errors }"
+                        rules="required"
+                        name="Vehicle Status Active"
+                      >
+                        <v-select
+                          v-model="editItem.v_status"
+                          :items="items"
+                          :error-messages="errors"
+                          label="Vehicle Status Active"
                           required
                         >
                         </v-select>
@@ -227,7 +229,7 @@ extend("email", {
   message: "Email must be valid",
 });
 
-const adminsAccountsRef = fireStore.collection("users");
+const vehiclesRef = fireStore.collection("users");
 
 export default {
   name: "user_vehicles",
@@ -240,7 +242,14 @@ export default {
   created() {
     this.getHelpDetails();
   },
-
+ computed: {
+    id() {
+      return this.$route.params.id;
+    },
+    userId(){
+      return this.$route.params.user_id;
+    }
+  },
   data: () => ({
     //Other
     search: "",
@@ -253,10 +262,18 @@ export default {
         align: "center",
         width: "150px",
       },
+      { text: "User QR", value: "user_qr_id" },
       { text: "Phone No", value: "phone_no" },
-      { text: "User Type", value: "user_type" },
-      { text: "Is Account Active", value: "accActive" },
-      { text: "Reg.Date", value: "u-reg_date" },
+      { text: "Is Account Active", value: "acc_status_active" },
+      { text: "Vehicle Name", value: "v_name" },
+      { text: "Vehicle Description", value: "v_description" },
+      { text: "Vehicle Type", value: "v_type_name" },
+      { text: "V.N Letter", value: "v_no_letter" },
+      { text: "V.N Number", value: "v_no_number" },
+      { text: "V.Status Active", value: "v_status" },
+      { text: "Exp Date", value: "exp_date" },
+      { text: "Is Expire", value: "isExpired" },
+      { text: "Package", value: "package" },
       { text: "User Actions", value: "u-actions", width: "190px" },
     ],
     dataRows: [],
@@ -275,7 +292,10 @@ export default {
   }),
   methods: {
     getHelpDetails() {
-      adminsAccountsRef.where('user_type', "==", "admin")
+      vehiclesRef
+        .doc(this.userId)
+        .collection("vehicles")
+        .orderBy("v_id")
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
           for (const key in snapshot.docs) {
@@ -292,7 +312,7 @@ export default {
     //   try {
     //     this.loadingBtn = true;
 
-    //     adminsAccountsRef
+    //     vehiclesRef
     //       .add({
     //         point: parseInt(this.editItem.point),
     //         app_name: this.editItem.app_name,
@@ -325,11 +345,12 @@ export default {
     updateData() {
       try {
         this.loadingBtn = true;
-
-        adminsAccountsRef
-          .doc(this.editItem.user_id)
+        vehiclesRef.doc(this.userId)
+        .collection("vehicles")
+          .doc(this.editItem.v_id)
           .update({
-            accActive: this.editItem.accActive,
+            acc_status_active: this.editItem.acc_status_active,
+            v_status: this.editItem.v_status,
           })
           .then(() => {
             this.dialog = !this.dialog;
@@ -357,7 +378,7 @@ export default {
     //   try {
     //     this.loadingBtn = true;
 
-    //     adminsAccountsRef
+    //     vehiclesRef
     //       .doc(this.deleteID)
     //       .delete()
     //       .then(() => {
@@ -430,10 +451,10 @@ export default {
 .ActionButton__container {
   text-align: center;
 }
-/* .truncate {
+.truncate {
   max-width: 300px !important;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-} */
+}
 </style>

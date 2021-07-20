@@ -110,11 +110,19 @@
                 <v-container>
                   <v-row class="mt-4">
                     <v-col cols="12" sm="6" md="6">
-                      <v-text-field
-                        v-model="editItem.point"
-                        label="Point"
-                        hint="Enter point of help"
-                      ></v-text-field>
+                      <validation-provider
+                        v-slot="{ errors }"
+                        rules="required"
+                        name="Point"
+                      >
+                        <v-text-field
+                          v-model="editItem.point"
+                          label="Point"
+                          hint="Enter point of help"
+                          :error-messages="errors"
+                          required
+                        ></v-text-field>
+                      </validation-provider>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
                       <validation-provider
@@ -279,7 +287,7 @@
 </template>
 
 <script>
-import {fireStore} from "@/firebaseConfig";
+import { fireStore } from "@/firebaseConfig";
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
 import {
