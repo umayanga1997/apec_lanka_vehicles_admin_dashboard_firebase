@@ -1,7 +1,7 @@
 <template>
   <v-row justify="center">
     <v-dialog
-    dark
+      dark
       v-model="dialog"
       fullscreen
       hide-overlay
@@ -18,7 +18,7 @@
           <!-- <v-btn icon dark @click="dialog = false">
             <v-icon>mdi-close</v-icon>
           </v-btn> -->
-          <v-toolbar-title>'{{data.v_name}}' Vehicle Details</v-toolbar-title>
+          <v-toolbar-title>'{{ data.v_name }}' Vehicle Details</v-toolbar-title>
           <v-spacer></v-spacer>
           <v-btn icon dark @click="dialog = false">
             <v-icon>mdi-close</v-icon>
@@ -40,10 +40,10 @@
                 </template>
               </v-list-item-content>
             </v-col>
-          <v-col cols="12" sm="12" md="8" lg="8" class="flexible">
+            <v-col cols="12" sm="12" md="8" lg="8" class="flexible">
               <v-list-item-content>
                 <v-list-item-title>Gallery Images</v-list-item-title>
-                
+
                 <template>
                   <div class="flexible">
                     <v-img
@@ -62,177 +62,104 @@
         <v-divider></v-divider>
         <v-row>
           <v-col cols="12" sm="12" md="4">
-            <v-list-item>
-                <v-list-item-content>
-                <v-list-item-title>Owner Name</v-list-item-title>
-                <v-list-item-subtitle
-                    >{{data.user_name}}</v-list-item-subtitle
-                >
-                </v-list-item-content>
-            </v-list-item>
+            <DetailViewContainer :title="'Owner QR'" :data="data.user_qr_id" />
           </v-col>
           <v-col cols="12" sm="12" md="4">
-            <v-list-item>
-                <v-list-item-content>
-                <v-list-item-title>Owner QR</v-list-item-title>
-                <v-list-item-subtitle
-                    >{{data.user_qr_id}}</v-list-item-subtitle
-                >
-                </v-list-item-content>
-            </v-list-item>
+            <DetailViewContainer :title="'Owner Name'" :data="data.user_name" />
           </v-col>
           <v-col cols="12" sm="12" md="4">
-            <v-list-item>
-                <v-list-item-content>
-                <v-list-item-title>Owner Mobile No</v-list-item-title>
-                <v-list-item-subtitle
-                    >{{data.phone_no}}</v-list-item-subtitle
-                >
-                </v-list-item-content>
-            </v-list-item>
+            <DetailViewContainer
+              :title="'Owner Mobile No'"
+              :data="data.phone_no"
+            />
           </v-col>
           <v-col cols="12" sm="12" md="4">
-            <v-list-item>
-                <v-list-item-content>
-                <v-list-item-title>Optional Contact name</v-list-item-title>
-                <v-list-item-subtitle
-                    >{{data.optional_contact_name}}</v-list-item-subtitle
-                >
-                </v-list-item-content>
-            </v-list-item>
+            <DetailViewContainer
+              :title="'Optional Contact name'"
+              :data="data.optional_contact_name"
+            />
           </v-col>
           <v-col cols="12" sm="12" md="4">
-            <v-list-item>
-                <v-list-item-content>
-                <v-list-item-title>Optional Contact No</v-list-item-title>
-                <v-list-item-subtitle
-                    >{{data.optional_contact_no}}</v-list-item-subtitle
-                >
-                </v-list-item-content>
-            </v-list-item>
+            <DetailViewContainer
+              :title="'Optional Contact No'"
+              :data="data.optional_contact_no"
+            />
           </v-col>
           <v-col cols="12" sm="12" md="4">
-            <v-list-item>
-                <v-list-item-content>
-                <v-list-item-title>Is Account Active</v-list-item-title>
-                <v-list-item-subtitle
-                    >{{data.acc_status_active}}</v-list-item-subtitle
-                >
-                </v-list-item-content>
-            </v-list-item>
+            <DetailViewContainer
+              :title="'Is Account Active'"
+              :data="data.acc_status_active"
+            />
           </v-col>
           <v-col cols="12" sm="12" md="4">
-            <v-list-item>
-                <v-list-item-content>
-                <v-list-item-title>Vehicle Name</v-list-item-title>
-                <v-list-item-subtitle
-                    >{{data.v_name}}</v-list-item-subtitle
-                >
-                </v-list-item-content>
-            </v-list-item>
+            <DetailViewContainer :title="'Vehicle Name'" :data="data.v_name" />
           </v-col>
           <v-col cols="12" sm="12" md="4">
-            <v-list-item>
-                <v-list-item-content>
-                <v-list-item-title>Vehicle Type</v-list-item-title>
-                <v-list-item-subtitle
-                    >{{data.v_type_name}}</v-list-item-subtitle
-                >
-                </v-list-item-content>
-            </v-list-item>
+            <DetailViewContainer
+              :title="'Vehicle Type'"
+              :data="data.v_type_name"
+            />
+          </v-col>
+          <v-col cols="12" sm="12" md="12">
+            <DetailViewContainer
+              :title="'Vehicle Description'"
+              :data="data.v_description"
+            />
           </v-col>
           <v-col cols="12" sm="12" md="12">
             <v-list-item>
-                <v-list-item-content>
-                <v-list-item-title>Vehicle Description</v-list-item-title>
-                <v-list-item-subtitle
-                    >{{data.v_description}}</v-list-item-subtitle
-                >
-                </v-list-item-content>
-            </v-list-item>
-          </v-col>
-          <v-col cols="12" sm="12" md="12">
-            <v-list-item>
-                <v-list-item-content>
+              <v-list-item-content>
                 <v-list-item-title>Vehicle Locations</v-list-item-title>
-               <div class="flexible v-list-item__subtitle">
-                    <span class="pl-2" v-for="(element, index) in data.locations" :key="index"
-                    >{{element.location_name}},</span
-                >
-               </div>
-                </v-list-item-content>
+                <div class="flexible v-list-item__subtitle">
+                  <span
+                    class="pl-2"
+                    v-for="(element, index) in data.locations"
+                    :key="index"
+                    >{{ element.location_name }},</span
+                  >
+                </div>
+              </v-list-item-content>
             </v-list-item>
           </v-col>
           <v-col cols="12" sm="12" md="4">
-            <v-list-item>
-                <v-list-item-content>
-                <v-list-item-title>V.N Letter</v-list-item-title>
-                <v-list-item-subtitle
-                    >{{data.v_no_letter}}</v-list-item-subtitle
-                >
-                </v-list-item-content>
-            </v-list-item>
+            <DetailViewContainer
+              :title="'V.N Letter'"
+              :data="data.v_no_letter"
+            />
           </v-col>
           <v-col cols="12" sm="12" md="4">
-            <v-list-item>
-                <v-list-item-content>
-                <v-list-item-title>V.N Number</v-list-item-title>
-                <v-list-item-subtitle
-                    >{{data.v_no_number}}</v-list-item-subtitle
-                >
-                </v-list-item-content>
-            </v-list-item>
+            <DetailViewContainer
+              :title="'V.N Number'"
+              :data="data.v_no_number"
+            />
           </v-col>
           <v-col cols="12" sm="12" md="4">
-            <v-list-item>
-                <v-list-item-content>
-                <v-list-item-title>V.Status Active</v-list-item-title>
-                <v-list-item-subtitle
-                    >{{data.v_status}}</v-list-item-subtitle
-                >
-                </v-list-item-content>
-            </v-list-item>
+            <DetailViewContainer
+              :title="'V.Status Active'"
+              :data="data.v_status"
+            />
           </v-col>
           <v-col cols="12" sm="12" md="4">
-            <v-list-item>
-                <v-list-item-content>
-                <v-list-item-title>Exp Date</v-list-item-title>
-                <v-list-item-subtitle
-                    >{{data.exp_date}}</v-list-item-subtitle
-                >
-                </v-list-item-content>
-            </v-list-item>
+            <DetailViewContainer :title="'Exp Date'" :data="data.exp_date" />
           </v-col>
           <v-col cols="12" sm="12" md="4">
-            <v-list-item>
-                <v-list-item-content>
-                <v-list-item-title>Is Expire</v-list-item-title>
-                <v-list-item-subtitle
-                    >{{data.isExpired}}</v-list-item-subtitle
-                >
-                </v-list-item-content>
-            </v-list-item>
+            <DetailViewContainer :title="'Is Expire'" :data="data.isExpired" />
           </v-col>
           <v-col cols="12" sm="12" md="4">
-            <v-list-item>
-                <v-list-item-content>
-                <v-list-item-title>Package</v-list-item-title>
-                <v-list-item-subtitle
-                    >{{data.package}}</v-list-item-subtitle
-                >
-                </v-list-item-content>
-            </v-list-item>
+            <DetailViewContainer :title="'Package'" :data="data.package" />
           </v-col>
-     
         </v-row>
       </v-card>
     </v-dialog>
   </v-row>
 </template>
 <script>
+import DetailViewContainer from "./detail_view_container.vue";
 export default {
   props: ["dialog", "data"],
-
+  components: {
+    DetailViewContainer,
+  },
   data() {
     return {
       notifications: false,
@@ -251,11 +178,12 @@ export default {
   background: #ddd;
   margin-bottom: 10px;
 }
-.flexible{
-    display: flex !important; flex-wrap: wrap !important;
+.flexible {
+  display: flex !important;
+  flex-wrap: wrap !important;
 }
-.headerStyle{
-    /* margin-bottom: 2px; */
+.headerStyle {
+  /* margin-bottom: 2px; */
   background-color: #dd2c00 !important;
   /* background-color: rgb(0, 105, 100); */
   color: rgb(254, 254, 255);
@@ -265,8 +193,8 @@ export default {
   font-weight: 500;
   justify-content: center;
 }
-.v-responsive{
-    background-color: #1E1E1E !important;
+.v-responsive {
+  background-color: #1e1e1e !important;
 }
 .v-list-item__title{
     color: #2dff5b;
