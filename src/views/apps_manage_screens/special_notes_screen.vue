@@ -483,7 +483,7 @@ export default {
 };
 </script>
 
-<style>
+<style scopedd>
 .v-input {
   margin: 0px;
   padding: 0px;

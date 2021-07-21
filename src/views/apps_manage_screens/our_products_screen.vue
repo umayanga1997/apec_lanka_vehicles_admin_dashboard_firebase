@@ -619,7 +619,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .v-input {
   margin: 0px;
   padding: 0px;

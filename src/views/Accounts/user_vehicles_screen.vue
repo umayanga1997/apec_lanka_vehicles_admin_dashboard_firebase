@@ -69,12 +69,13 @@
                     isUpdateData = true;
                     dialog = !dialog;
                     editItem = item;
+                    VehicleViewerDialog = false;
                   "
                   icon="mdi-pencil"
                   color="green lighten-2"
                 />
                 <ActionButton
-                @click="route('vehicle_view', item.v_id)"
+                  @click="editItem = item;VehicleViewerDialog = false; VehicleViewerDialog = true;"
                   class="ma-1"
                   icon="mdi-archive"
                   color="green lighten-2"
@@ -86,6 +87,7 @@
       </v-data-table>
     </v-card>
     <!-- Popup Form Create/Update-->
+    <VehicleViewer :dialog="VehicleViewerDialog" :data="editItem"/>
     <template>
       <v-row justify="center">
         <v-dialog v-model="dialog" max-width="300px">
@@ -193,6 +195,7 @@
 
 <script>
 import { fireStore } from "@/firebaseConfig";
+import VehicleViewer from "../../components/vehicle_details_view.vue";
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
 import {
@@ -238,6 +241,7 @@ export default {
     ActionButton,
     ValidationObserver,
     ValidationProvider,
+    VehicleViewer,
   },
 
   created() {
@@ -256,13 +260,13 @@ export default {
     loading: true,
     headers: [
       {
-        text: "User Name",
+        text: "Owner Name",
         value: "user_name",
         align: "center",
         width: "150px",
       },
-      { text: "User QR", value: "user_qr_id" },
-      { text: "Phone No", value: "phone_no" },
+      { text: "Owner QR", value: "user_qr_id" },
+      { text: "Owner Phone No", value: "phone_no" },
       { text: "Is Account Active", value: "acc_status_active" },
       { text: "Vehicle Name", value: "v_name" },
       { text: "Vehicle Description", value: "v_description" },
@@ -284,6 +288,7 @@ export default {
     dialog: false,
     dialogDelete: false,
     deleteID: null,
+    VehicleViewerDialog :false,
     //message
     message: null,
     isMsg: false,
@@ -380,7 +385,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .v-input {
   margin: 0px;
   padding: 0px;
