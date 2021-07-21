@@ -73,14 +73,12 @@ export default {
     this.getHelpDetails();
   },
   
-  computed: {
-    id() {
-      return this.$route.params.id;
-    },
-   userId(){
-     return this.$route.params.user_id;
-   }
-  },
+  // computed: {
+  //   id() {
+  //     return this.$route.params.id;
+  //   },
+  // },
+  props:['userId'],
   data: () => ({
     //Other
     search: "",

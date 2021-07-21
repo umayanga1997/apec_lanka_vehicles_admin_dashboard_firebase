@@ -74,6 +74,7 @@
                   color="green lighten-2"
                 />
                 <ActionButton
+                @click="route('vehicle_view', item.v_id)"
                   class="ma-1"
                   icon="mdi-archive"
                   color="green lighten-2"
@@ -242,14 +243,12 @@ export default {
   created() {
     this.getHelpDetails();
   },
- computed: {
-    id() {
-      return this.$route.params.id;
-    },
-    userId(){
-      return this.$route.params.user_id;
-    }
-  },
+  //  computed: {
+  //     id() {
+  //       return this.$route.params.id;
+  //     },
+  //   },
+  props:['userId'],
   data: () => ({
     //Other
     search: "",
@@ -308,40 +307,6 @@ export default {
           this.alertMessage(e.message, "error");
         });
     },
-    // insertData() {
-    //   try {
-    //     this.loadingBtn = true;
-
-    //     vehiclesRef
-    //       .add({
-    //         point: parseInt(this.editItem.point),
-    //         app_name: this.editItem.app_name,
-    //         title: this.editItem.title,
-    //         body: this.editItem.body,
-    //         link_title: this.editItem.link_title ?? "",
-    //         link: this.editItem.link ?? "",
-    //         link_icon: this.editItem.link_icon ?? "",
-    //       })
-    //       .then(() => {
-    //         this.dialog = !this.dialog;
-    //         this.loadingBtn = !this.loadingBtn;
-    //         this.editItem = {};
-    //         this.alertMessage("Data inserted successfully.", "success");
-    //       })
-    //       .catch((e) => {
-    //         this.dialog = !this.dialog;
-    //         this.loadingBtn = !this.loadingBtn;
-    //         this.editItem = {};
-    //         this.alertMessage(e.message, "error");
-    //       });
-    //   } catch (error) {
-    //     this.dialog = !this.dialog;
-    //     this.loadingBtn = !this.loadingBtn;
-    //     this.editItem = {};
-    //     this.alertMessage(error.message, "error");
-    //   }
-    // },
-
     updateData() {
       try {
         this.loadingBtn = true;
@@ -400,6 +365,7 @@ export default {
     //     this.alertMessage(error.message, "error");
     //   }
     // },
+   
     alertMessage(message, msgType) {
       this.isMsg = true;
       this.message = message;

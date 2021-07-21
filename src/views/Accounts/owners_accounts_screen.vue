@@ -327,7 +327,7 @@ export default {
     },
     
     route(name, qr, id) {
-      this.$router.push({name:name,params:{id:qr, user_id: id }});
+      this.$router.push({name:name,params:{id:qr, userId: id }});
     },
     alertMessage(message, msgType) {
       this.isMsg = true;
