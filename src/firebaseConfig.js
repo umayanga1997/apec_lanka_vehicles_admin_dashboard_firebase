@@ -17,7 +17,9 @@ firebaseApp.firestore().settings({
 firebaseApp.firestore().enablePersistence();
 const fireStore = firebaseApp.firestore();
 const storage = firebaseApp.storage();
+// const auth = firebaseApp.auth();
 export {
     fireStore,
-    storage
+    storage,
+    // auth
 };
