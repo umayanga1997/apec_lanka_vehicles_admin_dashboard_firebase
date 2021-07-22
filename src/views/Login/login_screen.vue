@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="flexible">
+  <v-container fluid>
     <v-alert
       transition="scale-transition"
       dense
@@ -7,45 +7,65 @@
       :type="msgType"
       >{{ message }}</v-alert
     >
-    <v-col cols="4">
-      <validation-observer ref="observer" v-slot="{ invalid }">
-        <form @submit.prevent="submit">
-          <validation-provider
-            v-if="!isOtpField"
-            v-slot="{ errors }"
-            rules="required"
-            name="Mobile No"
+    <v-container fluid class="flexible">
+      <v-col cols="4">
+        <validation-observer ref="observer" v-slot="{ invalid }">
+          <v-container>
+            <validation-provider
+              v-slot="{ errors }"
+              rules="required"
+              name="Mobile No"
+            >
+              <v-textarea
+                v-model="phoneNumber"
+                :counter="9"
+                :error-messages="errors"
+                required
+                auto-grow
+                rows="1"
+                label="Mobile No *"
+                hint="Enter mobile no"
+              ></v-textarea>
+            </validation-provider>
+          </v-container>
+          <v-container class="" v-if="isOtpField">
+            <validation-provider
+              v-slot="{ errors }"
+              name="OTP No"
+              rules="required"
+            >
+              <v-text-field
+                v-model="otp"
+                :counter="6"
+                :error-messages="errors"
+                auto-grow
+                rows="1"
+                label="OTP No *"
+                hint="Enter mobile no"
+                required
+              ></v-text-field>
+            </validation-provider>
+          </v-container>
+          <div id="recaptcha-container"></div>
+
+          <v-btn
+            class="ma-2"
+            :loading="loadingBtn"
+            :disabled="loadingBtn ? loadingBtn : invalid"
+            color="green darken-2 white--text"
+            outlined
+            @click="!isOtpField ? sendOtp() : verifyOtp()"
+            >{{ !isOtpField ? "Send OTP" : "Login" }}</v-btn
           >
-            <v-textarea
-              v-model="phoneNumber"
-              :counter="10"
-              :error-messages="errors"
-              required
-              auto-grow
-              rows="1"
-              label="Mobile No *"
-              hint="Enter mobile no"
-            ></v-textarea>
-          </validation-provider>
-          <validation-provider v-else v-slot="{ errors }" name="otp">
-            <v-text-field
-              v-model="otp"
-              :error-messages="errors"
-              label="OTP"
-              required
-            ></v-text-field>
-          </validation-provider>
-<div id="recaptcha-container"></div><br>
-          <v-btn class="mr-4" @click="sendOtp()" :disabled="invalid"> submit </v-btn>
-          <v-btn @click="clear"> clear </v-btn>
-        </form>
-      </validation-observer>
-    </v-col>
+        </validation-observer>
+      </v-col>
+    </v-container>
   </v-container>
 </template>
 
 <script>
-import firebase from 'firebase';
+import { fireStore, firebase } from "@/firebaseConfig";
+// import firebase from "firebase";
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
 import {
   extend,
@@ -53,6 +73,8 @@ import {
   ValidationProvider,
   setInteractionMode,
 } from "vee-validate";
+
+const STORAGE_KEY = "auth-storage";
 
 setInteractionMode("eager");
 
@@ -81,6 +103,8 @@ extend("email", {
   message: "Email must be valid",
 });
 
+const adminsAccountsRef = fireStore.collection("users");
+
 export default {
   components: {
     ValidationProvider,
@@ -89,8 +113,10 @@ export default {
   data: () => ({
     phoneNumber: "",
     otp: null,
-     appVerifier : '',
+    appVerifier: "",
+    reCapAgain: false,
     isOtpField: false,
+    loadingBtn: false,
     //message
     message: null,
     isMsg: false,
@@ -104,76 +130,118 @@ export default {
     clear() {
       this.phoneNumber = "";
       this.otp = "";
-      this.appVerifier='';
-    
+      this.appVerifier = "";
+
       this.$refs.observer.reset();
     },
 
     sendOtp() {
-      if (this.phoneNumber.length != 12) {
+      this.loadingBtn = true;
+      if (this.phoneNumber.length != 9) {
         this.alertMessage("Invalid Phone Number Format !", "error");
+        this.loadingBtn = false;
       } else {
-        //   this.initReCaptcha();
-        //
-        // let countryCode = "+91"; //india
-        // let phoneNumber = countryCode + this.phNo;
-        //
-        let appVerifier = this.appVerifier;
-        //
-        console.log(firebase.auth());
-        firebase.auth()
-          .signInWithPhoneNumber(this.phoneNumber, appVerifier)
-          .then(function (confirmationResult) {
-            // SMS sent. Prompt user to type the code from the message, then sign the
-            // user in with confirmationResult.confirm(code).
-            window.confirmationResult = confirmationResult;
-            //
-            alert("SMS sent");
-          })
-          .catch((e) =>{
-           this.alertMessage(e.message, "error");
-          });
+        if (!this.reCapAgain) {
+          //
+          let editedPhoneNumber = "+94" + this.phoneNumber;
+          //
+          let appVerifier = this.appVerifier;
+          //
+          firebase
+            .auth()
+            .signInWithPhoneNumber(editedPhoneNumber, appVerifier)
+            .then(function (confirmationResult) {
+              // SMS sent. Prompt user to type the code from the message, then sign the
+              // user in with confirmationResult.confirm(code).
+              return confirmationResult;
+            })
+            .then((value) => {
+              this.isOtpField = true;
+              this.loadingBtn = false;
+              window.confirmationResult = value;
+              //
+              this.alertMessage("SMS sent!", "success");
+            })
+            .catch((e) => {
+              this.loadingBtn = false;
+              this.isOtpField = false;
+              this.alertMessage(e.message, "error");
+            });
+        } else {
+          this.alertMessage(
+            "Please refresh page and get new reCaptcha.",
+            "error"
+          );
+        }
       }
     },
     //
     verifyOtp() {
-      if (this.phoneNumber.length != 12 || this.otp.length != 6) {
+      this.loadingBtn = true;
+
+      if (this.phoneNumber.length != 9 || this.otp.length != 6) {
         this.alertMessage("Invalid Phone Number Format !", "error");
+        this.loadingBtn = false;
       } else {
-        //
-        // let vm = this;
-        let code = this.otp;
-        //
         window.confirmationResult
-          .confirm(code)
+          .confirm(this.otp)
           .then(function (result) {
             // User signed in successfully.
-            var user = result.user;
-            console.log(user)
-            // ...
-            //route to set password !
-            // vm.$router.push({ path: "/setPassword" });
+            adminsAccountsRef
+              .where("user_type", "==", "admin")
+              .where("user_id", "==", result.user.uid)
+              .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
+                var checkItemList = [];
+                for (const key in snapshot.docs) {
+                  checkItemList.push({ ...snapshot.docs[key].data() });
+                }
+                // let check = checkItemList.filter(
+                //   (item) => item.user_id === value
+                // );
+                if (checkItemList.length >= 1) {
+                  return checkItemList;
+                } else {
+                  return [];
+                }
+              })
+              
           })
-          .catch((e)=> {
+          .then((value) => {
+            if (value.length >= 1) {
+              console.log(value);
+              const userData = value[0];
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+              this.$router.push({ path: "/" });
+            } else {
+              this.alertMessage(
+                "This account is not found, Please contact main admin.",
+                "error"
+              );
+            }
+            this.loadingBtn = false;
+          })
+          .catch((e) => {
+            firebase.auth().signOut();
+            this.isOtpField = false;
+            this.loadingBtn = false;
             this.alertMessage(e.message, "error");
           });
       }
     },
     initReCaptcha() {
-        
       setTimeout(() => {
-         
-        // let vm = this;
         window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier(
           "recaptcha-container",
           {
             size: "invisible",
             callback: function (response) {
-                console.log(response)
+              this.reCapAgain = false;
+              return response;
               // reCAPTCHA solved, allow signInWithPhoneNumber.
               // ...
             },
             "expired-callback": function () {
+              this.reCapAgain = true;
               // Response expired. Ask user to solve reCAPTCHA again.
               // ...
             },
@@ -184,21 +252,20 @@ export default {
       }, 3000);
     },
     alertMessage(message, msgType) {
-    this.isMsg = true;
-    this.message = message;
-    this.msgType = msgType;
-    setTimeout(() => {
-      this.isMsg = false;
-      this.message = null;
-      this.msgType = null;
-    }, 5000);
-  },
+      this.isMsg = true;
+      this.message = message;
+      this.msgType = msgType;
+      setTimeout(() => {
+        this.isMsg = false;
+        this.message = null;
+        this.msgType = null;
+      }, 5000);
+    },
   },
 
   created() {
     this.initReCaptcha();
   },
-  
 };
 </script>
 
@@ -209,5 +276,6 @@ export default {
   display: flex !important;
   justify-content: center !important;
   align-content: center !important;
+  text-align: end;
 }
 </style>
