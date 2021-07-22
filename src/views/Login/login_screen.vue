@@ -203,7 +203,6 @@ export default {
                 
                 if (this.checkItemList.length === 1) {
                   const userData = this.checkItemList[0];
-                  console.log(userData);
                   localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
                   this.$router.push({ name: "Home" });
                 } else {
