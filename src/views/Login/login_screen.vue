@@ -117,6 +117,7 @@ export default {
     reCapAgain: false,
     isOtpField: false,
     loadingBtn: false,
+    checkItemList: [],
     //message
     message: null,
     isMsg: false,
@@ -176,7 +177,7 @@ export default {
       }
     },
     //
-    verifyOtp() {
+    async verifyOtp() {
       this.loadingBtn = true;
 
       if (this.phoneNumber.length != 9 || this.otp.length != 6) {
@@ -187,38 +188,33 @@ export default {
           .confirm(this.otp)
           .then(function (result) {
             // User signed in successfully.
-            adminsAccountsRef
+            return result;
+          })
+          .then(async (result) => {
+            await adminsAccountsRef
               .where("user_type", "==", "admin")
               .where("user_id", "==", result.user.uid)
-              .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-                var checkItemList = [];
+              .get().then(snapshot => {
                 for (const key in snapshot.docs) {
-                  checkItemList.push({ ...snapshot.docs[key].data() });
+                  this.checkItemList.push({...snapshot.docs[key].data()});
                 }
-                // let check = checkItemList.filter(
-                //   (item) => item.user_id === value
-                // );
-                if (checkItemList.length >= 1) {
-                  return checkItemList;
+
+              }).then(()=>{
+                
+                if (this.checkItemList.length === 1) {
+                  const userData = this.checkItemList[0];
+                  console.log(userData);
+                  localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+                  this.$router.push({ name: "Home" });
                 } else {
-                  return [];
+                  this.alertMessage(
+                    "This account is not found, Please contact main admin.",
+                    "error"
+                  );
                 }
-              })
-              
-          })
-          .then((value) => {
-            if (value.length >= 1) {
-              console.log(value);
-              const userData = value[0];
-              localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
-              this.$router.push({ path: "/" });
-            } else {
-              this.alertMessage(
-                "This account is not found, Please contact main admin.",
-                "error"
-              );
-            }
-            this.loadingBtn = false;
+                this.loadingBtn = false;
+              });
+            
           })
           .catch((e) => {
             firebase.auth().signOut();
