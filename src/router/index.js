@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
+import Home from '@/views/Home.vue'
 import Helps from '@/views/apps_manage_screens/help_screen.vue';
 import Ads from '@/views/apps_manage_screens/Ads/ads_screen.vue';
 import SpecialNotes from '@/views/apps_manage_screens/special_notes_screen.vue';
@@ -16,12 +16,13 @@ import AdminsAccounts from '@/views/Accounts/admins_accounts_screen.vue';
 import OwnersAccounts from '@/views/Accounts/owners_accounts_screen.vue';
 import UserTransactions from '@/views/Accounts/user_transactions_screen.vue';
 import UserVehicles from '@/views/Accounts/user_vehicles_screen.vue';
+import Login from '@/views/Login/login_screen.vue';
 
 Vue.use(VueRouter)
 
 const routes = [{
         path: '/',
-        name: 'Home',
+        name: 'home',
         component: Home
     },
     {
@@ -100,6 +101,11 @@ const routes = [{
         name: 'user_transactions',
         component: UserTransactions,
         props: true
+    },
+    {
+        path: '/auth/login',
+        name: 'login',
+        component: Login,
     },
 ]
 

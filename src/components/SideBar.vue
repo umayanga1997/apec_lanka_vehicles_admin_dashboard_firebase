@@ -1,10 +1,18 @@
 <template>
   <nav>
     <v-app-bar elevation="10" app dense dark fixed color="#1E1E1E">
-      <v-app-bar-nav-icon @click="isDrawerOpen=!isDrawerOpen" />
+      <v-app-bar-nav-icon @click="isDrawerOpen = !isDrawerOpen" />
       <v-app-bar-title>
-        <span class="font_size welcomeTag">{{welcomeTag}}</span>
+        <span class="font_size welcomeTag">{{ welcomeTag }}</span>
       </v-app-bar-title>
+      <v-spacer></v-spacer>
+      <p class="userTag">{{ userName }}</p>
+      <ActionButton
+        class="ma-1"
+        icon="mdi-logout"
+        color="green lighten-2"
+        @click="signOut()"
+      />
     </v-app-bar>
     <v-navigation-drawer
       fixed
@@ -29,7 +37,7 @@
           ripple
           @click="cleanSelect"
           route
-          :to="isDashBoard?'/':null"
+          :to="isDashBoard ? '/' : null"
         >
           <v-list-item-icon class="mr-4">
             <!-- <v-icon>mdi-account</v-icon> -->
@@ -44,7 +52,7 @@
           :prepend-icon="linkItem.icon"
           no-action
           active-class="deep-orange accent-4 white--text"
-          @click="isDashBoard =false"
+          @click="isDashBoard = false"
         >
           <v-list-item slot="activator">
             <v-list-tile-content>
@@ -61,7 +69,7 @@
               active-class="subLinkColor"
               @click="setWelcomeTag(linkItem.title + ' \\ ' + subLink.subTitle)"
             >
-              <v-list-item-title >{{ subLink.subTitle }}</v-list-item-title>
+              <v-list-item-title>{{ subLink.subTitle }}</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-list-group>
@@ -70,10 +78,21 @@
   </nav>
 </template>
 <script>
+import ActionButton from "./ActionButton.vue";
+import { firebase } from "@/firebaseConfig";
+
+const STORAGE_KEY = "auth-storage";
 export default {
   name: "sidebar",
+  props: ["userName"],
+  components: {
+    ActionButton,
+  },
+  created(){
+    this.cleanSelect()
+  },
   data: () => ({
-    welcomeTag :"Welcome...!",
+    welcomeTag: "Welcome...!",
     isDrawerOpen: true,
     isDashBoard: true,
     links: [
@@ -154,7 +173,7 @@ export default {
         active: false,
         route: "/#/",
         subLinks: [
-           {
+          {
             subTitle: "Owners",
             suRoute: "/accounts/owners_acc_",
             active: false,
@@ -164,7 +183,6 @@ export default {
             suRoute: "/accounts/admin_acc_",
             active: false,
           },
-         
         ],
       },
       {
@@ -187,16 +205,14 @@ export default {
       },
     ],
   }),
-  watch:{
 
-  },
   // computed:{
   //   welcomeTag(){
   //     return this.$store.state.welcomeTag;
   //   }
   // },
   methods: {
-    setWelcomeTag(tag){
+    setWelcomeTag(tag) {
       // this.$store.commit("setWelcomeTag", tag)
       this.welcomeTag = tag;
     },
@@ -209,8 +225,17 @@ export default {
           return false;
         }
       });
-      this.setWelcomeTag('Welcome...!');
-      this.$router.push({ name: "Home" });
+      this.setWelcomeTag("Welcome...!");
+    },
+    signOut() {
+      firebase
+        .auth()
+        .signOut()
+        .then((_) => {
+          console.log(_);
+          localStorage.removeItem(STORAGE_KEY);
+          this.$router.go();
+        });
     },
   },
 };
@@ -225,12 +250,11 @@ export default {
   background-color: rgb(0, 141, 134);
   /* border-right: 5px solid rgb(6, 252, 190); */
 }
-.v-list-group{
-  
-  overflow-y:visible
+.v-list-group {
+  overflow-y: visible;
 }
-.v-list-group__header__prepend-icon{
-  margin-right: 10px !important
+.v-list-group__header__prepend-icon {
+  margin-right: 10px !important;
 }
 .welcomeTag {
   /* margin-bottom: 2px; */
@@ -243,5 +267,8 @@ export default {
   font-weight: 500;
   padding: 5px;
   justify-content: center;
+}
+.userTag {
+  margin: 0 10px 0 0;
 }
 </style>

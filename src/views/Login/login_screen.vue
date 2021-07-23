@@ -194,17 +194,17 @@ export default {
             await adminsAccountsRef
               .where("user_type", "==", "admin")
               .where("user_id", "==", result.user.uid)
-              .get().then(snapshot => {
+              .get()
+              .then((snapshot) => {
                 for (const key in snapshot.docs) {
-                  this.checkItemList.push({...snapshot.docs[key].data()});
+                  this.checkItemList.push({ ...snapshot.docs[key].data() });
                 }
-
-              }).then(()=>{
-                
+              })
+              .then(() => {
                 if (this.checkItemList.length === 1) {
                   const userData = this.checkItemList[0];
                   localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
-                  this.$router.push({ name: "Home" });
+                  this.$router.go();
                 } else {
                   this.alertMessage(
                     "This account is not found, Please contact main admin.",
@@ -213,7 +213,6 @@ export default {
                 }
                 this.loadingBtn = false;
               });
-            
           })
           .catch((e) => {
             firebase.auth().signOut();
