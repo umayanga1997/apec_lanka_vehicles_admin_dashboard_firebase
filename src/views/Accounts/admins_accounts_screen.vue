@@ -352,7 +352,7 @@ export default {
         } else {
           const id = uuidv4();
           var dateTiem = moment(new Date()).format("YYYY-MM-DD h:mm:ss");
-          console.log(this.editItem.user_name);
+          
           adminsAccountsRef
             .doc(id)
             .set({

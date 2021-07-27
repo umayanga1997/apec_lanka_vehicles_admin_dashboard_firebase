@@ -35,6 +35,7 @@
         "vue": "^2.6.11",
         "vue-advanced-cropper": "^1.7.0",
         "vue-router": "^3.2.0",
+        "vuesax": "^4.0.1-alpha.25",
         "vuetify": "^2.4.0",
         "vuex": "^3.4.0"
     },

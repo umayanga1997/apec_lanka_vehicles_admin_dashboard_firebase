@@ -70,7 +70,7 @@ const transactionRef = fireStore.collection("users");
 export default {
   name: "user_transactions",
   created() {
-    this.getHelpDetails();
+    this.getTransactionsDetails();
   },
   
   // computed: {
@@ -99,7 +99,7 @@ export default {
     dataRows: [],
   }),
   methods: {
-    getHelpDetails() {
+    getTransactionsDetails() {
       transactionRef
         .doc(this.userId)
         .collection("transactions")
