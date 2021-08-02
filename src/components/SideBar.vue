@@ -100,7 +100,7 @@ export default {
         title: "App Mangement",
         icon: "apps",
         active: false,
-        route: "/#/",
+        route: "/",
         subLinks: [
           {
             subTitle: "Ads",
@@ -217,7 +217,6 @@ export default {
       this.welcomeTag = tag;
     },
     cleanSelect() {
-      this.isDashBoard = true;
       this.links.forEach((link) => {
         if (link.active) {
           link.active = false;
@@ -225,6 +224,8 @@ export default {
           return false;
         }
       });
+      this.isDashBoard = true;
+      this.$router.push('/');
       this.setWelcomeTag("Welcome...!");
     },
     signOut() {
