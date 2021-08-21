@@ -43,7 +43,7 @@ async function createWindow() {
     } else {
         createProtocol('app')
             // Load the index.html when not in development
-        win.loadURL('app://./index.html')
+        win.loadURL('app://index.html')
             // window.loadURL(formatUrl({
             //     pathname: path.join(__dirname, 'index.html'),
             //     protocol: 'file',
