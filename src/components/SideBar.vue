@@ -242,7 +242,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .font_size {
   font-size: 16px;
 }
@@ -257,6 +257,7 @@ export default {
 .v-list-group__header__prepend-icon {
   margin-right: 10px !important;
 }
+
 .welcomeTag {
   /* margin-bottom: 2px; */
   color: #46f9ff;
