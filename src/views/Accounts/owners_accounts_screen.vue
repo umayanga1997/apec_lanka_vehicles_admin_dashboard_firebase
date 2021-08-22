@@ -79,16 +79,14 @@
               <v-container fluid class="ActionButton__container pa-1">
                 <ActionButton
                   class="ma-1"
-                  @click="
-                    route('user_vehicles',item.user_qr_id, item.user_id)
-                  "
+                  @click="route('user_vehicles', item.user_qr_id, item.user_id)"
                   icon="mdi-taxi"
                   color="green lighten-1"
                 />
                 <ActionButton
                   class="ma-1"
                   @click="
-                    route('user_transactions',item.user_qr_id, item.user_id)
+                    route('user_transactions', item.user_qr_id, item.user_id)
                   "
                   icon="mdi-cash-multiple"
                   color="green lighten-1"
@@ -297,18 +295,41 @@ export default {
     updateData() {
       try {
         this.loadingBtn = true;
-
+        var value = this.editItem.accActive;
         ownersAccountsRef
           .doc(this.editItem.user_id)
           .update({
             accActive: this.editItem.accActive,
           })
           .then(() => {
-            this.dialog = !this.dialog;
-            this.loadingBtn = !this.loadingBtn;
-            this.isUpdateData = !this.isUpdateData;
-            this.editItem = {};
-            this.alertMessage("Data updated successfully.", "success");
+            ownersAccountsRef
+              .doc(this.editItem.user_id)
+              .collection("vehicles")
+              .get()
+              .then(function (querySnapshot) {
+                querySnapshot.forEach(function (doc) {
+                  doc.ref.update({
+                    acc_status_active: value,
+                  });
+                });
+              })
+              .then(() => {
+                this.dialog = !this.dialog;
+                this.loadingBtn = !this.loadingBtn;
+                this.isUpdateData = !this.isUpdateData;
+                this.editItem = {};
+                value = null;
+                this.alertMessage("Data updated successfully.", "success");
+              })
+              .catch((e) => {
+                this.dialog = !this.dialog;
+                this.loadingBtn = !this.loadingBtn;
+                this.isUpdateData = !this.isUpdateData;
+                this.editItem = {};
+                this.alertMessage(e.message, "error");
+              });
+
+            this.loading = false;
           })
           .catch((e) => {
             this.dialog = !this.dialog;
@@ -325,9 +346,9 @@ export default {
         this.alertMessage(error.message, "error");
       }
     },
-    
+
     route(name, qr, id) {
-      this.$router.push({name:name,params:{id:qr, userId: id }});
+      this.$router.push({ name: name, params: { id: qr, userId: id } });
     },
     alertMessage(message, msgType) {
       this.isMsg = true;
