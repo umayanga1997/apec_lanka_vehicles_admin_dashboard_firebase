@@ -271,6 +271,7 @@ export default {
   justify-content: center;
 }
 .userTag {
-  margin: 0 10px 0 0;
+  margin-right: 10px;
+  margin-bottom: 0px !important;
 }
 </style>
