@@ -153,7 +153,7 @@ export default {
         title: "Finding Options",
         icon: "search",
         active: false,
-        route: "/#/",
+        route: "/",
         subLinks: [
           {
             subTitle: "Locations",
@@ -171,7 +171,7 @@ export default {
         title: "Accounts",
         icon: "person",
         active: false,
-        route: "/#/",
+        route: "/",
         subLinks: [
           {
             subTitle: "Owners",
@@ -189,7 +189,7 @@ export default {
         title: "Reports",
         icon: "assessment",
         active: false,
-        route: "/#/",
+        route: "/",
         subLinks: [
           {
             subTitle: "Owner's Report",
@@ -242,7 +242,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 .font_size {
   font-size: 16px;
 }
@@ -270,6 +270,7 @@ export default {
   justify-content: center;
 }
 .userTag {
-  margin: 0 10px 0 0;
+  margin-right: 10px;
+  margin-bottom: 0px !important;
 }
 </style>
