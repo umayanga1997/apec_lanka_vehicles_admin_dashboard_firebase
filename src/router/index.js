@@ -91,7 +91,7 @@ const routes = [{
         component: OwnersAccounts,
     },
     {
-        path: '/accounts/owners_acc_/vehicles/:id',
+        path: '/accounts/owners_acc_/:id',
         name: 'user_vehicles',
         component: UserVehicles,
         props: true
@@ -111,7 +111,7 @@ const routes = [{
 
 const router = new VueRouter({
     mode: 'history',
-    base: process.env.BASE_URL,
+    base: process.env.BASE_URL + '/vehicles',
     routes
 })
 

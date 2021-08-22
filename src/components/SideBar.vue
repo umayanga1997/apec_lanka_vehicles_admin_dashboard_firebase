@@ -100,7 +100,7 @@ export default {
         title: "App Mangement",
         icon: "apps",
         active: false,
-        route: "/",
+        Route: "/",
         subLinks: [
           {
             subTitle: "Ads",
@@ -153,7 +153,7 @@ export default {
         title: "Finding Options",
         icon: "search",
         active: false,
-        route: "/#/",
+        Route: "/",
         subLinks: [
           {
             subTitle: "Locations",
@@ -171,7 +171,7 @@ export default {
         title: "Accounts",
         icon: "person",
         active: false,
-        route: "/#/",
+        Route: "/",
         subLinks: [
           {
             subTitle: "Owners",
@@ -189,7 +189,7 @@ export default {
         title: "Reports",
         icon: "assessment",
         active: false,
-        route: "/#/",
+        Route: "/",
         subLinks: [
           {
             subTitle: "Owner's Report",
