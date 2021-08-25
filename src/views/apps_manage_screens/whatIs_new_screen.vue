@@ -217,8 +217,8 @@
 </template>
 
 <script>
-import {fireStore} from "@/firebaseConfig";
-// import { v4 as uuidv4 } from 'uuid';
+import { fireStore } from "@/firebaseConfig";
+import { v4 as uuidv4 } from "uuid";
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
 import {
@@ -314,11 +314,15 @@ export default {
     insertData() {
       try {
         this.loadingBtn = true;
-        NoteRef.add({
-          app_name: this.editItem.app_name,
-          title: this.editItem.title,
-          note: this.editItem.note,
-        })
+        const id = uuidv4();
+
+        NoteRef.doc(id)
+          .set({
+            id: id,
+            app_name: this.editItem.app_name,
+            title: this.editItem.title,
+            note: this.editItem.note,
+          })
           .then(() => {
             this.dialog = !this.dialog;
             this.loadingBtn = !this.loadingBtn;

@@ -288,6 +288,7 @@
 
 <script>
 import { fireStore } from "@/firebaseConfig";
+import { v4 as uuidv4 } from "uuid";
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
 import {
@@ -390,9 +391,11 @@ export default {
     insertData() {
       try {
         this.loadingBtn = true;
-
+        const id = uuidv4();
         helpsRef
-          .add({
+          .doc(id)
+          .set({
+            help_id: id,
             point: parseInt(this.editItem.point),
             app_name: this.editItem.app_name,
             title: this.editItem.title,
