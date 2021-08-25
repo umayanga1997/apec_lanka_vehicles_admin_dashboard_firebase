@@ -70,9 +70,9 @@ service cloud.firestore {
     	allow read:if true;
     }
     // Read users by admin user
-    match /users/{documents}{
-    	allow read: if adminAuthCheck();
-    }
+    // match /users/{documents}{
+    // 	allow read: if adminAuthCheck();
+    // }
     
     //Write types of vehicles
     match /vehicle_types/{documentID}{
@@ -87,8 +87,8 @@ service cloud.firestore {
     
     //Read/write user details with other  
     match /users/{userID}{
-    	allow read, update: if chackUserAuth() && userID !=null && userID == request.auth.uid;
-      allow create : if request.auth != null && userID !=null;
+      allow update: if chackUserAuth() && userID !=null && userID == request.auth.uid;
+      allow read, create : if request.auth != null && userID !=null;
       //Write vehicles
     	match /vehicles/{vehicleID}{
     		allow create: if chackUserAuth() && vehicleID !=null;
