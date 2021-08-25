@@ -74,6 +74,17 @@ service cloud.firestore {
     	allow read: if adminAuthCheck();
     }
     
+    //Write types of vehicles
+    match /vehicle_types/{documentID}{
+    	allow create:if adminAuthCheck() && documentID != null;
+        allow update:if adminAuthCheck() && documentID != null && resource.data.v_type_id == documentID;
+    }
+    //Write locations
+    match /locations/{documentID}{
+    	allow create:if adminAuthCheck() && documentID != null;
+        allow update:if adminAuthCheck() && documentID != null && resource.data.location_id == documentID;
+    }
+    
     //Read/write user details with other  
     match /users/{userID}{
     	allow read, update: if chackUserAuth() && userID !=null && userID == request.auth.uid;
