@@ -1,13 +1,24 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // match /{documents=**}{
+    // 	allow read,write;
+    // }
+  	// match /mobile_otps/{document=**}{
+  	// 	allow read, write: if true;
+  	// }
     //   allow read, write: if request.auth !=null && get(/databases/{database}/documents/users/$(request.auth.uid)).data.roles[request.resource.data.user_type] =="admin";
-    match /{document=**} {
-      allow read: if true; 
-      allow write: if chackUserAuth();
-    }
+    // match /{document=**} {
+    //   allow read: if true; 
+    //   allow write: if chackUserAuth();
+    // }
+    
     //Read all types of vehicles
     match /vehicle_types/{document=**}{
+    	allow read:if true;
+    }
+    //Read all locations
+    match /locations/{document=**}{
     	allow read:if true;
     }
     //Google Ads Config
@@ -38,18 +49,14 @@ service cloud.firestore {
     match /{doc=**}/introductions/{documents}{
     	allow read: if true;
     }
-    //Read all locations
-    match /locations/{document=**}{
-    	allow read:if true;
-    }
     // About Us
     match /{doc=**}/about_us_details/{document}{
     allow read:if true;
     }
-    //Read all transactions Configurations
-    match /{doc=**}/transactions_config/{documents}{
-    	allow read: if chackUserAuth();
-    }
+    // //Read all transactions Configurations
+    // match /{doc=**}/transactions_config/{documents}{
+    // 	allow read: if chackUserAuth();
+    // }
     //Read all vehicles
     match /{doc=**}/vehicles/{document}{
     	allow read:if true;
@@ -62,10 +69,14 @@ service cloud.firestore {
     match /{doc=**}/what_is_new_configs/{document}{
     	allow read:if true;
     }
+    // Read users by admin user
+    match /users/{documents}{
+    	allow read: if adminAuthCheck();
+    }
     
     //Read/write user details with other  
     match /users/{userID}{
-    	allow  read, update: if chackUserAuth() && userID !=null &&  userID == request.auth.uid;
+    	allow read, update: if chackUserAuth() && userID !=null && userID == request.auth.uid;
       allow create : if request.auth != null && userID !=null;
       //Write vehicles
     	match /vehicles/{vehicleID}{
@@ -76,7 +87,7 @@ service cloud.firestore {
       match /transactions/{document=**}{
     		allow read: if chackUserAuth();
     	}
-       //Read additional packages
+      //Read additional packages
       match /additional_packages/{document=**}{
     		allow read:if chackUserAuth();
     	}
@@ -90,6 +101,72 @@ service cloud.firestore {
     		allow create:if chackUserAuth()&& packageID !=null;
     		allow update, delete:if chackUserAuth()&& packageID !=null && resource.data.id == packageID;
     	}
+    }
+    //App management
+    match /apps_management/{document=**}{
+    	allow read: if true;
+      allow write:if adminAuthCheck();
+      
+      //Google Ads Config
+      match /admob_ads_config/{documentID}{
+        allow create:if adminAuthCheck() && documentID != null;
+        allow update:if adminAuthCheck() && documentID != null && resource.data.config_id == documentID;
+      }
+      // Custom Ads Config
+      match /custom_ads_config/{documentID}{
+        allow create:if adminAuthCheck() && documentID != null;
+        allow update:if adminAuthCheck() && documentID != null && resource.data.ad_id == documentID;
+      }
+      //Other Config
+      match /other_configurations/{documentID}{
+        allow create:if adminAuthCheck() && documentID != null;
+        allow update:if adminAuthCheck() && documentID != null && resource.data.conf_id == documentID;
+      }
+      //Helps
+      match /helps/{documentID}{
+        allow create:if adminAuthCheck() && documentID != null;
+        allow update:if adminAuthCheck() && documentID != null && resource.data.help_id == documentID;
+      }
+      //Special Notes
+      match /special_notes/{documentID}{
+        allow create:if adminAuthCheck() && documentID != null;
+        allow update:if adminAuthCheck() && documentID != null && resource.data.note_id == documentID;
+      }
+      //Other Apps Links
+      match /our_products/{documentID}{
+        allow create:if adminAuthCheck() && documentID != null;
+        allow update:if adminAuthCheck() && documentID != null && resource.data.product_id == documentID;
+      }
+      //Introductions Config
+      match /introductions/{documentID}{
+        allow create:if adminAuthCheck() && documentID != null;
+        allow update:if adminAuthCheck() && documentID != null && resource.data.intro_id == documentID;
+      }
+      // About Us
+      match /about_us_details/{documentID}{
+      	allow create:if adminAuthCheck() && documentID != null;
+        allow update:if adminAuthCheck() && documentID != null && resource.data.id == documentID;
+      }
+      // //Read all transactions Configurations
+      // match /transactions_config/{documentID}{
+      //   allow create:if adminAuthCheck() && documentID != null;
+      //   allow update:if adminAuthCheck() && documentID != null && resource.data.note_id == documentID;
+      // }
+      // Additional packages config
+      match /additional_packages_config/{documentID}{
+        allow create:if adminAuthCheck() && documentID != null;
+        allow update:if adminAuthCheck() && documentID != null && resource.data.id == documentID;
+      }
+      // What_is_new Cconfigs
+      match /what_is_new_configs/{documentID}{
+        allow create:if adminAuthCheck() && documentID != null;
+        allow update:if adminAuthCheck() && documentID != null && resource.data.id == documentID;
+      }
+    }
+    
+    function adminAuthCheck(){
+      return chackUserAuth() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.user_type =="admin";
+      // return chackUserAuth() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.roles[request.resource.data.user_type] =="admin";
     }
     function chackUserAuth() {
      	return request.auth != null && exists(/databases/$(database)/documents/users/$(request.auth.uid));
