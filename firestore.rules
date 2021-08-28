@@ -77,17 +77,18 @@ service cloud.firestore {
     //Write types of vehicles
     match /vehicle_types/{documentID}{
     	allow create:if adminAuthCheck() && documentID != null;
-        allow update:if adminAuthCheck() && documentID != null && resource.data.v_type_id == documentID;
+        allow update,delete :if adminAuthCheck() && documentID != null && resource.data.v_type_id == documentID;
     }
+    
     //Write locations
     match /locations/{documentID}{
     	allow create:if adminAuthCheck() && documentID != null;
-        allow update:if adminAuthCheck() && documentID != null && resource.data.location_id == documentID;
+        allow update,delete:if adminAuthCheck() && documentID != null && resource.data.location_id == documentID;
     }
     
     //Read/write user details with other  
     match /users/{userID}{
-      allow update: if chackUserAuth() && userID !=null && userID == request.auth.uid;
+      allow update,delete: if chackUserAuth() && userID !=null && userID == request.auth.uid;
       allow read, create : if request.auth != null && userID !=null;
       //Write vehicles
     	match /vehicles/{vehicleID}{
@@ -121,42 +122,42 @@ service cloud.firestore {
       //Google Ads Config
       match /admob_ads_config/{documentID}{
         allow create:if adminAuthCheck() && documentID != null;
-        allow update:if adminAuthCheck() && documentID != null && resource.data.config_id == documentID;
+        allow update,delete:if adminAuthCheck() && documentID != null && resource.data.config_id == documentID;
       }
       // Custom Ads Config
       match /custom_ads_config/{documentID}{
         allow create:if adminAuthCheck() && documentID != null;
-        allow update:if adminAuthCheck() && documentID != null && resource.data.ad_id == documentID;
+        allow update,delete:if adminAuthCheck() && documentID != null && resource.data.ad_id == documentID;
       }
       //Other Config
       match /other_configurations/{documentID}{
         allow create:if adminAuthCheck() && documentID != null;
-        allow update:if adminAuthCheck() && documentID != null && resource.data.conf_id == documentID;
+        allow update,delete:if adminAuthCheck() && documentID != null && resource.data.conf_id == documentID;
       }
       //Helps
       match /helps/{documentID}{
         allow create:if adminAuthCheck() && documentID != null;
-        allow update:if adminAuthCheck() && documentID != null && resource.data.help_id == documentID;
+        allow update,delete:if adminAuthCheck() && documentID != null && resource.data.help_id == documentID;
       }
       //Special Notes
       match /special_notes/{documentID}{
         allow create:if adminAuthCheck() && documentID != null;
-        allow update:if adminAuthCheck() && documentID != null && resource.data.note_id == documentID;
+        allow update,delete:if adminAuthCheck() && documentID != null && resource.data.note_id == documentID;
       }
       //Other Apps Links
       match /our_products/{documentID}{
         allow create:if adminAuthCheck() && documentID != null;
-        allow update:if adminAuthCheck() && documentID != null && resource.data.product_id == documentID;
+        allow update,delete:if adminAuthCheck() && documentID != null && resource.data.product_id == documentID;
       }
       //Introductions Config
       match /introductions/{documentID}{
         allow create:if adminAuthCheck() && documentID != null;
-        allow update:if adminAuthCheck() && documentID != null && resource.data.intro_id == documentID;
+        allow update,delete:if adminAuthCheck() && documentID != null && resource.data.intro_id == documentID;
       }
       // About Us
       match /about_us_details/{documentID}{
       	allow create:if adminAuthCheck() && documentID != null;
-        allow update:if adminAuthCheck() && documentID != null && resource.data.id == documentID;
+        allow update,delete:if adminAuthCheck() && documentID != null && resource.data.id == documentID;
       }
       // //Read all transactions Configurations
       // match /transactions_config/{documentID}{
@@ -166,12 +167,12 @@ service cloud.firestore {
       // Additional packages config
       match /additional_packages_config/{documentID}{
         allow create:if adminAuthCheck() && documentID != null;
-        allow update:if adminAuthCheck() && documentID != null && resource.data.id == documentID;
+        allow update,delete:if adminAuthCheck() && documentID != null && resource.data.id == documentID;
       }
       // What_is_new Cconfigs
       match /what_is_new_configs/{documentID}{
         allow create:if adminAuthCheck() && documentID != null;
-        allow update:if adminAuthCheck() && documentID != null && resource.data.id == documentID;
+        allow update,delete:if adminAuthCheck() && documentID != null && resource.data.id == documentID;
       }
     }
     

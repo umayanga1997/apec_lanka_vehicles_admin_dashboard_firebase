@@ -322,6 +322,28 @@
     },
     {
       "collectionGroup": "vehicles",
+      "fieldPath": "isExpired",
+      "indexes": [
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION"
+        },
+        {
+          "order": "DESCENDING",
+          "queryScope": "COLLECTION"
+        },
+        {
+          "arrayConfig": "CONTAINS",
+          "queryScope": "COLLECTION"
+        },
+        {
+          "order": "ASCENDING",
+          "queryScope": "COLLECTION_GROUP"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "vehicles",
       "fieldPath": "user_qr_id",
       "indexes": [
         {
