@@ -169,13 +169,13 @@
                         rules="required"
                         name="Designation"
                       >
-                        <v-text-field
+                        <v-textarea
                           v-model="editItem.designation"
                           :error-messages="errors"
                           label="Designation *"
                           hint="Enter Designation"
                           required
-                        ></v-text-field>
+                        ></v-textarea>
                       </validation-provider>
                     </v-col>
                     <v-col cols="12" sm="6" md="6">
