@@ -21,7 +21,7 @@ import Login from '@/views/Login/login_screen.vue';
 Vue.use(VueRouter)
 
 const routes = [{
-        path: '/',
+        path: '/vehicles',
         name: 'home',
         component: Home
     },
@@ -111,7 +111,7 @@ const routes = [{
 
 const router = new VueRouter({
     mode: 'history',
-    base: process.env.BASE_URL + '/vehicles',
+    base: process.env.BASE_URL,
     routes
 })
 

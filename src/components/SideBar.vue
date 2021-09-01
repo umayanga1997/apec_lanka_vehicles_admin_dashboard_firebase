@@ -37,7 +37,7 @@
           ripple
           @click="cleanSelect"
           route
-          :to="isDashBoard ? '/' : null"
+          :to="isDashBoard ? '/vehicles' : null"
         >
           <v-list-item-icon class="mr-4">
             <!-- <v-icon>mdi-account</v-icon> -->
@@ -225,7 +225,7 @@ export default {
         }
       });
       this.isDashBoard = true;
-      this.$router.push('/');
+      this.$router.push('/vehicles');
       this.setWelcomeTag("Welcome...!");
     },
     signOut() {
