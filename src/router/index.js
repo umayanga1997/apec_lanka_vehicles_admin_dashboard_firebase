@@ -10,6 +10,7 @@ import Introductions from '@/views/apps_manage_screens/introduction_screen.vue';
 import AboutUs from '@/views/apps_manage_screens/aboutUs_screen.vue';
 import OurProducts from '@/views/apps_manage_screens/our_products_screen.vue';
 import OtherConfigs from '@/views/apps_manage_screens/other_config_screen.vue';
+import GatewayConfig from '@/views/apps_manage_screens/payment_gateway_config_screen.vue';
 import Locations from '@/views/find_screens/locations_screen.vue';
 import VehiclesTypes from '@/views/find_screens/vehicles_types_screen.vue';
 import AdminsAccounts from '@/views/Accounts/admins_accounts_screen.vue';
@@ -69,6 +70,11 @@ const routes = [{
         path: '/app_manage/other_config_',
         name: 'other_config',
         component: OtherConfigs,
+    },
+    {
+        path: '/app_manage/gateway_config_',
+        name: 'gateway',
+        component: GatewayConfig,
     },
     {
         path: '/find_options/locations_',

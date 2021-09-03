@@ -147,6 +147,11 @@ export default {
             suRoute: "/app_manage/other_config_",
             active: false,
           },
+          {
+            subTitle: "Payment Gateway Configurations",
+            suRoute: "/app_manage/gateway_config_",
+            active: false,
+          },
         ],
       },
       {
