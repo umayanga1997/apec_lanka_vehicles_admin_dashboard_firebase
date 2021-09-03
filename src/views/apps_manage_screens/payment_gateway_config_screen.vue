@@ -23,10 +23,10 @@
       >{{ message }}</v-alert
     >
     <!-- Data Table -->
-    <v-card class="mt-5 mb-5">
-      <v-card-title>
+    <!-- <v-card class="mt-5 mb-5"> -->
+      <!-- <v-card-title>
         <span>Payment Gateway Configurations</span>
-      </v-card-title>
+      </v-card-title> -->
 
       <v-container class="pa-2 content-center">
         <ValidationObserver ref="observer" v-slot="{}">
@@ -88,7 +88,7 @@
           </v-col>
         </ValidationObserver>
       </v-container>
-    </v-card>
+    <!-- </v-card> -->
   </v-container>
 </template>
 
