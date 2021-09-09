@@ -22,6 +22,9 @@ import Login from '@/views/Login/login_screen.vue';
 Vue.use(VueRouter)
 
 const routes = [{
+        path: '/',
+        redirect: 'vehicles',
+    }, {
         path: '/vehicles',
         name: 'home',
         component: Home
@@ -109,7 +112,7 @@ const routes = [{
         props: true
     },
     {
-        path: '/auth/login',
+        path: '/vehicles/auth/login',
         name: 'login',
         component: Login,
     },
