@@ -74,13 +74,12 @@ export default {
           var expireCount = 0;
 
           snapshot.docs.forEach((element) => {
-            if (element.data()["acc_status_active"] === false) {
-              activeCount++;
-            } else if (element.data()["isExpired"] === true) {
-              expireCount++;
-            } else {
-              allCount++;
-            }
+            if (element.data()["acc_status_active"] === true) activeCount++;
+            
+            if (element.data()["isExpired"] === true) expireCount++;
+            
+            allCount++;
+            
           });
 
           for (let index = 0; index < this.headers.length; index++) {
