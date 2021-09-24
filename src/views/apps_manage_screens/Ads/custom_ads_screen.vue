@@ -68,6 +68,10 @@
             <td class="d-block d-sm-table-cell">{{ item.point }}</td>
             <td class="d-block d-sm-table-cell">{{ item.st_date }}</td>
             <td class="d-block d-sm-table-cell">{{ item.exp_date }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.url_title }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.navigate_url }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.link_icon }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.sec}}</td>
             <td class="d-block-flex d-sm-table-cell">
               <v-img
                 :src="item.banner_image"
@@ -239,6 +243,48 @@
                         </v-date-picker>
                       </v-dialog>
                     </v-col>
+                     <v-col cols="12" sm="6" md="6">
+                     
+                        <v-text-field
+                          v-model="editItem.url_title"
+                          :error-messages="errors"
+                          label="URl Title"
+                          hint="Enter title of custom ad URl"
+                          required
+                        ></v-text-field>
+                      
+                    </v-col>
+                    <v-col cols="12" sm="6" md="6">
+                     
+                        <v-text-field
+                          v-model="editItem.navigate_url"
+                          :error-messages="errors"
+                          label="Navigate URl"
+                          hint="Enter Navigate URL of custom ad"
+                          required
+                        ></v-text-field>
+                        </v-col>
+                    <v-col cols="12" sm="6" md="6">
+                     
+                        <v-text-field
+                          v-model="editItem.link_icon"
+                          :error-messages="errors"
+                          label="Link Icon"
+                          hint="Enter icon of the url link"
+                          required
+                        ></v-text-field>
+                      
+                    </v-col><v-col cols="12" sm="6" md="6">
+                     
+                        <v-text-field
+                          v-model="editItem.sec"
+                          :error-messages="errors"
+                          label="Duration (sec)"
+                          hint="Enter Duration (sec) of custom ad"
+                          required
+                        ></v-text-field>
+                     
+                    </v-col>
                     <v-col cols="12" sm="6" md="6">
                       <cropper
                         v-if="selectedImageURL !== null"
@@ -400,6 +446,10 @@ export default {
       { text: "Point", value: "point", align: "center" },
       { text: "ST Date", value: "st_date" },
       { text: "Exp Date", value: "exp_date" },
+      { text: "URL Title", value: "url_title" },
+      { text: "Navigate URL", value: "navigate_url" },
+      { text: "Link Icon", value: "link_icon" },
+      { text: "Duration (sec)", value: "sec" },
       { text: "Image", value: "banner_image", width: "130px" },
       { text: "Actions", value: "u-actions", width: "190px" },
     ],
@@ -456,6 +506,10 @@ export default {
               thumbnail_image: value,
               st_date: this.editItem.st_date,
               exp_date: this.editItem.exp_date,
+              url_title: this.editItem.url_title ?? "",
+              navigate_url: this.editItem.navigate_url ?? "",
+              link_icon: this.editItem.link_icon ?? "",
+              sec: parseInt(this.editItem.sec) ?? 15,
             })
             .then(() => {
               this.isSelectNewImage = false;
@@ -506,6 +560,11 @@ export default {
             thumbnail_image: value,
             st_date: this.editItem.st_date,
             exp_date: this.editItem.exp_date,
+            url_title: this.editItem.url_title ?? "",
+            navigate_url: this.editItem.navigate_url ?? "",
+            link_icon: this.editItem.link_icon ?? "",
+
+            sec: parseInt(this.editItem.sec) ?? 15,
           })
           .then(() => {
             this.isSelectNewImage = false;
