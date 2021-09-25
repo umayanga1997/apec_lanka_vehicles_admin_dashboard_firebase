@@ -182,7 +182,7 @@
 </template>
 
 <script>
-import {fireStore} from "@/firebaseConfig";
+import { fireStore } from "@/firebaseConfig";
 import { v4 as uuidv4 } from "uuid";
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
@@ -222,6 +222,7 @@ extend("email", {
 });
 
 const locationsRef = fireStore.collection("locations");
+const vehiclesFetchRef = fireStore.collectionGroup("vehicles");
 
 export default {
   name: "locations",
@@ -232,7 +233,7 @@ export default {
   },
 
   created() {
-    this.getSpNoteDetails();
+    this.getLocationsDetails();
   },
 
   data: () => ({
@@ -259,7 +260,7 @@ export default {
     msgType: null,
   }),
   methods: {
-    getSpNoteDetails() {
+    getLocationsDetails() {
       locationsRef
         .orderBy("location_name")
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
@@ -327,11 +328,55 @@ export default {
             location_name: this.editItem.location_name,
           })
           .then(() => {
-            this.dialog = !this.dialog;
-            this.loadingBtn = !this.loadingBtn;
-            this.isUpdateData = !this.isUpdateData;
-            this.editItem = {};
-            this.alertMessage("Data updated successfully.", "success");
+            vehiclesFetchRef
+              .get()
+              .then(async (snapshot) => {
+                for (const key in snapshot.docs) {
+                  //Asigne snapshot data to a new object
+                  var locationsObj = snapshot.docs[key].data().locations;
+
+                  //Check existing
+                  var exists = locationsObj.some((item) => {
+                    return item.location_id === this.editItem.location_id;
+                  });
+                  
+                  if (exists) {
+                     //find index from locationObj
+                    const index = locationsObj.findIndex((item) => {
+                      return item.location_id === this.editItem.location_id;
+                    });
+
+                    //make a new data
+                    const newData = {
+                      location_id: this.editItem.location_id,
+                      location_name: this.editItem.location_name,
+                    };
+
+                    //replace new data to locationsObj object
+                    locationsObj.splice(index, 1, newData);
+
+                    //update firestore reference of current vehicle
+                    snapshot.docs[key].ref
+                      .update({
+                        locations: locationsObj,
+                      })
+                      .catch((e) => {
+                        this.dialog = !this.dialog;
+                        this.loadingBtn = !this.loadingBtn;
+                        this.isUpdateData = !this.isUpdateData;
+                        this.editItem = {};
+                        this.alertMessage(e.message, "error");
+                      });
+                  }
+                }
+              })
+              .then(() => {
+                this.dialog = !this.dialog;
+                this.loadingBtn = !this.loadingBtn;
+                this.isUpdateData = !this.isUpdateData;
+                this.editItem = {};
+                this.alertMessage("Data updated successfully.", "success");
+              });
           })
           .catch((e) => {
             this.dialog = !this.dialog;
