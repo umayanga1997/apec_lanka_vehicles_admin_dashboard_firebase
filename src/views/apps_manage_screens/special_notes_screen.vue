@@ -7,7 +7,7 @@
       :type="msgType"
       >{{ message }}</v-alert
     >
-    
+
     <!-- {{screenName}}
     <v-btn @click="changeScreenName">Change</v-btn> -->
     <v-row no-gutters class="mt-2 justify-center">
@@ -74,6 +74,8 @@
             <td class="d-block d-sm-table-cell">{{ item.link }}</td>
             <td class="d-block d-sm-table-cell">{{ item.isShow }}</td>
             <td class="d-block d-sm-table-cell">{{ item.isLockApp }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.isAppUpdate }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.newAppVersion }}</td>
 
             <td class="d-block d-sm-table-cell">
               <v-container fluid class="ActionButton__container pa-1">
@@ -171,7 +173,7 @@
                     </v-col>
                     <v-spacer></v-spacer>
 
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" sm="6" md="6">
                       <validation-provider
                         v-slot="{ errors }"
                         rules="required"
@@ -187,7 +189,7 @@
                         </v-select>
                       </validation-provider>
                     </v-col>
-                    <v-col cols="12" md="4">
+                    <v-col cols="12" sm="6" md="6">
                       <validation-provider
                         v-slot="{ errors }"
                         rules="required"
@@ -202,6 +204,33 @@
                         >
                         </v-select>
                       </validation-provider>
+                    </v-col>
+                    <br />
+                    <!-- Update Controller -->
+                    <v-col cols="12" sm="6" md="6">
+                      <validation-provider
+                        v-slot="{ errors }"
+                        rules="required"
+                        name="Is App Update"
+                      >
+                        <v-select
+                          v-model="editItem.isAppUpdate"
+                          :items="selectItems"
+                          :error-messages="errors"
+                          label="Is App Update?"
+                          required
+                        >
+                        </v-select>
+                      </validation-provider>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="6">
+                      <v-text-field
+                        v-model="editItem.newAppVersion"
+                        :error-messages="errors"
+                        label="New Version of the App"
+                        hint="Enter new version of the app"
+                        required
+                      ></v-text-field>
                     </v-col>
                   </v-row>
                 </v-container>
@@ -266,7 +295,7 @@
 </template>
 
 <script>
-import {fireStore} from "@/firebaseConfig";
+import { fireStore } from "@/firebaseConfig";
 import { v4 as uuidv4 } from "uuid";
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
@@ -335,6 +364,8 @@ export default {
       { text: "Link", value: "link" },
       { text: "Is Show?", value: "isShow" },
       { text: "Is Lock App?", value: "isLockApp" },
+      { text: "Is App Update?", value: "isAppUpdate" },
+      { text: "New App Version", value: "newAppVersion" },
       { text: "Actions", value: "u-actions", width: "190px" },
     ],
     dataRows: [],
@@ -351,12 +382,11 @@ export default {
     isMsg: false,
     msgType: null,
   }),
-  computed:{
+  computed: {
     // screenName(){
     //   console.log(this.$store)
     //   return this.$store.state.screenName;
     // },
-
   },
   methods: {
     // changeScreenName(){
@@ -387,6 +417,8 @@ export default {
             link: this.editItem.link ?? "",
             isShow: this.editItem.isShow,
             isLockApp: this.editItem.isLockApp,
+            isAppUpdate: this.editItem.isAppUpdate,
+            newAppVersion: this.editItem.newAppVersion ?? "",
           })
           .then(() => {
             this.dialog = !this.dialog;
@@ -420,6 +452,8 @@ export default {
             link: this.editItem.link ?? "",
             isShow: this.editItem.isShow,
             isLockApp: this.editItem.isLockApp,
+            isAppUpdate: this.editItem.isAppUpdate,
+            newAppVersion: this.editItem.newAppVersion ?? "",
           })
           .then(() => {
             this.dialog = !this.dialog;
