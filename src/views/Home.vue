@@ -211,7 +211,7 @@ export default {
           );
           var amount = 0;
           snapshot.docs.forEach((element) => {
-            amount += element.data()["pay_amount"];
+            amount += parseInt(element.data()["pay_amount"]);
           });
           if (check.length === 0)
             this.headers.push({
