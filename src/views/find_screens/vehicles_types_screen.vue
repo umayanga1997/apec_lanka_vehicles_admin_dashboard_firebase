@@ -182,7 +182,7 @@
 </template>
 
 <script>
-import {fireStore} from "@/firebaseConfig";
+import { fireStore } from "@/firebaseConfig";
 import { v4 as uuidv4 } from "uuid";
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
@@ -222,6 +222,7 @@ extend("email", {
 });
 
 const vehicleTypessRef = fireStore.collection("vehicle_types");
+const vehiclesFetchRef = fireStore.collectionGroup("vehicles");
 
 export default {
   name: "vehicles_types",
@@ -327,11 +328,36 @@ export default {
             v_type_name: this.editItem.v_type_name,
           })
           .then(() => {
-            this.dialog = !this.dialog;
-            this.loadingBtn = !this.loadingBtn;
-            this.isUpdateData = !this.isUpdateData;
-            this.editItem = {};
-            this.alertMessage("Data updated successfully.", "success");
+            vehiclesFetchRef
+              .get()
+              .then(async (snapshot) => {
+                for (const key in snapshot.docs) {
+                  if (
+                    this.editItem.v_type_id ===
+                    snapshot.docs[key].data().v_type_id
+                  ) {
+                    //update firestore reference of current vehicle
+                    snapshot.docs[key].ref
+                      .update({
+                        v_type_name: this.editItem.v_type_name,
+                      })
+                      .catch((e) => {
+                        this.dialog = !this.dialog;
+                        this.loadingBtn = !this.loadingBtn;
+                        this.isUpdateData = !this.isUpdateData;
+                        this.editItem = {};
+                        this.alertMessage(e.message, "error");
+                      });
+                  }
+                }
+              })
+              .then(() => {
+                this.dialog = !this.dialog;
+                this.loadingBtn = !this.loadingBtn;
+                this.isUpdateData = !this.isUpdateData;
+                this.editItem = {};
+                this.alertMessage("Data updated successfully.", "success");
+              });
           })
           .catch((e) => {
             this.dialog = !this.dialog;
@@ -356,10 +382,35 @@ export default {
           .doc(this.deleteID)
           .delete()
           .then(() => {
-            this.dialogDelete = !this.dialogDelete;
-            this.loadingBtn = !this.loadingBtn;
-            this.deleteID = null;
-            this.alertMessage("Data deleted successfully.", "success");
+            vehiclesFetchRef
+              .get()
+              .then(async (snapshot) => {
+                for (const key in snapshot.docs) {
+                  if (
+                    this.deleteID ===
+                    snapshot.docs[key].data().v_type_id
+                  ) {
+                    snapshot.docs[key].ref
+                      .update({
+                        v_type_id: null,
+                        v_type_name: null,
+                      })
+                      .catch((e) => {
+                        this.dialog = !this.dialog;
+                        this.loadingBtn = !this.loadingBtn;
+                        this.isUpdateData = !this.isUpdateData;
+                        this.editItem = {};
+                        this.alertMessage(e.message, "error");
+                      });
+                  }
+                }
+              })
+              .then(() => {
+                this.dialogDelete = !this.dialogDelete;
+                this.loadingBtn = !this.loadingBtn;
+                this.deleteID = null;
+                this.alertMessage("Data deleted successfully.", "success");
+              });
           })
           .catch((e) => {
             this.dialogDelete = !this.dialogDelete;

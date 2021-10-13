@@ -339,9 +339,9 @@ export default {
                   var exists = locationsObj.some((item) => {
                     return item.location_id === this.editItem.location_id;
                   });
-                  
+
                   if (exists) {
-                     //find index from locationObj
+                    //find index from locationObj
                     const index = locationsObj.findIndex((item) => {
                       return item.location_id === this.editItem.location_id;
                     });
@@ -401,10 +401,49 @@ export default {
           .doc(this.deleteID)
           .delete()
           .then(() => {
-            this.dialogDelete = !this.dialogDelete;
-            this.loadingBtn = !this.loadingBtn;
-            this.deleteID = null;
-            this.alertMessage("Data deleted successfully.", "success");
+            vehiclesFetchRef
+              .get()
+              .then(async (snapshot) => {
+                for (const key in snapshot.docs) {
+                  //Asigne snapshot data to a new object
+                  var locationsObj = snapshot.docs[key].data().locations;
+
+                  //Check existing
+                  var exists = locationsObj.some((item) => {
+                    return item.location_id === this.deleteID;
+                  });
+
+                  if (exists) {
+                    //find index from locationObj
+                    const index = locationsObj.findIndex((item) => {
+                      return item.location_id === this.deleteID;
+                    });
+
+                    //replace new data to locationsObj object
+                    locationsObj.splice(index, 1);
+                    //update firestore reference of current vehicle
+                   
+                        snapshot.docs[key].ref
+                          .update({
+                            locations: locationsObj,
+                          })
+                          .catch((e) => {
+                            this.dialog = !this.dialog;
+                            this.loadingBtn = !this.loadingBtn;
+                            this.isUpdateData = !this.isUpdateData;
+                            this.editItem = {};
+                            this.alertMessage(e.message, "error");
+                          });
+                     
+                  }
+                }
+              })
+              .then(() => {
+                this.dialogDelete = !this.dialogDelete;
+                this.loadingBtn = !this.loadingBtn;
+                this.deleteID = null;
+                this.alertMessage("Data deleted successfully.", "success");
+              });
           })
           .catch((e) => {
             this.dialogDelete = !this.dialogDelete;
