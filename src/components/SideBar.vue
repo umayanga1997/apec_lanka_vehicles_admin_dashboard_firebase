@@ -184,6 +184,11 @@ export default {
             active: false,
           },
           {
+            subTitle: "Customers",
+            suRoute: "/accounts/customers_accounts_",
+            active: false,
+          },
+          {
             subTitle: "Admins",
             suRoute: "/accounts/admin_acc_",
             active: false,

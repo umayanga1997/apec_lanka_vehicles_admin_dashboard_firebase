@@ -60,6 +60,7 @@ export default {
     this.getCountOfVehiclesTypes();
     this.getCountOfOwnersAccounts();
     this.getTotalOfTransactions();
+    this.getCountOfCustomerssAccounts();
   },
   data: () => ({
     headers: [],
@@ -196,6 +197,25 @@ export default {
             premium: premium,
             free: free,
           });
+        })
+        .catch((e) => {
+          // this.loading = false;
+          this.alertMessage(e.message, "error");
+        });
+    },
+    async getCountOfCustomerssAccounts() {
+      await usersFetchRef
+        .where("second_role", "==", "Customer")
+        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
+          
+         let check = this.headers.filter(
+            (item) => item.title === "Count of customers accounts"
+          );
+          if (check.length === 0)
+            this.headers.push({
+              title: "Count of customers accounts",
+              value: snapshot.docs.length,
+            });       
         })
         .catch((e) => {
           // this.loading = false;

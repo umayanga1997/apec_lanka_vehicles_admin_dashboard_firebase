@@ -15,6 +15,7 @@ import Locations from '@/views/find_screens/locations_screen.vue';
 import VehiclesTypes from '@/views/find_screens/vehicles_types_screen.vue';
 import AdminsAccounts from '@/views/Accounts/admins_accounts_screen.vue';
 import OwnersAccounts from '@/views/Accounts/owners_accounts_screen.vue';
+import CustomersAccounts from '@/views/Accounts/customers_accounts_screen.vue';
 import UserTransactions from '@/views/Accounts/user_transactions_screen.vue';
 import UserVehicles from '@/views/Accounts/user_vehicles_screen.vue';
 import Login from '@/views/Login/login_screen.vue';
@@ -98,6 +99,11 @@ const routes = [{
         path: '/accounts/owners_acc_',
         name: 'owners_accounts',
         component: OwnersAccounts,
+    },
+    {
+        path: '/accounts/customers_accounts_',
+        name: 'customers_accounts',
+        component: CustomersAccounts,
     },
     {
         path: '/accounts/owners_acc_/:id',
