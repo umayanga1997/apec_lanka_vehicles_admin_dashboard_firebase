@@ -72,6 +72,8 @@
             <td class="d-block d-sm-table-cell">{{ item.description }}</td>
             <td class="d-block d-sm-table-cell">{{ item.navigate_url }}</td>
             <td class="d-block d-sm-table-cell">{{ item.link_icon }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.icon_prefix }}</td>
+            <td class="d-block d-sm-table-cell">{{ item.icon_web }}</td>
             <td class="d-block d-sm-table-cell">{{ item.sec }}</td>
             <td class="d-block-flex d-sm-table-cell">
               <v-img
@@ -279,8 +281,28 @@
                         label="Link Icon"
                         hint="Enter icon of the url link"
                         required
-                      ></v-text-field> </v-col
-                    ><v-col cols="12" sm="6" md="6">
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="6">
+                      <v-text-field
+                        v-model="editItem.icon_prefix"
+                        :error-messages="errors"
+                        label="Icon Prefix"
+                        hint="Enter icon prefix (Web)"
+                        required
+                      ></v-text-field>
+                    </v-col>
+                    <v-col cols="12" sm="6" md="6">
+                      <v-text-field
+                        v-model="editItem.icon_web"
+                        :error-messages="errors"
+                        label="Icon Web"
+                        hint="Enter icon of the url link (Web)"
+                        required
+                      ></v-text-field>
+                    </v-col>
+
+                    <v-col cols="12" sm="6" md="6">
                       <v-text-field
                         v-model="editItem.sec"
                         :error-messages="errors"
@@ -454,6 +476,8 @@ export default {
       { text: "Description", value: "description" },
       { text: "Navigate URL", value: "navigate_url" },
       { text: "Link Icon", value: "link_icon" },
+      { text: "Icon Prefix", value: "icon_prefix" },
+      { text: "Icon Web", value: "icon_web" },
       { text: "Duration (sec)", value: "sec" },
       { text: "Image", value: "banner_image", width: "130px" },
       { text: "Actions", value: "u-actions", width: "190px" },
@@ -515,6 +539,8 @@ export default {
               description: this.editItem.description ?? "",
               navigate_url: this.editItem.navigate_url ?? "",
               link_icon: this.editItem.link_icon ?? "",
+              icon_web: this.editItem.icon_web ?? "",
+              icon_prefix: this.editItem.icon_prefix ?? "",
               sec: parseInt(this.editItem.sec) ?? 15,
             })
             .then(() => {
@@ -568,10 +594,10 @@ export default {
             exp_date: this.editItem.exp_date,
             url_title: this.editItem.url_title ?? "",
             description: this.editItem.description ?? "",
-
             navigate_url: this.editItem.navigate_url ?? "",
             link_icon: this.editItem.link_icon ?? "",
-
+            icon_web: this.editItem.icon_web ?? "",
+            icon_prefix: this.editItem.icon_prefix ?? "",
             sec: parseInt(this.editItem.sec) ?? 15,
           })
           .then(() => {
