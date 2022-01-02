@@ -3,7 +3,7 @@
     fill-height
     fluid
     justify-center
-    style="height: 75rem;align-content: flex-start;"
+    style="height: 75rem; align-content: flex-start"
     v-if="this.loading"
   >
     <v-progress-circular
@@ -94,7 +94,7 @@
 </template>
 
 <script>
-import {fireStore} from "@/firebaseConfig";
+import { fireStore } from "@/firebaseConfig";
 
 const admobFetchRef = fireStore.collectionGroup("admob_ads_config");
 const admobRef = fireStore
@@ -117,26 +117,29 @@ export default {
   }),
   methods: {
     getAdmobDetails() {
-      admobFetchRef
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          this.details = [];
-          snapshot.docs.forEach((element) => {
-            this.configID = element.data().config_id;
+      try {
+        admobFetchRef.onSnapshot(
+          { includeMetadataChanges: true },
+          (snapshot) => {
+            this.details = [];
+            snapshot.docs.forEach((element) => {
+              this.configID = element.data().config_id;
 
-            this.details.push({
-              Banner: element.data().Banner,
-              Interstitial: element.data().Interstitial,
-              Rewarded: element.data().Rewarded,
-              isShowCustomers: element.data().isShowCustomers,
-              isShowOwner: element.data().isShowOwner,
+              this.details.push({
+                Banner: element.data().Banner,
+                Interstitial: element.data().Interstitial,
+                Rewarded: element.data().Rewarded,
+                isShowCustomers: element.data().isShowCustomers,
+                isShowOwner: element.data().isShowOwner,
+              });
+              this.loading = false;
             });
-            this.loading = false;
-          });
-        })
-        .catch((e) => {
-          this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+          }
+        );
+      } catch (error) {
+        this.loading = false;
+        this.alertMessage(error, "error");
+      }
     },
     updateData() {
       try {

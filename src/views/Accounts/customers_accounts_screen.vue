@@ -234,19 +234,20 @@ export default {
   }),
   methods: {
     getCustomersDetails() {
-      customersAccountsRef
-        .where("second_role", "==", "Customer")
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          this.dataRows = [];
-          for (const key in snapshot.docs) {
-            this.dataRows.push({ ...snapshot.docs[key].data() });
-          }
-          this.loading = false;
-        })
-        .catch((e) => {
-          this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+      try {
+        customersAccountsRef
+          .where("second_role", "==", "Customer")
+          .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
+            this.dataRows = [];
+            for (const key in snapshot.docs) {
+              this.dataRows.push({ ...snapshot.docs[key].data() });
+            }
+            this.loading = false;
+          });
+      } catch (error) {
+        this.loading = false;
+        this.alertMessage(error, "error");
+      }
     },
     // updateData() {
     //   try {

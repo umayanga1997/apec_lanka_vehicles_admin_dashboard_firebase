@@ -261,21 +261,22 @@ export default {
   }),
   methods: {
     getLocationsDetails() {
-      locationsRef
-        .orderBy("location_name")
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          this.dataRows = [];
-          this.checkItemList = [];
-          snapshot.docs.forEach((element) => {
-            this.dataRows.push({ ...element.data() });
-            this.checkItemList.push({ ...element.data() });
-            this.loading = false;
+      try {
+        locationsRef
+          .orderBy("location_name")
+          .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
+            this.dataRows = [];
+            this.checkItemList = [];
+            snapshot.docs.forEach((element) => {
+              this.dataRows.push({ ...element.data() });
+              this.checkItemList.push({ ...element.data() });
+              this.loading = false;
+            });
           });
-        })
-        .catch((e) => {
-          this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+      } catch (error) {
+        this.loading = false;
+        this.alertMessage(error, "error");
+      }
     },
     async insertData() {
       try {
@@ -422,19 +423,18 @@ export default {
                     //replace new data to locationsObj object
                     locationsObj.splice(index, 1);
                     //update firestore reference of current vehicle
-                   
-                        snapshot.docs[key].ref
-                          .update({
-                            locations: locationsObj,
-                          })
-                          .catch((e) => {
-                            this.dialog = !this.dialog;
-                            this.loadingBtn = !this.loadingBtn;
-                            this.isUpdateData = !this.isUpdateData;
-                            this.editItem = {};
-                            this.alertMessage(e.message, "error");
-                          });
-                     
+
+                    snapshot.docs[key].ref
+                      .update({
+                        locations: locationsObj,
+                      })
+                      .catch((e) => {
+                        this.dialog = !this.dialog;
+                        this.loadingBtn = !this.loadingBtn;
+                        this.isUpdateData = !this.isUpdateData;
+                        this.editItem = {};
+                        this.alertMessage(e.message, "error");
+                      });
                   }
                 }
               })

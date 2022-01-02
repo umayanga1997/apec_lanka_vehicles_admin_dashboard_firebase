@@ -374,7 +374,8 @@ export default {
   }),
   methods: {
     getHelpDetails() {
-      helpsFetchRef
+      try {
+         helpsFetchRef
         .orderBy("point")
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
@@ -383,10 +384,11 @@ export default {
             this.loading = false;
           });
         })
-        .catch((e) => {
-          this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+      } catch (error) {
+         this.loading = false;
+          this.alertMessage(error, "error");
+      }
+     
     },
     insertData() {
       try {

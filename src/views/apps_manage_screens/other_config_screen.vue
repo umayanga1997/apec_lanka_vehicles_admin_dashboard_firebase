@@ -1,10 +1,5 @@
 <template>
-  <v-container
-    fill-height
-    fluid
-    justify-center
-    v-if="this.loading"
-  >
+  <v-container fill-height fluid justify-center v-if="this.loading">
     <v-progress-circular
       :size="30"
       :width="3"
@@ -52,7 +47,7 @@
 </template>
 
 <script>
-import {fireStore} from "@/firebaseConfig";
+import { fireStore } from "@/firebaseConfig";
 
 const otherConfigFetchRef = fireStore.collectionGroup("other_configurations");
 const otherConfigRef = fireStore
@@ -75,23 +70,25 @@ export default {
   }),
   methods: {
     getAdmobDetails() {
-      otherConfigFetchRef
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          this.details = [];
-          snapshot.docs.forEach((element) => {
-            this.configID = element.id;
+      try {
+        otherConfigFetchRef.onSnapshot(
+          { includeMetadataChanges: true },
+          (snapshot) => {
+            this.details = [];
+            snapshot.docs.forEach((element) => {
+              this.configID = element.id;
 
-            this.details.push({
-              isAccountUpgradeButton: element.data().isAccountUpgradeButton,
-             
+              this.details.push({
+                isAccountUpgradeButton: element.data().isAccountUpgradeButton,
+              });
+              this.loading = false;
             });
-            this.loading = false;
-          });
-        })
-        .catch((e) => {
-          this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+          }
+        );
+      } catch (error) {
+        this.loading = false;
+        this.alertMessage(error, "error");
+      }
     },
     updateData() {
       try {
@@ -136,8 +133,8 @@ export default {
 .v-progress-circular {
   margin: 1rem;
 }
-.container--fluid{
-height: 75rem;
-padding: 40px !important;
+.container--fluid {
+  height: 75rem;
+  padding: 40px !important;
 }
 </style>

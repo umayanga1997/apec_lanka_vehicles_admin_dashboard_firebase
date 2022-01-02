@@ -261,7 +261,8 @@ export default {
   }),
   methods: {
     getSpNoteDetails() {
-      vehicleTypessRef
+      try {
+          vehicleTypessRef
         .orderBy("v_type_name")
         .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
           this.dataRows = [];
@@ -272,10 +273,11 @@ export default {
             this.loading = false;
           });
         })
-        .catch((e) => {
-          this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+      } catch (error) {
+        this.loading = false;
+          this.alertMessage(error, "error");
+      }
+    
     },
     async insertData() {
       try {

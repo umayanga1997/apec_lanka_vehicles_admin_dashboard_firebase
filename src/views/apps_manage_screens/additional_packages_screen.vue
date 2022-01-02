@@ -261,7 +261,7 @@
 </template>
 
 <script>
-import {fireStore} from "@/firebaseConfig";
+import { fireStore } from "@/firebaseConfig";
 import { v4 as uuidv4 } from "uuid";
 //Validator Configurations
 import { required, digits, email, max, regex } from "vee-validate/dist/rules";
@@ -347,18 +347,21 @@ export default {
   }),
   methods: {
     getSpNoteDetails() {
-      PackageFetchRef.orderBy("position")
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          this.dataRows = [];
-          snapshot.docs.forEach((element) => {
-            this.dataRows.push({ ...element.data() });
-            this.loading = false;
-          });
-        })
-        .catch((e) => {
-          this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+      try {
+        PackageFetchRef.orderBy("position").onSnapshot(
+          { includeMetadataChanges: true },
+          (snapshot) => {
+            this.dataRows = [];
+            snapshot.docs.forEach((element) => {
+              this.dataRows.push({ ...element.data() });
+              this.loading = false;
+            });
+          }
+        );
+      } catch (error) {
+        this.loading = false;
+        this.alertMessage(error, "error");
+      }
     },
     insertData() {
       try {

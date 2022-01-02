@@ -427,18 +427,21 @@ export default {
   }),
   methods: {
     getHelpDetails() {
-      ourProductsFetchRef
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          this.dataRows = [];
-          snapshot.docs.forEach((element) => {
-            this.dataRows.push({ ...element.data() });
-            this.loading = false;
-          });
-        })
-        .catch((e) => {
-          this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+      try {
+        ourProductsFetchRef.onSnapshot(
+          { includeMetadataChanges: true },
+          (snapshot) => {
+            this.dataRows = [];
+            snapshot.docs.forEach((element) => {
+              this.dataRows.push({ ...element.data() });
+              this.loading = false;
+            });
+          }
+        );
+      } catch (error) {
+        this.loading = false;
+        this.alertMessage(error, "error");
+      }
     },
     async insertData() {
       try {

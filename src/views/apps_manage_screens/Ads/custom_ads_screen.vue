@@ -504,19 +504,20 @@ export default {
   }),
   methods: {
     getHelpDetails() {
-      customAdsFetchRef
-        .orderBy("point")
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          this.dataRows = [];
-          snapshot.docs.forEach((element) => {
-            this.dataRows.push({ ...element.data() });
-            this.loading = false;
+      try {
+        customAdsFetchRef
+          .orderBy("point")
+          .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
+            this.dataRows = [];
+            snapshot.docs.forEach((element) => {
+              this.dataRows.push({ ...element.data() });
+              this.loading = false;
+            });
           });
-        })
-        .catch((e) => {
-          this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+      } catch (error) {
+        this.loading = false;
+        this.alertMessage(error, "error");
+      }
     },
     async insertData() {
       try {

@@ -321,20 +321,21 @@ export default {
   }),
   methods: {
     getHelpDetails() {
-      adminsAccountsRef
-        .where("user_type", "==", "admin")
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          this.dataRows = [];
-          for (const key in snapshot.docs) {
-            this.dataRows.push({ ...snapshot.docs[key].data() });
-            this.checkItemList.push({ ...snapshot.docs[key].data() });
-          }
-          this.loading = false;
-        })
-        .catch((e) => {
-          this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+      try {
+        adminsAccountsRef
+          .where("user_type", "==", "admin")
+          .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
+            this.dataRows = [];
+            for (const key in snapshot.docs) {
+              this.dataRows.push({ ...snapshot.docs[key].data() });
+              this.checkItemList.push({ ...snapshot.docs[key].data() });
+            }
+            this.loading = false;
+          });
+      } catch (error) {
+        this.loading = false;
+        this.alertMessage(error, "error");
+      }
     },
     insertData() {
       try {
@@ -352,7 +353,7 @@ export default {
         } else {
           const id = uuidv4();
           var dateTiem = moment(new Date()).format("YYYY-MM-DD h:mm:ss");
-          
+
           adminsAccountsRef
             .doc(id)
             .set({

@@ -393,16 +393,21 @@ export default {
     //   this.$store.commit('changeScreenName',"New");
     // },
     getSpNoteDetails() {
-      NoteFetchRef.onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-        this.dataRows = [];
-        snapshot.docs.forEach((element) => {
-          this.dataRows.push({ ...element.data() });
-          this.loading = false;
-        });
-      }).catch((e) => {
+      try {
+        NoteFetchRef.onSnapshot(
+          { includeMetadataChanges: true },
+          (snapshot) => {
+            this.dataRows = [];
+            snapshot.docs.forEach((element) => {
+              this.dataRows.push({ ...element.data() });
+              this.loading = false;
+            });
+          }
+        );
+      } catch (error) {
         this.loading = false;
-        this.alertMessage(e.message, "error");
-      });
+        this.alertMessage(error, "error");
+      }
     },
     insertData() {
       try {

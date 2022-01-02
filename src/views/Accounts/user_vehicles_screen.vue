@@ -10,8 +10,6 @@
     <!-- Search Field -->
     <!-- <v-spacer ></v-spacer> -->
     <v-row no-gutters class="mt-2 justify-center">
-      
-
       <!-- Search Field -->
       <!-- <v-spacer ></v-spacer> -->
       <v-col cols="12" sm="4" class="pa-1">
@@ -51,9 +49,13 @@
             <td class="d-block d-sm-table-cell">{{ item.user_name }}</td>
             <td class="d-block d-sm-table-cell">{{ item.user_qr_id }}</td>
             <td class="d-block d-sm-table-cell">{{ item.phone_no }}</td>
-            <td class="d-block d-sm-table-cell">{{ item.acc_status_active }}</td>
+            <td class="d-block d-sm-table-cell">
+              {{ item.acc_status_active }}
+            </td>
             <td class="d-block d-sm-table-cell">{{ item.v_name }}</td>
-            <td class="d-block d-sm-table-cell truncate">{{ item.v_description }}</td>
+            <td class="d-block d-sm-table-cell truncate">
+              {{ item.v_description }}
+            </td>
             <td class="d-block d-sm-table-cell">{{ item.v_type_name }}</td>
             <td class="d-block d-sm-table-cell">{{ item.v_no_letter }}</td>
             <td class="d-block d-sm-table-cell">{{ item.v_no_number }}</td>
@@ -75,7 +77,11 @@
                   color="green lighten-2"
                 />
                 <ActionButton
-                  @click="editItem = item;VehicleViewerDialog = false; VehicleViewerDialog = true;"
+                  @click="
+                    editItem = item;
+                    VehicleViewerDialog = false;
+                    VehicleViewerDialog = true;
+                  "
                   class="ma-1"
                   icon="mdi-archive"
                   color="green lighten-2"
@@ -87,7 +93,7 @@
       </v-data-table>
     </v-card>
     <!-- Popup Form Create/Update-->
-    <VehicleViewer :dialog="VehicleViewerDialog" :data="editItem"/>
+    <VehicleViewer :dialog="VehicleViewerDialog" :data="editItem" />
     <template>
       <v-row justify="center">
         <v-dialog v-model="dialog" max-width="300px">
@@ -252,7 +258,7 @@ export default {
   //       return this.$route.params.id;
   //     },
   //   },
-  props:['userId'],
+  props: ["userId"],
   data: () => ({
     //Other
     search: "",
@@ -288,7 +294,7 @@ export default {
     dialog: false,
     dialogDelete: false,
     deleteID: null,
-    VehicleViewerDialog :false,
+    VehicleViewerDialog: false,
     //message
     message: null,
     isMsg: false,
@@ -296,27 +302,29 @@ export default {
   }),
   methods: {
     getHelpDetails() {
-      vehiclesRef
-        .doc(this.userId)
-        .collection("vehicles")
-        .orderBy("v_id")
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          this.dataRows = [];
-          for (const key in snapshot.docs) {
+      try {
+        vehiclesRef
+          .doc(this.userId)
+          .collection("vehicles")
+          .orderBy("v_id")
+          .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
+            this.dataRows = [];
+            for (const key in snapshot.docs) {
               this.dataRows.push({ ...snapshot.docs[key].data() });
-          }
-          this.loading = false;
-        })
-        .catch((e) => {
-          this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+            }
+            this.loading = false;
+          });
+      } catch (error) {
+        this.loading = false;
+        this.alertMessage(error, "error");
+      }
     },
     updateData() {
       try {
         this.loadingBtn = true;
-        vehiclesRef.doc(this.userId)
-        .collection("vehicles")
+        vehiclesRef
+          .doc(this.userId)
+          .collection("vehicles")
           .doc(this.editItem.v_id)
           .update({
             acc_status_active: this.editItem.acc_status_active,
@@ -370,7 +378,7 @@ export default {
     //     this.alertMessage(error.message, "error");
     //   }
     // },
-   
+
     alertMessage(message, msgType) {
       this.isMsg = true;
       this.message = message;

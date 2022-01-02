@@ -72,13 +72,13 @@ export default {
   created() {
     this.getTransactionsDetails();
   },
-  
+
   // computed: {
   //   id() {
   //     return this.$route.params.id;
   //   },
   // },
-  props:['userId'],
+  props: ["userId"],
   data: () => ({
     //Other
     search: "",
@@ -100,21 +100,22 @@ export default {
   }),
   methods: {
     getTransactionsDetails() {
-      transactionRef
-        .doc(this.userId)
-        .collection("transactions")
-        .orderBy("dateForOrderBy")
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          this.dataRows = [];
-          for (const key in snapshot.docs) {
-            this.dataRows.push({ ...snapshot.docs[key].data() });
-          }
-          this.loading = false;
-        })
-        .catch((e) => {
-          this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+      try {
+        transactionRef
+          .doc(this.userId)
+          .collection("transactions")
+          .orderBy("dateForOrderBy")
+          .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
+            this.dataRows = [];
+            for (const key in snapshot.docs) {
+              this.dataRows.push({ ...snapshot.docs[key].data() });
+            }
+            this.loading = false;
+          });
+      } catch (error) {
+        this.loading = false;
+        this.alertMessage(error, "error");
+      }
     },
   },
 };

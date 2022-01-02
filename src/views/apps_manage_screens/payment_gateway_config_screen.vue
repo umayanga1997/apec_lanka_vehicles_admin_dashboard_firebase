@@ -24,70 +24,70 @@
     >
     <!-- Data Table -->
     <!-- <v-card class="mt-5 mb-5"> -->
-      <!-- <v-card-title>
+    <!-- <v-card-title>
         <span>Payment Gateway Configurations</span>
       </v-card-title> -->
 
-      <v-container class="pa-2 content-center">
-        <ValidationObserver ref="observer" v-slot="{}">
-          <v-col cols="12" sm="4" md="6" lg="6">
-            <v-form ref="form" v-model="valid" lazy-validation>
-              <validation-provider
-                v-slot="{ errors }"
-                rules="required"
-                name="Gateway Live ID"
-              >
-                <v-text-field
-                  v-model="details[0].gateway_id_LIVE"
-                  :error-messages="errors"
-                  label="Gateway Live ID"
-                  required
-                ></v-text-field>
-              </validation-provider>
-              <br />
-              <validation-provider
-                v-slot="{ errors }"
-                rules="required"
-                name="Gateway Sandbox ID"
-              >
-                <v-text-field
-                  v-model="details[0].gateway_id_SANDBOX"
-                  label="Gateway Sandbox ID"
-                  required
-                  :error-messages="errors"
-                ></v-text-field>
-              </validation-provider>
-              <br />
-              <validation-provider
-                v-slot="{ errors }"
-                rules="required"
-                name="Is Live data"
-              >
-                <v-select
-                  v-model="details[0].gateway_is_live"
-                  :items="items"
-                  :error-messages="errors"
-                  label="Is Live"
-                  required
-                ></v-select>
-              </validation-provider>
-              <br />
-              <v-btn
-                class="mx-2"
-                @click="updateData()"
-                color="green darken-2 white--text"
-                outlined
-                :loading="loadingBtn"
-                :disabled="loadingBtn ? loadingBtn : invalid"
-              >
-                <v-icon dark left>mdi-update</v-icon>
+    <v-container class="pa-2 content-center">
+      <ValidationObserver ref="observer" v-slot="{}">
+        <v-col cols="12" sm="4" md="6" lg="6">
+          <v-form ref="form" v-model="valid" lazy-validation>
+            <validation-provider
+              v-slot="{ errors }"
+              rules="required"
+              name="Gateway Live ID"
+            >
+              <v-text-field
+                v-model="details[0].gateway_id_LIVE"
+                :error-messages="errors"
+                label="Gateway Live ID"
+                required
+              ></v-text-field>
+            </validation-provider>
+            <br />
+            <validation-provider
+              v-slot="{ errors }"
+              rules="required"
+              name="Gateway Sandbox ID"
+            >
+              <v-text-field
+                v-model="details[0].gateway_id_SANDBOX"
+                label="Gateway Sandbox ID"
+                required
+                :error-messages="errors"
+              ></v-text-field>
+            </validation-provider>
+            <br />
+            <validation-provider
+              v-slot="{ errors }"
+              rules="required"
+              name="Is Live data"
+            >
+              <v-select
+                v-model="details[0].gateway_is_live"
+                :items="items"
+                :error-messages="errors"
+                label="Is Live"
+                required
+              ></v-select>
+            </validation-provider>
+            <br />
+            <v-btn
+              class="mx-2"
+              @click="updateData()"
+              color="green darken-2 white--text"
+              outlined
+              :loading="loadingBtn"
+              :disabled="loadingBtn ? loadingBtn : invalid"
+            >
+              <v-icon dark left>mdi-update</v-icon>
 
-                <span style="font-size: 12px" lowercase>Update</span>
-              </v-btn>
-            </v-form>
-          </v-col>
-        </ValidationObserver>
-      </v-container>
+              <span style="font-size: 12px" lowercase>Update</span>
+            </v-btn>
+          </v-form>
+        </v-col>
+      </ValidationObserver>
+    </v-container>
     <!-- </v-card> -->
   </v-container>
 </template>
@@ -161,19 +161,21 @@ export default {
   }),
   methods: {
     getPayCoinfigDetails() {
-      PaymentsFetchRef.onSnapshot(
-        { includeMetadataChanges: true },
-        (snapshot) => {
-          this.details = [];
-          snapshot.docs.forEach((element) => {
-            this.details.push({ ...element.data() });
-            this.loading = false;
-          });
-        }
-      ).catch((e) => {
+      try {
+        PaymentsFetchRef.onSnapshot(
+          { includeMetadataChanges: true },
+          (snapshot) => {
+            this.details = [];
+            snapshot.docs.forEach((element) => {
+              this.details.push({ ...element.data() });
+              this.loading = false;
+            });
+          }
+        );
+      } catch (error) {
         this.loading = false;
-        this.alertMessage(e.message, "error");
-      });
+        this.alertMessage(error, "error");
+      }
     },
 
     async updateData() {
@@ -192,7 +194,7 @@ export default {
                 this.loadingBtn = !this.loadingBtn;
                 this.alertMessage(e.message, "error");
               });
-          }else{
+          } else {
             this.loadingBtn = !this.loadingBtn;
           }
         });

@@ -278,19 +278,20 @@ export default {
   }),
   methods: {
     getHelpDetails() {
-      ownersAccountsRef
-        .where("user_type", "==", "owner")
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          this.dataRows = [];
-          for (const key in snapshot.docs) {
-            this.dataRows.push({ ...snapshot.docs[key].data() });
-          }
-          this.loading = false;
-        })
-        .catch((e) => {
-          this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+      try {
+        ownersAccountsRef
+          .where("user_type", "==", "owner")
+          .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
+            this.dataRows = [];
+            for (const key in snapshot.docs) {
+              this.dataRows.push({ ...snapshot.docs[key].data() });
+            }
+            this.loading = false;
+          });
+      } catch (error) {
+        this.loading = false;
+        this.alertMessage(error, "error");
+      }
     },
     updateData() {
       try {
@@ -318,7 +319,7 @@ export default {
                 this.loadingBtn = !this.loadingBtn;
                 this.isUpdateData = !this.isUpdateData;
                 this.editItem = {};
-                value= null;
+                value = null;
                 this.alertMessage("Data updated successfully.", "success");
               })
               .catch((e) => {

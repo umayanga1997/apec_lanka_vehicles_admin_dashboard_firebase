@@ -1,12 +1,7 @@
 <template>
   <v-container fluid>
     <div class="wrapper">
-      <v-col
-        cols="12"
-       
-        v-for="header in headers"
-        :key="header.title"
-      >
+      <v-col cols="12" v-for="header in headers" :key="header.title">
         <vs-card>
           <template #title>
             <h3>{{ header.title }}</h3>
@@ -68,181 +63,184 @@ export default {
   components: {},
   methods: {
     async getCountOfVehicles() {
-      await vehiclesFetchRef
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          var allCount = 0;
-          var activeCount = 0;
-          var expireCount = 0;
+      try {
+        await vehiclesFetchRef.onSnapshot(
+          { includeMetadataChanges: true },
+          (snapshot) => {
+            var allCount = 0;
+            var activeCount = 0;
+            var expireCount = 0;
 
-          snapshot.docs.forEach((element) => {
-            if (element.data()["acc_status_active"] === true) activeCount++;
-            
-            if (element.data()["isExpired"] === true) expireCount++;
-            
-            allCount++;
-            
-          });
+            snapshot.docs.forEach((element) => {
+              if (element.data()["acc_status_active"] === true) activeCount++;
 
-          for (let index = 0; index < this.headers.length; index++) {
-            const element = this.headers[index];
-            if (element.title === "Count of vehicles") {
-              this.headers.splice(index, 1);
-              index--;
+              if (element.data()["isExpired"] === true) expireCount++;
+
+              allCount++;
+            });
+
+            for (let index = 0; index < this.headers.length; index++) {
+              const element = this.headers[index];
+              if (element.title === "Count of vehicles") {
+                this.headers.splice(index, 1);
+                index--;
+              }
             }
+            // let check = this.headers.splice(
+            //   (item) => item.title === "Count of vehicles"
+            // );
+
+            this.headers.push({
+              title: "Count of vehicles",
+              value: allCount,
+              active: activeCount,
+              expired: expireCount,
+            });
           }
-          // let check = this.headers.splice(
-          //   (item) => item.title === "Count of vehicles"
-          // );
-
-          this.headers.push({
-            title: "Count of vehicles",
-            value: allCount,
-            active: activeCount,
-            expired: expireCount,
-          });
-        })
-
-        .catch((e) => {
-          // this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+        );
+      } catch (error) {
+        this.alertMessage(error, "error");
+      }
     },
     async getCountOfLocations() {
-      await locationsFetchRef
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          let check = this.headers.filter(
-            (item) => item.title === "Count of locations"
-          );
-          if (check.length === 0)
-            this.headers.push({
-              title: "Count of locations",
-              value: snapshot.docs.length,
-            });
-        })
-        .catch((e) => {
-          // this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+      try {
+        await locationsFetchRef.onSnapshot(
+          { includeMetadataChanges: true },
+          (snapshot) => {
+            let check = this.headers.filter(
+              (item) => item.title === "Count of locations"
+            );
+            if (check.length === 0)
+              this.headers.push({
+                title: "Count of locations",
+                value: snapshot.docs.length,
+              });
+          }
+        );
+      } catch (error) {
+        this.alertMessage(error, "error");
+      }
     },
     async getCountOfVehiclesTypes() {
-      await vTypesFetchRef
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          let check = this.headers.filter(
-            (item) => item.title === "Count of vehicles types"
-          );
-          if (check.length === 0)
-            this.headers.push({
-              title: "Count of vehicles types",
-              value: snapshot.docs.length,
-            });
-        })
-        .catch((e) => {
-          // this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+      try {
+        await vTypesFetchRef.onSnapshot(
+          { includeMetadataChanges: true },
+          (snapshot) => {
+            let check = this.headers.filter(
+              (item) => item.title === "Count of vehicles types"
+            );
+            if (check.length === 0)
+              this.headers.push({
+                title: "Count of vehicles types",
+                value: snapshot.docs.length,
+              });
+          }
+        );
+      } catch (error) {
+        this.alertMessage(error, "error");
+      }
     },
     async getCountOfOwnersAccounts() {
-      await usersFetchRef
-        .where("user_type", "==", "owner")
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          var allCount = 0;
-          var activeCount = 0;
-          var basic = 0;
-          var pro = 0;
-          var premium = 0;
-          var free = 0;
+      try {
+        await usersFetchRef
+          .where("user_type", "==", "owner")
+          .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
+            var allCount = 0;
+            var activeCount = 0;
+            var basic = 0;
+            var pro = 0;
+            var premium = 0;
+            var free = 0;
 
-          snapshot.docs.forEach((element) => {
-            if (element.data()["accActive"] === true) {
-              activeCount++;
-            } 
+            snapshot.docs.forEach((element) => {
+              if (element.data()["accActive"] === true) {
+                activeCount++;
+              }
               allCount++;
-            
-            switch (element.data()["account_type"]) {
-              case "Free":
-                free++;
-                break;
-              case "Basic":
-                basic++;
-                break;
-              case "Pro":
-                pro++;
-                break;
-              case "Premium":
-                premium++;
-                break;
 
-              default:
-                break;
+              switch (element.data()["account_type"]) {
+                case "Free":
+                  free++;
+                  break;
+                case "Basic":
+                  basic++;
+                  break;
+                case "Pro":
+                  pro++;
+                  break;
+                case "Premium":
+                  premium++;
+                  break;
+
+                default:
+                  break;
+              }
+            });
+
+            for (let index = 0; index < this.headers.length; index++) {
+              const element = this.headers[index];
+              if (element.title === "Count of owner accounts") {
+                this.headers.splice(index, 1);
+                index--;
+              }
             }
-          });
+            // let check = this.headers.splice(
+            //   (item) => item.title === "Count of vehicles"
+            // );
 
-          for (let index = 0; index < this.headers.length; index++) {
-            const element = this.headers[index];
-            if (element.title === "Count of owner accounts") {
-              this.headers.splice(index, 1);
-              index--;
-            }
-          }
-          // let check = this.headers.splice(
-          //   (item) => item.title === "Count of vehicles"
-          // );
-
-          this.headers.push({
-            title: "Count of owner accounts",
-            value: allCount,
-            active: activeCount,
-            basic: basic,
-            pro: pro,
-            premium: premium,
-            free: free,
+            this.headers.push({
+              title: "Count of owner accounts",
+              value: allCount,
+              active: activeCount,
+              basic: basic,
+              pro: pro,
+              premium: premium,
+              free: free,
+            });
           });
-        })
-        .catch((e) => {
-          // this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+      } catch (error) {
+        this.alertMessage(error, "error");
+      }
     },
     async getCountOfCustomerssAccounts() {
-      await usersFetchRef
-        .where("second_role", "==", "Customer")
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          
-         let check = this.headers.filter(
-            (item) => item.title === "Count of customers accounts"
-          );
-          if (check.length === 0)
-            this.headers.push({
-              title: "Count of customers accounts",
-              value: snapshot.docs.length,
-            });       
-        })
-        .catch((e) => {
-          // this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+      try {
+        await usersFetchRef
+          .where("second_role", "==", "Customer")
+          .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
+            let check = this.headers.filter(
+              (item) => item.title === "Count of customers accounts"
+            );
+            if (check.length === 0)
+              this.headers.push({
+                title: "Count of customers accounts",
+                value: snapshot.docs.length,
+              });
+          });
+      } catch (error) {
+        this.alertMessage(error, "error");
+      }
     },
     async getTotalOfTransactions() {
-      await transactionsFetchRef
-        .where("is_success", "==", true)
-        .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
-          let check = this.headers.filter(
-            (item) => item.title === "Total of earnings"
-          );
-          var amount = 0;
-          snapshot.docs.forEach((element) => {
-            amount += parseInt(element.data()["pay_amount"]);
-          });
-          if (check.length === 0)
-            this.headers.push({
-              title: "Total of earnings",
-              value: amount,
+      try {
+        await transactionsFetchRef
+          .where("is_success", "==", true)
+          .onSnapshot({ includeMetadataChanges: true }, (snapshot) => {
+            let check = this.headers.filter(
+              (item) => item.title === "Total of earnings"
+            );
+            var amount = 0;
+            snapshot.docs.forEach((element) => {
+              amount += parseInt(element.data()["pay_amount"]);
             });
-        })
-        .catch((e) => {
-          // this.loading = false;
-          this.alertMessage(e.message, "error");
-        });
+            if (check.length === 0)
+              this.headers.push({
+                title: "Total of earnings",
+                value: amount,
+              });
+          });
+      } catch (error) {
+        this.alertMessage(error, "error");
+      }
     },
 
     alertMessage(message, msgType) {
@@ -264,10 +262,10 @@ export default {
   background-color: rgb(28, 23, 43) !important;
   color: white !important;
 }
-.wrapper{
+.wrapper {
   display: grid;
   gap: 10px;
-  grid-template-columns:repeat( auto-fit, minmax(300px, 1fr) );
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   grid-auto-flow: dense;
 }
 </style>
