@@ -1,7 +1,7 @@
 {
     "hosting": {
         "site": "vehicles-admin",
-        "public": "public",
+        "public": "dist",
         "ignore": [
             "firebase.json",
             "**/.*",

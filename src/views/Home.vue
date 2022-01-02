@@ -59,6 +59,7 @@ export default {
   },
   data: () => ({
     headers: [],
+    isMsg: false,
   }),
   components: {},
   methods: {
@@ -229,7 +230,7 @@ export default {
               (item) => item.title === "Total of earnings"
             );
             var amount = 0;
-            snapshot.docs.forEach((element) => {
+            snapshot.docs?.forEach((element) => {
               amount += parseInt(element.data()["pay_amount"]);
             });
             if (check.length === 0)
